@@ -1,0 +1,234 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-07-09",
+  "site": {
+    "title": "ミラの未来視",
+    "subtitle": "miranomiraishi official hub",
+    "canonicalUrl": "https://miranomiraishihome.netlify.app/",
+    "description": "漫画、アニメ、ゲーム、音楽、グッズ、そして2DライブAIアイドルルームまで。個人制作の熱量を、世界に向けて企業サイト級の信頼感で届けるための公式拠点です。",
+    "eyebrow": "Creator Studio / Manga / Anime / Games / Music",
+    "heroImage": "images/hero-mira-studio.jpg",
+    "aiRoomImage": "images/ai-idol-room.jpg",
+    "bgm": "assets/mira-the-world-bgm.mp3"
+  },
+  "items": [
+    {
+      "id": "hero-main",
+      "type": "image",
+      "section": "hero",
+      "order": 1,
+      "label": "OFFICIAL",
+      "icon": "MV",
+      "title": "ミラの未来視",
+      "description": "漫画、アニメ、ゲーム、音楽、グッズ、そして2DライブAIアイドルルームまで。個人制作の熱量を、世界に向けて企業サイト級の信頼感で届けるための公式拠点です。",
+      "image": "images/hero-mira-studio.jpg",
+      "url": "https://miranomiraishihome.netlify.app/",
+      "buttonLabel": "公式URL"
+    },
+    {
+      "id": "manga-free",
+      "type": "manga",
+      "section": "manga",
+      "order": 10,
+      "label": "MANGA",
+      "icon": "M",
+      "title": "漫画無料公開エリア",
+      "description": "アイマンガで公開中のミラの未来視。日本語・English対応の漫画ページへ移動できます。",
+      "image": "images/manga-ai-manga-heading.jpg",
+      "url": "https://a-i-manga.com/users/1TrcsErv",
+      "buttonLabel": "漫画を読む",
+      "links": [
+        {
+          "label": "アイマンガで読む",
+          "url": "https://a-i-manga.com/users/1TrcsErv"
+        },
+        {
+          "label": "Amazonで購入",
+          "url": "#"
+        },
+        {
+          "label": "BOOTHで購入",
+          "url": "#"
+        }
+      ]
+    },
+    {
+      "id": "game-rhythm-demo",
+      "type": "game",
+      "section": "game",
+      "order": 20,
+      "label": "GAME",
+      "icon": "G",
+      "title": "ミラのリズムゲーム体験版",
+      "description": "ブラウザで遊べるミラのリズムゲーム体験版を公開中。今後のデモや更新版もここに追加していきます。",
+      "image": "images/rhythm-game-heading.jpg",
+      "url": "games/mira-rhythm-prototype.html",
+      "buttonLabel": "体験版をプレイ"
+    },
+    {
+      "id": "game-puzzle",
+      "type": "game",
+      "section": "game",
+      "order": 30,
+      "label": "PUZZLE",
+      "icon": "P",
+      "title": "ミラの未来視パズルゲーム",
+      "description": "公開中のブラウザ版パズルゲーム。ミラの未来視のゲーム作品として、外部Netlify版へリンクします。",
+      "image": "images/puzzle-game-heading.jpeg",
+      "url": "https://miranomiraishigame.netlify.app/",
+      "buttonLabel": "パズルを遊ぶ"
+    },
+    {
+      "id": "game-mira-musou-demo",
+      "type": "game",
+      "section": "game",
+      "order": 35,
+      "label": "ACTION",
+      "icon": "A",
+      "title": "ミラ無双 横スクロールアクション体験版",
+      "description": "動画スクショを素材化して作った、リズムゲームとは別の横スクロールアクション。ちびミラで敵をなぎ倒す1ステージ体験版です。",
+      "image": "images/mira-musou-title-screen.jpg",
+      "url": "games/mira-video-stage-demo.html",
+      "buttonLabel": "アクション体験版を遊ぶ"
+    },
+    {
+      "id": "music-streaming",
+      "type": "music",
+      "section": "music",
+      "order": 40,
+      "label": "MUSIC",
+      "icon": "♪",
+      "title": "配信音楽紹介",
+      "description": "楽曲、BGM、MV、外部配信サービスへのリンクをまとめ、ミラの活動の音を見せるセクションです。",
+      "image": "images/works-collage.jpg",
+      "url": "#",
+      "buttonLabel": "リンク準備中"
+    },
+    {
+      "id": "voice-bgm",
+      "type": "voice",
+      "section": "music",
+      "order": 45,
+      "label": "BGM",
+      "icon": "♪",
+      "title": "ミラの未来視_ザ・ワールド",
+      "description": "ホームページ右上のBGMボタンで再生できるテーマ音源です。",
+      "image": "images/works-collage.jpg",
+      "audio": "assets/mira-the-world-bgm.mp3",
+      "url": "assets/mira-the-world-bgm.mp3",
+      "buttonLabel": "音源を開く"
+    },
+    {
+      "id": "goods-keyholder",
+      "type": "goods",
+      "section": "goods",
+      "order": 50,
+      "label": "GOODS",
+      "icon": "B",
+      "title": "ミラのキャラクターグッズ",
+      "description": "ミラのキーホルダー、アクリル系アイテム、イベント向け小物などを紹介する場所。商品画像とBOOTH販売URLを差し込めます。",
+      "image": "images/works-collage.jpg",
+      "url": "#",
+      "buttonLabel": "BOOTH未設定"
+    },
+    {
+      "id": "world-guide",
+      "type": "image",
+      "section": "world",
+      "order": 60,
+      "label": "WORLD",
+      "icon": "W",
+      "title": "世界観・キャラクター資料",
+      "description": "ミラの未来視の世界設定、キャラ、年表、キービジュアルを整理して、初見の人にも伝わる入口にします。",
+      "image": "images/hero-mira-studio.jpg",
+      "url": "#",
+      "buttonLabel": "資料追加"
+    },
+    {
+      "id": "ai-idol-room",
+      "type": "link",
+      "section": "ai-idol",
+      "order": 70,
+      "label": "AI IDOL",
+      "icon": "AI",
+      "title": "AI Idol Room Lab",
+      "description": "Live2D、会話、歌、配信告知を接続していく実験室。現在制作中で、完成後はサイトの看板体験になります。",
+      "image": "images/ai-idol-room.jpg",
+      "url": "#room",
+      "buttonLabel": "Roomへ"
+    },
+    {
+      "id": "live-2d-room",
+      "type": "link",
+      "section": "ai-idol",
+      "order": 75,
+      "label": "SOON",
+      "icon": "2D",
+      "title": "ミラの2Dライブ（Coming Soon）",
+      "description": "まばたき・口パク・視線・髪の物理演算つきで、ブラウザだけで動く2Dライブを現在制作中です。公開までもう少しお待ちください。",
+      "image": "images/ai-idol-room.jpg",
+      "url": "#room",
+      "buttonLabel": "Coming Soon"
+    },
+    {
+      "id": "official-url",
+      "type": "link",
+      "section": "links",
+      "order": 100,
+      "label": "OFFICIAL",
+      "icon": "URL",
+      "title": "Official URL",
+      "description": "公開URL: miranomiraishihome.netlify.app。独自ドメインなら miranomiraishi.com に変更。",
+      "url": "https://miranomiraishihome.netlify.app/",
+      "buttonLabel": "公式サイト"
+    },
+    {
+      "id": "ko-fi",
+      "type": "link",
+      "section": "links",
+      "order": 110,
+      "label": "SUPPORT",
+      "icon": "K",
+      "title": "Ko-fi",
+      "description": "制作支援、活動報告、ファン向け更新。",
+      "url": "https://ko-fi.com/miravision",
+      "buttonLabel": "Ko-fi"
+    },
+    {
+      "id": "booth",
+      "type": "goods",
+      "section": "links",
+      "order": 120,
+      "label": "SHOP",
+      "icon": "B",
+      "title": "BOOTH",
+      "description": "ミラのキーホルダー、アクリル系グッズ、漫画関連アイテム。",
+      "url": "#",
+      "buttonLabel": "BOOTH未設定"
+    },
+    {
+      "id": "music-links",
+      "type": "music",
+      "section": "links",
+      "order": 130,
+      "label": "MUSIC",
+      "icon": "♪",
+      "title": "Music",
+      "description": "YouTube、Spotify、Apple Musicなどへの配信紹介。",
+      "url": "#",
+      "buttonLabel": "準備中"
+    },
+    {
+      "id": "github-links",
+      "type": "link",
+      "section": "links",
+      "order": 140,
+      "label": "DEV",
+      "icon": "G",
+      "title": "GitHub",
+      "description": "ゲーム、資料、更新履歴、技術的な制作ログ。",
+      "url": "#",
+      "buttonLabel": "準備中"
+    }
+  ]
+}

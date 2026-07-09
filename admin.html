@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#06070a">
+  <title>ミラの未来視 Admin | data.json Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #06070a;
+      --panel: rgba(255,255,255,0.035);
+      --panel-2: rgba(255,255,255,0.06);
+      --panel-strong: rgba(15, 17, 24, 0.72);
+      --ink: #f5f7fc;
+      --muted: #9aa4b8;
+      --faint: #6c7488;
+      --line: rgba(255,255,255,0.09);
+      --line-strong: rgba(255,255,255,0.16);
+      --cyan: #66d6ff;
+      --violet: #a693ff;
+      --gold: #f1d09a;
+      --green: #71e7ad;
+      --danger: #ff6b8a;
+      --accent: linear-gradient(120deg, #66d6ff 0%, #a693ff 52%, #ff86c6 100%);
+      --shadow-soft: 0 24px 60px -32px rgba(0,0,0,0.7);
+      --radius: 16px;
+      --sans: "Inter", "Noto Sans JP", "Yu Gothic UI", system-ui, sans-serif;
+      --serif: "Shippori Mincho", "Noto Serif JP", serif;
+      font-family: var(--sans);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(110% 90% at 84% 4%, rgba(255,134,198,0.12), transparent 46%),
+        radial-gradient(110% 90% at 12% 12%, rgba(102,214,255,0.12), transparent 48%),
+        radial-gradient(100% 80% at 50% 120%, rgba(166,147,255,0.1), transparent 60%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; }
+    ::selection { background: rgba(166,147,255,0.32); color: #fff; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      border-bottom: 1px solid var(--line);
+      background: rgba(6,7,10,0.72);
+      backdrop-filter: blur(20px) saturate(1.4);
+    }
+
+    .bar, main {
+      width: min(1200px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      min-height: 76px;
+    }
+
+    .bar-brand { display: flex; align-items: center; gap: 12px; }
+    .mark {
+      display: grid; place-items: center;
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: linear-gradient(135deg, rgba(102,214,255,0.24), rgba(255,134,198,0.2)), rgba(12,14,20,0.9);
+      color: var(--gold);
+      font-weight: 800; font-size: 14px; letter-spacing: 0.04em;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
+    }
+
+    h1, h2, h3 { margin: 0; letter-spacing: 0.01em; }
+    h1 { font-size: 18px; font-weight: 700; }
+    h2 { font-family: var(--serif); font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+
+    .kicker {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--violet);
+      font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .kicker::before { content: ""; width: 22px; height: 1px; background: linear-gradient(90deg, var(--violet), transparent); }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+      gap: 20px;
+      padding: 32px 0 64px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel-strong);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-soft);
+    }
+    .panel-body { padding: 24px; }
+    .hint { color: var(--muted); line-height: 1.75; font-size: 13px; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+    button, .button, input, textarea, select { font: inherit; }
+
+    button, .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      color: var(--ink);
+      background: rgba(255,255,255,0.04);
+      font-weight: 600;
+      font-size: 13.5px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    button:hover, .button:hover { transform: translateY(-1px); background: rgba(255,255,255,0.08); }
+
+    button.primary {
+      border-color: transparent;
+      color: #060810;
+      background: var(--accent);
+      font-weight: 700;
+      box-shadow: 0 12px 30px -14px rgba(166,147,255,0.7);
+    }
+    button.good { border-color: rgba(113,231,173,0.5); background: rgba(113,231,173,0.12); color: #e7fff4; }
+    button.danger { border-color: rgba(255,107,138,0.5); color: #ffd7df; background: rgba(255,107,138,0.1); }
+
+    label { display: grid; gap: 7px; color: #e3e9f5; font-size: 12.5px; font-weight: 600; letter-spacing: 0.02em; }
+
+    input, textarea, select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--ink);
+      background: rgba(255,255,255,0.04);
+      padding: 11px 13px;
+      transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+    }
+    input::placeholder, textarea::placeholder { color: var(--faint); }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: rgba(102,214,255,0.55);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 3px rgba(102,214,255,0.12);
+    }
+    textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
+    select option { background: #0a0c12; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .item-list {
+      display: grid;
+      gap: 10px;
+      max-height: 66vh;
+      overflow: auto;
+      padding-right: 6px;
+      margin-top: 18px;
+    }
+    .item-list::-webkit-scrollbar { width: 8px; }
+    .item-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 15px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.025);
+      cursor: pointer;
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .item-row:hover { transform: translateX(2px); border-color: var(--line-strong); background: rgba(255,255,255,0.05); }
+    .item-row.active { border-color: rgba(102,214,255,0.5); background: rgba(102,214,255,0.08); }
+    .item-row b { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 700; }
+    .item-row span { display: block; color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+    .badge {
+      display: inline-flex; align-items: center;
+      min-height: 26px; padding: 0 10px;
+      border-radius: 999px;
+      color: #e7fff4;
+      background: rgba(113,231,173,0.1);
+      border: 1px solid rgba(113,231,173,0.28);
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    .json-preview {
+      min-height: 220px;
+      max-height: 360px;
+      overflow: auto;
+      white-space: pre;
+      color: #cfe6ff;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .json-preview::-webkit-scrollbar { width: 8px; height: 8px; }
+    .json-preview::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
+
+    .divider { height: 1px; background: var(--line); margin: 28px 0 24px; }
+
+    @media (max-width: 920px) {
+      main, .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="bar-brand">
+        <span class="mark">MV</span>
+        <div>
+          <h1>ミラの未来視 Admin</h1>
+          <div class="hint">監督編集型 — カード内容を作り、data.jsonとして保存します。</div>
+        </div>
+      </div>
+      <a class="button" href="index.html">← サイトへ戻る</a>
+    </div>
+  </header>
+
+  <main>
+    <aside class="panel">
+      <div class="panel-body">
+        <span class="kicker">Library</span>
+        <h2>コンテンツ一覧</h2>
+        <p class="hint">クリックすると右側で編集できます。並び順は section と order で決まります。</p>
+        <div class="actions">
+          <button class="primary" id="newItem" type="button">＋ 新規カード</button>
+          <label class="button" for="jsonFile">data.json読込</label>
+          <input id="jsonFile" type="file" accept="application/json,.json" hidden>
+        </div>
+        <div class="item-list" id="itemList"></div>
+      </div>
+    </aside>
+
+    <section class="panel">
+      <div class="panel-body">
+        <span class="kicker">Editor</span>
+        <h2>カード編集</h2>
+        <div class="divider"></div>
+        <div class="form-grid">
+          <label>ID<input id="id" placeholder="game-rhythm-demo"></label>
+          <label>type
+            <select id="type">
+              <option value="manga">manga</option>
+              <option value="image">image</option>
+              <option value="video">video</option>
+              <option value="voice">voice</option>
+              <option value="link">link</option>
+              <option value="goods">goods</option>
+              <option value="music">music</option>
+              <option value="game">game</option>
+            </select>
+          </label>
+          <label>section
+            <select id="section">
+              <option value="hero">hero</option>
+              <option value="manga">manga</option>
+              <option value="game">game</option>
+              <option value="music">music</option>
+              <option value="goods">goods</option>
+              <option value="world">world</option>
+              <option value="ai-idol">ai-idol</option>
+              <option value="links">links</option>
+            </select>
+          </label>
+          <label>order<input id="order" type="number" step="1" placeholder="10"></label>
+          <label>label<input id="label" placeholder="GAME"></label>
+          <label>icon<input id="icon" placeholder="G"></label>
+          <label class="full">タイトル<input id="title" placeholder="作品タイトル"></label>
+          <label class="full">説明<textarea id="description" placeholder="説明文"></textarea></label>
+          <label class="full">画像パス<input id="image" placeholder="images/example.png"></label>
+          <label class="full">動画URL / mp4パス<input id="video" placeholder="videos/example.mp4 または YouTube URL"></label>
+          <label>YouTube ID<input id="youtubeId" placeholder="動画IDだけ"></label>
+          <label>音声パス<input id="audio" placeholder="assets/example.mp3"></label>
+          <label class="full">URL<input id="url" placeholder="https://... または games/example.html"></label>
+          <label>ボタン名<input id="buttonLabel" placeholder="開く"></label>
+          <label class="full">複数リンク<textarea id="linksText" placeholder="アイマンガで読む | https://a-i-manga.com/...
+Amazonで購入 | https://amazon.co.jp/...
+BOOTHで購入 | https://booth.pm/..."></textarea></label>
+        </div>
+        <div class="actions">
+          <button class="good" id="saveItem" type="button">このカードを保存</button>
+          <button class="danger" id="deleteItem" type="button">削除</button>
+          <button class="primary" id="downloadJson" type="button">data.jsonをダウンロード</button>
+        </div>
+
+        <div class="divider"></div>
+        <span class="kicker">Preview</span>
+        <h2>data.json プレビュー</h2>
+        <div class="json-preview" id="jsonPreview" style="margin-top:14px"></div>
+        <p class="hint" style="margin-top:14px">
+          保存ボタンはブラウザ内の編集データに反映します。最後に「data.jsonをダウンロード」して、このフォルダの data.json と置き換えてください。
+          画像は images フォルダに入れ、画像パス欄に <code>images/ファイル名.png</code> のように書きます。
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const emptyData = {
+      version: "1.0.0",
+      updatedAt: new Date().toISOString().slice(0, 10),
+      site: {
+        title: "ミラの未来視",
+        subtitle: "miranomiraishi official hub",
+        canonicalUrl: "https://miranomiraishi.netlify.app/",
+        description: "",
+        eyebrow: "Creator Studio",
+        heroImage: "images/hero-mira-studio.png",
+        aiRoomImage: "images/ai-idol-room.png",
+        bgm: "assets/mira-the-world-bgm.mp3"
+      },
+      items: []
+    };
+
+    const fields = ["id", "type", "section", "order", "label", "icon", "title", "description", "image", "video", "youtubeId", "audio", "url", "buttonLabel"];
+    let data = structuredClone(emptyData);
+    let selectedId = "";
+
+    function sortItems() {
+      data.items.sort((a, b) => String(a.section).localeCompare(String(b.section), "ja") || Number(a.order || 0) - Number(b.order || 0));
+    }
+
+    function renderList() {
+      sortItems();
+      const list = document.querySelector("#itemList");
+      list.innerHTML = data.items.map((item) => `
+        <div class="item-row ${item.id === selectedId ? "active" : ""}" data-id="${item.id}">
+          <div>
+            <b>${item.title || "(無題)"}</b>
+            <span>${item.section || "-"} / ${item.type || "-"} / order ${item.order || 0}</span>
+          </div>
+          <span class="badge">${item.label || item.type || "item"}</span>
+        </div>
+      `).join("");
+      document.querySelector("#jsonPreview").textContent = JSON.stringify(data, null, 2);
+    }
+
+    function readForm() {
+      const item = {};
+      fields.forEach((field) => {
+        const value = document.querySelector(`#${field}`).value.trim();
+        if (field === "order") item[field] = Number(value || 0);
+        else if (value) item[field] = value;
+      });
+      const linksText = document.querySelector("#linksText").value.trim();
+      if (linksText) {
+        item.links = linksText.split(/\n+/)
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .map((line) => {
+            const parts = line.split("|");
+            if (parts.length >= 2) {
+              return { label: parts[0].trim(), url: parts.slice(1).join("|").trim() };
+            }
+            return { label: "開く", url: line };
+          })
+          .filter((link) => link.url);
+      }
+      return item;
+    }
+
+    function fillForm(item = {}) {
+      fields.forEach((field) => {
+        document.querySelector(`#${field}`).value = item[field] ?? "";
+      });
+      document.querySelector("#linksText").value = Array.isArray(item.links)
+        ? item.links.map((link) => `${link.label || "開く"} | ${link.url || ""}`).join("\n")
+        : "";
+    }
+
+    function selectItem(id) {
+      selectedId = id;
+      fillForm(data.items.find((item) => item.id === id) || {});
+      renderList();
+    }
+
+    async function loadDataJson() {
+      try {
+        const response = await fetch("data.json", { cache: "no-store" });
+        if (!response.ok) throw new Error("fetch failed");
+        data = await response.json();
+      } catch (error) {
+        data = structuredClone(emptyData);
+      }
+      selectedId = data.items[0]?.id || "";
+      fillForm(data.items[0] || {});
+      renderList();
+    }
+
+    document.querySelector("#itemList").addEventListener("click", (event) => {
+      const row = event.target.closest("[data-id]");
+      if (row) selectItem(row.dataset.id);
+    });
+
+    document.querySelector("#newItem").addEventListener("click", () => {
+      const item = {
+        id: `new-item-${Date.now()}`,
+        type: "link",
+        section: "manga",
+        order: 999,
+        label: "NEW",
+        icon: "N",
+        title: "新しいカード",
+        description: "",
+        image: "images/works-collage.png",
+        url: "#",
+        buttonLabel: "開く"
+      };
+      data.items.push(item);
+      selectItem(item.id);
+    });
+
+    document.querySelector("#saveItem").addEventListener("click", () => {
+      const item = readForm();
+      if (!item.id) {
+        alert("IDは必須です。");
+        return;
+      }
+      const index = data.items.findIndex((entry) => entry.id === selectedId || entry.id === item.id);
+      if (index >= 0) data.items[index] = item;
+      else data.items.push(item);
+      selectedId = item.id;
+      data.updatedAt = new Date().toISOString().slice(0, 10);
+      renderList();
+    });
+
+    document.querySelector("#deleteItem").addEventListener("click", () => {
+      if (!selectedId) return;
+      data.items = data.items.filter((item) => item.id !== selectedId);
+      selectedId = data.items[0]?.id || "";
+      fillForm(data.items[0] || {});
+      renderList();
+    });
+
+    document.querySelector("#downloadJson").addEventListener("click", () => {
+      data.updatedAt = new Date().toISOString().slice(0, 10);
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "data.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.querySelector("#jsonFile").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      data = JSON.parse(await file.text());
+      selectedId = data.items[0]?.id || "";
+      fillForm(data.items[0] || {});
+      renderList();
+    });
+
+    loadDataJson();
+  </script>
+</body>
+</html>

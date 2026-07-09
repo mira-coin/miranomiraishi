@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ミラの未来視 / Mira Vision official hub. Manga, anime, games, music, AI idol room, goods, and creator updates.">
+  <meta name="theme-color" content="#06070a">
+  <link rel="canonical" href="https://miranomiraishi.netlify.app/">
+  <meta property="og:url" content="https://miranomiraishi.netlify.app/">
+  <meta property="og:title" content="ミラの未来視 | miranomiraishi">
+  <meta property="og:description" content="Manga, anime, games, music, AI idol room, goods, and creator updates by Mira Vision.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://miranomiraishi.netlify.app/images/hero-mira-studio.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" as="image" href="images/hero-mira-studio.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@600;700;800&display=swap" rel="stylesheet">
+  <title>ミラの未来視 | Mira Vision Official Hub</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #06070a;
+      --bg-2: #0a0c12;
+      --panel: rgba(255, 255, 255, 0.035);
+      --panel-2: rgba(255, 255, 255, 0.06);
+      --panel-strong: rgba(15, 17, 24, 0.66);
+      --ink: #f5f7fc;
+      --muted: #9aa4b8;
+      --faint: #6c7488;
+      --line: rgba(255, 255, 255, 0.09);
+      --line-strong: rgba(255, 255, 255, 0.16);
+      --cyan: #66d6ff;
+      --violet: #a693ff;
+      --pink: #ff86c6;
+      --gold: #f1d09a;
+      --accent: linear-gradient(120deg, #66d6ff 0%, #a693ff 52%, #ff86c6 100%);
+      --shadow: 0 40px 90px -38px rgba(0, 0, 0, 0.85);
+      --shadow-soft: 0 24px 60px -32px rgba(0, 0, 0, 0.7);
+      --radius: 16px;
+      --radius-lg: 26px;
+      --sans: "Inter", "Noto Sans JP", "Yu Gothic UI", system-ui, sans-serif;
+      --serif: "Shippori Mincho", "Noto Serif JP", "Yu Mincho", serif;
+      font-family: var(--sans);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+    ::selection { background: rgba(166, 147, 255, 0.32); color: #fff; }
+
+    .video-field {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background:
+        radial-gradient(120% 90% at 82% 6%, rgba(255, 134, 198, 0.14), transparent 46%),
+        radial-gradient(120% 90% at 12% 14%, rgba(102, 214, 255, 0.14), transparent 48%),
+        radial-gradient(100% 80% at 50% 120%, rgba(166, 147, 255, 0.12), transparent 60%),
+        linear-gradient(160deg, #06070a 0%, #0a0c12 52%, #0c0910 100%);
+    }
+
+    .video-field::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+      background-size: 96px 96px;
+      transform: perspective(900px) rotateX(60deg) translateY(6%);
+      transform-origin: top;
+      mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 60%, transparent);
+      animation: drift 46s linear infinite;
+    }
+
+    @keyframes drift {
+      from { background-position: 0 0; }
+      to { background-position: 0 480px; }
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: 0.4;
+      background: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 3px);
+      mix-blend-mode: screen;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      border-bottom: 1px solid transparent;
+      background: transparent;
+      transition: background .35s ease, border-color .35s ease, backdrop-filter .35s ease;
+    }
+
+    header.scrolled {
+      border-bottom-color: var(--line);
+      background: rgba(6, 7, 10, 0.72);
+      backdrop-filter: blur(20px) saturate(1.4);
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 24px;
+      width: min(1200px, calc(100% - 40px));
+      margin: 0 auto;
+      min-height: 76px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      font-weight: 700;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background:
+        linear-gradient(135deg, rgba(102,214,255,0.24), rgba(255,134,198,0.2)),
+        rgba(12,14,20,0.9);
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 0 30px rgba(102,214,255,0.14);
+    }
+
+    .brand span { display: block; white-space: nowrap; font-size: 15px; letter-spacing: 0.02em; }
+    .brand small {
+      display: block;
+      color: var(--faint);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    nav a, .pill-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 15px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: color .2s ease, background .2s ease;
+    }
+
+    nav a:hover, .pill-link:hover { color: var(--ink); background: rgba(255,255,255,0.06); }
+
+    .nav-actions { display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
+
+    .audio-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 15px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      color: var(--ink);
+      background: rgba(255,255,255,0.04);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .audio-toggle::before {
+      content: "";
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--faint);
+      transition: background .2s ease, box-shadow .2s ease;
+    }
+
+    .audio-toggle:hover { transform: translateY(-1px); background: rgba(255,255,255,0.08); }
+    .audio-toggle[aria-pressed="true"] {
+      border-color: rgba(102, 214, 255, 0.5);
+      background: rgba(102, 214, 255, 0.1);
+      color: #eafaff;
+    }
+    .audio-toggle[aria-pressed="true"]::before {
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 0 22px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      color: var(--ink);
+      background: rgba(255,255,255,0.04);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); background: rgba(255,255,255,0.08); }
+    .btn.primary {
+      border-color: transparent;
+      color: #060810;
+      background: var(--accent);
+      font-weight: 700;
+      box-shadow: 0 14px 34px -14px rgba(166,147,255,0.7);
+    }
+    .btn.primary:hover { box-shadow: 0 20px 42px -14px rgba(166,147,255,0.85); }
+    .btn.ghost { background: transparent; }
+
+    .nav .btn { min-height: 42px; padding: 0 18px; }
+
+    main { position: relative; }
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      align-items: center;
+      padding: 148px 0 72px;
+      overflow: hidden;
+      background-image:
+        linear-gradient(96deg, rgba(6,7,10,0.97) 0%, rgba(6,7,10,0.82) 34%, rgba(6,7,10,0.32) 66%, rgba(6,7,10,0.72) 100%),
+        url("images/hero-mira-studio.jpg");
+      background-size: cover;
+      background-position: center right;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(6,7,10,0.5) 0%, transparent 22%, transparent 62%, rgba(6,7,10,0.96) 100%);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 160px;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent, var(--bg));
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: min(1200px, calc(100% - 40px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 48px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 32px;
+      padding: 0 14px 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      color: #e7ecf7;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(166,147,255,0.9);
+    }
+
+    h1 {
+      font-family: var(--serif);
+      margin: 26px 0 20px;
+      max-width: none;
+      font-size: clamp(42px, 6.1vw, 86px);
+      white-space: nowrap;
+      font-weight: 800;
+      line-height: 0.98;
+      letter-spacing: 0.01em;
+      background: linear-gradient(180deg, #ffffff 30%, #cdd6ea 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    }
+
+    .url-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 32px;
+      margin-bottom: 22px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(102, 214, 255, 0.32);
+      color: #cdefff;
+      background: rgba(102, 214, 255, 0.07);
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .url-chip::before { content: "◍"; color: var(--cyan); font-size: 11px; }
+
+    .lead {
+      max-width: 54ch;
+      color: #cbd3e4;
+      font-size: clamp(16px, 1.5vw, 19px);
+      line-height: 1.9;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .hero-showcase {
+      display: grid;
+      gap: 14px;
+      align-content: center;
+    }
+
+    .hero-poster {
+      position: relative;
+      min-height: 420px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line-strong);
+      background:
+        linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85) 100%),
+        url("images/hero-mira-studio.jpg");
+      background-size: cover;
+      background-position: center right;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .hero-poster::before {
+      content: "";
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
+      background: linear-gradient(120deg, rgba(102,214,255,0.08), transparent 40%);
+    }
+    .hero-poster::after {
+      content: "OFFICIAL CREATOR UNIVERSE";
+      position: absolute;
+      left: 20px; bottom: 18px;
+      color: rgba(255,255,255,0.94);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      padding: 18px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-soft);
+    }
+    .metric b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 22px;
+      font-weight: 700;
+      background: var(--accent);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .metric span { color: #c4ccdd; font-size: 12px; font-weight: 500; line-height: 1.55; }
+
+    .ticker {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-block: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 46s linear infinite;
+    }
+
+    .ticker span {
+      display: inline-flex;
+      align-items: center;
+      gap: 20px;
+      min-height: 56px;
+      padding: 0 34px;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 13.5px;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+    .ticker span::after { content: "◆"; color: rgba(166,147,255,0.5); font-size: 8px; }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    section {
+      width: min(1200px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 120px 0;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 44px;
+    }
+
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      color: var(--violet);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+    .section-kicker::before { content: ""; width: 26px; height: 1px; background: linear-gradient(90deg, var(--violet), transparent); }
+
+    h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(32px, 4.4vw, 56px);
+      font-weight: 700;
+      line-height: 1.04;
+      letter-spacing: 0.01em;
+    }
+
+    .section-head p {
+      margin: 16px 0 0;
+      max-width: 62ch;
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 15px;
+    }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .tab {
+      min-height: 40px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      transition: color .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .tab:hover { color: var(--ink); border-color: var(--line-strong); }
+    .tab[aria-pressed="true"] {
+      color: #060810;
+      border-color: transparent;
+      background: linear-gradient(120deg, #dff4ff, #efe9ff);
+      font-weight: 700;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 340px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow-soft);
+      transition: transform .35s cubic-bezier(.2,.7,.2,1), border-color .35s ease, box-shadow .35s ease;
+    }
+    .card::after {
+      content: "";
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--line-strong);
+      box-shadow: var(--shadow);
+    }
+
+    .thumb {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(120% 120% at 20% 10%, rgba(102,214,255,0.16), transparent 55%),
+        radial-gradient(120% 120% at 90% 90%, rgba(255,134,198,0.14), transparent 55%),
+        linear-gradient(160deg, #10131c, #0a0c12);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+    .thumb img {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transform: scale(1.02);
+      transition: transform .6s cubic-bezier(.2,.7,.2,1);
+    }
+    .card:hover .thumb img { transform: scale(1.07); }
+
+    .thumb-letter {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 62px; height: 62px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(6,8,14,0.5);
+      backdrop-filter: blur(12px);
+      color: #fff;
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .thumb::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 45%, rgba(6,8,14,0.55) 100%);
+    }
+
+    .tag {
+      position: absolute;
+      top: 14px; left: 14px;
+      z-index: 2;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba(6,8,14,0.6);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(8px);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #fff;
+    }
+
+    .card-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 22px;
+    }
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: 0.01em;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 13.5px;
+    }
+
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 22px;
+    }
+
+    .mini-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 38px;
+      padding: 0 15px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      color: #eef4ff;
+      background: rgba(255,255,255,0.04);
+      font-size: 12.5px;
+      font-weight: 600;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .mini-link:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(102,214,255,0.4);
+    }
+    .mini-link::after { content: "→"; font-size: 12px; opacity: .7; transition: transform .2s ease; }
+    .mini-link:hover::after { transform: translateX(2px); }
+
+    .feature-band {
+      position: relative;
+      width: 100%;
+      border-block: 1px solid var(--line);
+      background:
+        radial-gradient(80% 120% at 12% 0%, rgba(102,214,255,0.1), transparent 55%),
+        radial-gradient(80% 120% at 92% 100%, rgba(255,134,198,0.1), transparent 55%),
+        rgba(255,255,255,0.015);
+    }
+
+    .room {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 470px);
+      gap: 32px;
+      align-items: stretch;
+      width: min(1200px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 110px 0;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 460px;
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line-strong);
+      background:
+        linear-gradient(120deg, rgba(6,7,10,0.15), rgba(6,7,10,0.45)),
+        url("images/ai-idol-room.jpg"),
+        linear-gradient(150deg, rgba(102,214,255,0.2), rgba(255,134,198,0.12) 48%, rgba(6,7,10,0.92));
+      background-size: cover, cover, auto;
+      background-position: center;
+      box-shadow: var(--shadow);
+    }
+    .stage::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(60% 50% at 50% 108%, rgba(166,147,255,0.32), transparent 70%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 4px);
+      mix-blend-mode: screen;
+      opacity: 0.7;
+    }
+    .stage::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 55%, rgba(6,7,10,0.7) 100%);
+    }
+
+    .stage-badge {
+      position: absolute;
+      top: 18px; left: 18px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(6,8,14,0.6);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+    }
+    .stage-badge::before {
+      content: "";
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ff6b8a;
+      box-shadow: 0 0 0 0 rgba(255,107,138,0.6);
+      animation: livePulse 1.8s ease-out infinite;
+    }
+    @keyframes livePulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,107,138,0.55); }
+      70% { box-shadow: 0 0 0 9px rgba(255,107,138,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,107,138,0); }
+    }
+
+    .avatar { display: none; }
+
+    .room-panel {
+      padding: 34px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-soft);
+    }
+    .room-panel h2 { font-size: clamp(28px, 3vw, 42px); margin-top: 14px; }
+    .room-panel p { color: var(--muted); line-height: 1.9; font-size: 15px; margin: 16px 0 0; }
+
+    .status-list { display: grid; gap: 12px; margin-top: 26px; }
+    .status {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.025);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .status b {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      position: relative;
+    }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 24px;
+      padding: 26px 28px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--panel);
+      transition: transform .3s ease, border-color .3s ease;
+    }
+    .timeline-item:hover { transform: translateX(4px); border-color: var(--line-strong); }
+    .timeline-item time {
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .timeline-item h3 { margin: 0 0 8px; font-size: 18px; font-weight: 700; }
+    .timeline-item p { margin: 0; color: var(--muted); line-height: 1.8; font-size: 14px; }
+
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .link-tile {
+      position: relative;
+      display: block;
+      min-height: 150px;
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow-soft);
+      transition: transform .3s ease, border-color .3s ease, background .3s ease;
+    }
+    .link-tile:hover {
+      transform: translateY(-4px);
+      border-color: rgba(102,214,255,0.4);
+      background: var(--panel-2);
+    }
+    .link-tile b {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .link-tile b::after { content: "↗"; color: var(--muted); font-size: 15px; }
+    .link-tile span { display: block; color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+    .local-notice {
+      display: none;
+      width: min(1200px, calc(100% - 40px));
+      margin: 100px auto -64px;
+      padding: 16px 18px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(241, 208, 154, 0.34);
+      color: #f6e6c4;
+      background: rgba(241, 208, 154, 0.08);
+      line-height: 1.7;
+      font-size: 13.5px;
+    }
+    .local-notice.show { display: block; }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 56px 0 64px;
+      color: var(--muted);
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.35));
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      width: min(1200px, calc(100% - 40px));
+      margin: 0 auto;
+      font-size: 13.5px;
+      line-height: 1.8;
+    }
+    .footer-inner strong { color: var(--ink); font-size: 15px; letter-spacing: 0.02em; }
+
+    .hide { display: none !important; }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);
+    }
+    [data-reveal].in { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+      [data-reveal] { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 960px) {
+      .nav { grid-template-columns: auto auto; gap: 12px; }
+      nav { display: none; }
+      .hero-inner, .room { grid-template-columns: 1fr; }
+      .hero-showcase { order: -1; }
+      .content-grid, .link-grid, .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .section-head { grid-template-columns: 1fr; }
+      .hero { min-height: auto; }
+      section { padding: 88px 0; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-actions .pill-link { display: none; }
+      .content-grid, .link-grid, .metrics { grid-template-columns: 1fr; }
+      .hero-poster { min-height: 300px; }
+      .timeline-item { grid-template-columns: 1fr; gap: 10px; }
+      .status { grid-template-columns: 1fr; gap: 4px; }
+      .footer-inner { flex-direction: column; }
+      .hero { padding-top: 120px; }
+      h1 { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <div class="video-field" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header id="siteHeader">
+    <div class="nav">
+      <a class="brand" href="#top" aria-label="Mira Vision home">
+        <span class="mark">MV</span>
+        <span>ミラの未来視<small>miranomiraishi official hub</small></span>
+      </a>
+      <nav aria-label="主要ナビゲーション">
+        <a href="#works">Works</a>
+        <a href="#room">AI Idol Room</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#links">Links</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="audio-toggle" id="bgmToggle" type="button" aria-pressed="false" aria-label="BGMを再生">BGM OFF</button>
+        <a class="pill-link" href="https://ko-fi.com/miravision" target="_blank" rel="noreferrer">Ko-fi</a>
+        <a class="pill-link" href="admin.html">Admin</a>
+        <a class="btn primary" href="#works">見る</a>
+      </div>
+    </div>
+  </header>
+
+  <audio id="siteBgm" src="assets/mira-the-world-bgm.mp3" preload="metadata" loop></audio>
+
+  <main id="top">
+    <div class="local-notice" id="localNotice">
+      data.jsonを直接読み込めないブラウザ環境です。Netlify公開後は自動読込されます。
+      ローカル確認では <label for="localDataFile" style="text-decoration:underline;cursor:pointer;font-weight:700">data.jsonを選択</label> してください。
+      <input id="localDataFile" type="file" accept="application/json,.json" hidden>
+    </div>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <div data-reveal>
+          <span class="eyebrow">Creator Studio / Manga / Anime / Games / Music</span>
+          <h1 id="hero-title">ミラの未来視</h1>
+          <span class="url-chip">miranomiraishi.netlify.app</span>
+          <p class="lead">
+            漫画、アニメ、ゲーム、音楽、グッズ、そして2DライブAIアイドルルームまで。
+            個人制作の熱量を、世界に向けて企業サイト級の信頼感で届けるための公式拠点です。
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#works">コンテンツを見る</a>
+            <a class="btn ghost" href="https://ko-fi.com/miravision" target="_blank" rel="noreferrer">支援する</a>
+            <a class="btn ghost" href="#links">外部リンク</a>
+          </div>
+        </div>
+        <div class="hero-showcase" aria-label="Mira Vision official showcase" data-reveal>
+          <div class="hero-poster" role="img" aria-label="ミラの未来視の公式キービジュアル"></div>
+          <div class="metrics">
+            <div class="metric"><b>6+</b><span>漫画・ゲーム・音楽・グッズを横断</span></div>
+            <div class="metric"><b>Global</b><span>日本語／英語展開を想定した公式拠点</span></div>
+            <div class="metric"><b>Next</b><span>2D Live AI Idol Roomへ拡張</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ticker" aria-label="Featured information">
+      <div class="ticker-track">
+        <span>無料漫画の一部公開予定</span>
+        <span>2D Live AI Idol Room foundation</span>
+        <span>Games playable from this hub</span>
+        <span>Music, goods, creator notes &amp; global updates</span>
+        <span>無料漫画の一部公開予定</span>
+        <span>2D Live AI Idol Room foundation</span>
+        <span>Games playable from this hub</span>
+        <span>Music, goods, creator notes &amp; global updates</span>
+      </div>
+    </div>
+
+    <section id="works" aria-labelledby="works-title">
+      <div class="section-head" data-reveal>
+        <div>
+          <span class="section-kicker">Portfolio</span>
+          <h2 id="works-title">Works Archive</h2>
+          <p>漫画・ゲーム・音楽・グッズ・世界観を横断する作品カード。画像やリンクは後から差し替えられる設計で、まずは公開カテゴリと導線を上質に整えています。</p>
+        </div>
+        <div class="tabs" aria-label="作品カテゴリ">
+          <button class="tab" data-filter="all" aria-pressed="true">All</button>
+          <button class="tab" data-filter="manga" aria-pressed="false">Manga</button>
+          <button class="tab" data-filter="game" aria-pressed="false">Game</button>
+          <button class="tab" data-filter="music" aria-pressed="false">Music</button>
+          <button class="tab" data-filter="goods" aria-pressed="false">Goods</button>
+          <button class="tab" data-filter="world" aria-pressed="false">World</button>
+          <button class="tab" data-filter="ai-idol" aria-pressed="false">AI Idol</button>
+        </div>
+      </div>
+      <div class="content-grid" id="workGrid"></div>
+    </section>
+
+    <div class="feature-band" id="room">
+      <div class="room">
+        <div class="stage" aria-label="2D Live AI idol room concept" data-reveal>
+          <span class="stage-badge">COMING SOON</span>
+          <div class="avatar" aria-hidden="true"></div>
+        </div>
+        <div class="room-panel" data-reveal>
+          <span class="section-kicker">Flagship</span>
+          <h2>2D Live AI Idol Room</h2>
+          <p>
+            ミラの2Dライブは現在制作中です。まばたき・口パク・視線・髪の物理演算つきで、ブラウザだけで動く看板コンテンツを準備しています。
+            完成形では会話・歌・告知・作品紹介・ライブ配信導線までつながる看板コンテンツにします。
+          </p>
+          <p style="margin-top:18px">
+            <span class="btn" style="opacity:.65;cursor:default">▶ 2Dライブ ｜ Coming Soon</span>
+          </p>
+          <div class="status-list">
+            <div class="status"><b>Phase 1</b><span>公式ホームページ土台、作品カード、外部リンク集。</span></div>
+            <div class="status"><b>Phase 2</b><span>画像ギャラリー、漫画ビューア、ゲーム埋め込み。</span></div>
+            <div class="status"><b>Phase 3</b><span>2Dライブ実装（まばたき／口パク／視線／髪物理）— Coming Soon。続いてAI会話・音声連携。</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section id="roadmap" aria-labelledby="roadmap-title">
+      <div class="section-head" data-reveal>
+        <div>
+          <span class="section-kicker">Vision</span>
+          <h2 id="roadmap-title">Launch Roadmap</h2>
+          <p>大量のコンテンツを一度に見せるのではなく、信頼される公式サイトとして段階的に強くしていく構成です。</p>
+        </div>
+      </div>
+      <div class="timeline">
+        <article class="timeline-item" data-reveal>
+          <time>Now</time>
+          <div><h3>Official Hub Foundation</h3><p>ブランドの第一印象、作品カテゴリ、支援導線、将来のAIアイドルルーム領域を整備。</p></div>
+        </article>
+        <article class="timeline-item" data-reveal>
+          <time>Next</time>
+          <div><h3>Asset Migration</h3><p>Google Drive／iCloudの画像を作品ギャラリー、漫画試し読み、グッズ紹介へ反映。</p></div>
+        </article>
+        <article class="timeline-item" data-reveal>
+          <time>Build</time>
+          <div><h3>Playable &amp; Watchable</h3><p>制作済みゲーム、動画、音楽配信、BOOTH商品をカードから直接見られるようにする。</p></div>
+        </article>
+        <article class="timeline-item" data-reveal>
+          <time>Flagship</time>
+          <div><h3>Live AI Idol Room</h3><p>Live2D／音声／会話／告知を統合し、ミラの未来視の看板体験にする。</p></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="links" aria-labelledby="links-title">
+      <div class="section-head" data-reveal>
+        <div>
+          <span class="section-kicker">Connect</span>
+          <h2 id="links-title">Official Links</h2>
+          <p>支援、販売、開発資料、配信音楽をまとめる場所です。URLが確定しているものから差し替えて使えます。</p>
+        </div>
+      </div>
+      <div class="link-grid"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div><strong>ミラの未来視 / Mira Vision</strong><br>Independent creator universe for manga, anime, games, music, and AI idol experiences.</div>
+      <div>© <span id="year"></span> Mira Vision. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    const workGrid = document.querySelector("#workGrid");
+    const tabs = document.querySelectorAll(".tab");
+    const linkGrid = document.querySelector(".link-grid");
+    const localNotice = document.querySelector("#localNotice");
+    const bgm = document.querySelector("#siteBgm");
+    const bgmToggle = document.querySelector("#bgmToggle");
+    const siteHeader = document.querySelector("#siteHeader");
+    let allItems = [];
+
+    function byOrder(a, b) {
+      return Number(a.order || 0) - Number(b.order || 0);
+    }
+
+    function getWorkItems() {
+      return allItems
+        .filter((item) => ["manga", "game", "music", "goods", "world", "ai-idol"].includes(item.section))
+        .sort(byOrder);
+    }
+
+    function renderWorks(filter = "all") {
+      const works = getWorkItems().filter((item) => filter === "all" || item.section === filter || item.type === filter);
+      workGrid.innerHTML = works.map((item) => `
+        <article class="card" data-category="${item.section}" data-type="${item.type}" data-reveal>
+          <div class="thumb">
+            ${item.image ? `<img src="${item.image}" alt="" loading="lazy">` : ""}
+            <span class="tag">${item.label || item.type}</span>
+            ${item.image ? "" : `<span class="thumb-letter">${item.icon || item.type.slice(0, 2).toUpperCase()}</span>`}
+          </div>
+          <div class="card-body">
+            <h3>${item.title}</h3>
+            <p>${item.description}</p>
+            <div class="card-actions">
+              ${renderActions(item)}
+            </div>
+          </div>
+        </article>
+      `).join("");
+      observeReveals();
+    }
+
+    function renderActions(item) {
+      const actions = [];
+      if (Array.isArray(item.links) && item.links.length) {
+        item.links.forEach((link) => {
+          if (!link || !link.url) return;
+          const external = link.url.startsWith("http");
+          const attrs = external ? ` target="_blank" rel="noreferrer"` : "";
+          actions.push(`<a class="mini-link" href="${link.url}"${attrs}>${link.label || "開く"}</a>`);
+        });
+        return actions.join("");
+      }
+      if (item.type === "voice" && item.audio) {
+        actions.push(`<button class="mini-link" type="button" data-audio="${item.audio}">再生</button>`);
+      }
+      if (item.type === "video" && item.video) {
+        actions.push(`<a class="mini-link" href="${item.video}" target="_blank" rel="noreferrer">${item.buttonLabel || "動画を見る"}</a>`);
+      }
+      if (item.youtubeId) {
+        actions.push(`<a class="mini-link" href="https://www.youtube.com/watch?v=${item.youtubeId}" target="_blank" rel="noreferrer">${item.buttonLabel || "YouTube"}</a>`);
+      }
+      if (item.url) {
+        const external = item.url.startsWith("http");
+        const attrs = external ? ` target="_blank" rel="noreferrer"` : "";
+        actions.push(`<a class="mini-link" href="${item.url}"${attrs}>${item.buttonLabel || "開く"}</a>`);
+      }
+      return actions.join("");
+    }
+
+    function renderLinks() {
+      const links = allItems.filter((item) => item.section === "links").sort(byOrder);
+      linkGrid.innerHTML = links.map((item) => {
+        const external = item.url && item.url.startsWith("http");
+        const attrs = external ? ` target="_blank" rel="noreferrer"` : "";
+        return `<a class="link-tile" href="${item.url || "#"}"${attrs} data-reveal><b>${item.title}</b><span>${item.description}</span></a>`;
+      }).join("");
+      observeReveals();
+    }
+
+    function applySiteSettings(data) {
+      const site = data.site || {};
+      if (site.title) document.querySelector("#hero-title").textContent = site.title;
+      if (site.subtitle) document.querySelector(".brand small").textContent = site.subtitle;
+      if (site.eyebrow) document.querySelector(".hero .eyebrow").textContent = site.eyebrow;
+      if (site.description) document.querySelector(".lead").textContent = site.description;
+      if (site.canonicalUrl) document.querySelector(".url-chip").textContent = site.canonicalUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+      if (site.heroImage) {
+        document.querySelector(".hero").style.backgroundImage = `linear-gradient(96deg, rgba(6,7,10,0.97) 0%, rgba(6,7,10,0.82) 34%, rgba(6,7,10,0.32) 66%, rgba(6,7,10,0.72) 100%), url("${site.heroImage}")`;
+        document.querySelector(".hero-poster").style.backgroundImage = `linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85) 100%), url("${site.heroImage}")`;
+      }
+      if (site.aiRoomImage) {
+        document.querySelector(".stage").style.backgroundImage = `linear-gradient(120deg, rgba(6,7,10,0.15), rgba(6,7,10,0.45)), url("${site.aiRoomImage}"), linear-gradient(150deg, rgba(102,214,255,0.2), rgba(255,134,198,0.12) 48%, rgba(6,7,10,0.92))`;
+      }
+      if (site.bgm) bgm.src = site.bgm;
+    }
+
+    async function loadData() {
+      try {
+        const response = await fetch("data.json", { cache: "no-store" });
+        if (!response.ok) throw new Error(`data.json ${response.status}`);
+        return await response.json();
+      } catch (error) {
+        localNotice.classList.add("show");
+        return { site: {}, items: [] };
+      }
+    }
+
+    const revealObserver = ("IntersectionObserver" in window)
+      ? new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" })
+      : null;
+
+    function observeReveals() {
+      const targets = document.querySelectorAll("[data-reveal]:not(.in)");
+      if (!revealObserver) { targets.forEach((t) => t.classList.add("in")); return; }
+      targets.forEach((t) => revealObserver.observe(t));
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((item) => item.setAttribute("aria-pressed", "false"));
+        tab.setAttribute("aria-pressed", "true");
+        renderWorks(tab.dataset.filter);
+      });
+    });
+
+    workGrid.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-audio]");
+      if (!button) return;
+      const player = new Audio(button.dataset.audio);
+      player.volume = 0.6;
+      player.play();
+    });
+
+    document.querySelector("#localDataFile").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const data = JSON.parse(await file.text());
+      allItems = Array.isArray(data.items) ? data.items : [];
+      applySiteSettings(data);
+      renderWorks();
+      renderLinks();
+    });
+
+    document.querySelector("#year").textContent = new Date().getFullYear();
+    loadData().then((data) => {
+      allItems = Array.isArray(data.items) ? data.items : [];
+      applySiteSettings(data);
+      renderWorks();
+      renderLinks();
+      observeReveals();
+    });
+
+    const onScroll = () => siteHeader.classList.toggle("scrolled", window.scrollY > 24);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    function setBgmState(isPlaying) {
+      bgmToggle.setAttribute("aria-pressed", String(isPlaying));
+      bgmToggle.setAttribute("aria-label", isPlaying ? "BGMを停止" : "BGMを再生");
+      bgmToggle.textContent = isPlaying ? "BGM ON" : "BGM OFF";
+    }
+
+    bgm.volume = 0.45;
+    bgmToggle.addEventListener("click", async () => {
+      if (bgm.paused) {
+        try { await bgm.play(); setBgmState(true); }
+        catch (error) { setBgmState(false); }
+      } else {
+        bgm.pause();
+        setBgmState(false);
+      }
+    });
+
+    bgm.addEventListener("pause", () => setBgmState(false));
+    bgm.addEventListener("play", () => setBgmState(true));
+  </script>
+</body>
+</html>
