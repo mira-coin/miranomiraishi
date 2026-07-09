@@ -92,6 +92,19 @@
       "buttonLabel": "アクション体験版を遊ぶ"
     },
     {
+      "id": "game-mira-stg",
+      "type": "game",
+      "section": "game",
+      "order": 37,
+      "label": "STG",
+      "icon": "S",
+      "title": "ミラのエンドレスウィルスバスター",
+      "description": "ミラの横スクロールエンドレスSTG。1分ごとに強化ボスが出現し、3種ステージがランダム変化。ブラウザですぐ遊べます。",
+      "image": "images/mira-stg-title.jpg",
+      "url": "games/mira-stg.html",
+      "buttonLabel": "STGを遊ぶ"
+    },
+    {
       "id": "music-streaming",
       "type": "music",
       "section": "music",
