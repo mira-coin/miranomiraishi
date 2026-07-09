@@ -1,0 +1,3445 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIRA Rhythm Prototype</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --cyan: #78f2ff;
+      --pink: #ff65f8;
+      --gold: #ffd969;
+      --green: #61f4a5;
+      --glass: rgba(8, 18, 42, .58);
+      --line: rgba(156, 224, 255, .72);
+      --text: #f7fbff;
+      --bg-dim: .28;
+      --bg-blur: 0px;
+      --bg-saturate: 1.15;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: "Segoe UI", "Yu Gothic UI", "Hiragino Sans", sans-serif;
+      background: #05091d;
+      color: var(--text);
+    }
+
+    button,
+    label {
+      font: inherit;
+    }
+
+    .stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(0, 224, 255, .3), transparent 34%),
+        radial-gradient(circle at 78% 72%, rgba(255, 60, 245, .27), transparent 35%),
+        linear-gradient(135deg, #081a43 0%, #07102e 42%, #13072e 100%);
+    }
+
+    video,
+    .youtube-bg,
+    .demo-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -4;
+    }
+
+    video {
+      object-fit: contain;
+      opacity: .92;
+      filter: saturate(var(--bg-saturate)) contrast(1.06) blur(var(--bg-blur));
+    }
+
+    .mv-fill {
+      z-index: -5;
+      object-fit: cover;
+      opacity: .55;
+      transform: scale(1.035);
+      filter: saturate(1.25) contrast(1.08) brightness(.82) blur(18px);
+    }
+
+    #mv {
+      z-index: -4;
+      background: transparent;
+    }
+
+    .youtube-bg {
+      border: 0;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      transform: none;
+      opacity: .82;
+      filter: saturate(var(--bg-saturate)) contrast(1.04) blur(var(--bg-blur));
+      pointer-events: none;
+    }
+
+    .demo-bg {
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(13, 28, 69, .18), rgba(7, 10, 31, .72)),
+        radial-gradient(circle at 50% 32%, rgba(126, 244, 255, .5), transparent 25%),
+        linear-gradient(145deg, #062a68, #0b0c2d 54%, #290a4e);
+    }
+
+    .demo-bg::before,
+    .demo-bg::after {
+      content: "";
+      position: absolute;
+      inset: -12%;
+      background-image:
+        linear-gradient(90deg, transparent 0 8%, rgba(132, 242, 255, .36) 8.4% 8.8%, transparent 9.2% 18%),
+        linear-gradient(0deg, transparent 0 12%, rgba(255, 110, 250, .24) 12.2% 12.6%, transparent 13% 24%);
+      transform: perspective(680px) rotateX(58deg) translateY(12%);
+      animation: drift 8s linear infinite;
+      opacity: .75;
+    }
+
+    .demo-bg::after {
+      background:
+        radial-gradient(circle, rgba(255, 255, 255, .9) 0 1px, transparent 2px) 0 0 / 90px 90px,
+        linear-gradient(90deg, transparent, rgba(115, 245, 255, .34), transparent);
+      animation-duration: 5s;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes drift {
+      from { background-position: 0 0, 0 0; }
+      to { background-position: 0 420px, 0 360px; }
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+      background:
+        rgba(0,0,0,var(--bg-dim)),
+        linear-gradient(90deg, rgba(0,0,0,.56), transparent 25%, transparent 74%, rgba(0,0,0,.48)),
+        linear-gradient(0deg, rgba(0,0,0,.64), transparent 28%, rgba(0,0,0,.15));
+    }
+
+    .mira-character-wrap {
+      position: absolute;
+      left: clamp(14px, 7vw, 126px);
+      bottom: 0;
+      z-index: 1;
+      width: min(42vw, 430px);
+      height: min(84vh, 760px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      pointer-events: none;
+      filter: drop-shadow(0 0 16px rgba(120, 242, 255, .42)) drop-shadow(0 0 34px rgba(255, 101, 248, .3));
+    }
+
+    .mira-character-wrap[hidden] {
+      display: none;
+    }
+
+    .mira-character {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transform-origin: 50% 92%;
+      animation: miraSway 5.2s ease-in-out infinite;
+      will-change: transform, filter;
+    }
+
+    .mira-sway-off .mira-character {
+      animation: none;
+    }
+
+    @keyframes miraSway {
+      0%, 100% {
+        transform: translate3d(0, 0, 0) rotate(-1.1deg) scale(1);
+        filter: brightness(1);
+      }
+      28% {
+        transform: translate3d(8px, -8px, 0) rotate(1.4deg) scale(1.012);
+        filter: brightness(1.07);
+      }
+      58% {
+        transform: translate3d(-5px, -3px, 0) rotate(-.5deg) scale(1.006);
+        filter: brightness(1.03);
+      }
+    }
+
+    .hud {
+      position: absolute;
+      inset: 22px 24px auto 24px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: start;
+      gap: 18px;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .panel {
+      width: fit-content;
+      min-width: 210px;
+      border: 1px solid rgba(130, 230, 255, .68);
+      background: linear-gradient(135deg, rgba(30, 70, 145, .48), rgba(30, 15, 75, .48));
+      box-shadow: 0 0 18px rgba(87, 224, 255, .35), inset 0 0 20px rgba(255,255,255,.07);
+      backdrop-filter: blur(10px);
+      padding: 12px 15px;
+      border-radius: 8px;
+      text-shadow: 0 0 10px rgba(143, 235, 255, .88);
+    }
+
+    .score-label,
+    .small-label {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0;
+      font-weight: 800;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: end;
+      gap: 14px;
+      white-space: nowrap;
+    }
+
+    .score {
+      font-size: clamp(34px, 4vw, 58px);
+      line-height: .94;
+      font-weight: 900;
+    }
+
+    .delta {
+      color: #ff8df9;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .rank {
+      justify-self: center;
+      min-width: 118px;
+      text-align: center;
+      padding: 12px 18px;
+    }
+
+    .rank strong {
+      display: block;
+      font-size: 54px;
+      line-height: .8;
+      color: white;
+      text-shadow: 0 0 9px var(--cyan), 0 0 19px var(--pink);
+    }
+
+    .life {
+      justify-self: end;
+      min-width: 280px;
+      margin-right: 86px;
+    }
+
+    .life-bar,
+    .fever-bar {
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, .2);
+      box-shadow: inset 0 0 8px rgba(0,0,0,.45);
+    }
+
+    .life-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #52f195, #8fffe9);
+      transition: width .22s ease;
+    }
+
+    .combo {
+      position: absolute;
+      right: clamp(28px, 8vw, 128px);
+      top: 28%;
+      z-index: 4;
+      text-align: center;
+      text-shadow: 0 0 14px rgba(71, 225, 255, .9), 0 0 30px rgba(255, 91, 247, .8);
+      pointer-events: none;
+    }
+
+    .combo span {
+      display: block;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 3px;
+    }
+
+    .combo strong {
+      display: block;
+      font-size: clamp(70px, 11vw, 148px);
+      line-height: .82;
+      background: linear-gradient(160deg, #8ffaff, #fff27a 52%, #ff70ef);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,.72);
+    }
+
+    .playfield {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: min(800px, 88vw);
+      height: min(78vh, 720px);
+      transform: translateX(-50%);
+      perspective: 760px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .lane-board {
+      position: absolute;
+      left: 50%;
+      bottom: 34px;
+      width: 82%;
+      height: 96%;
+      transform: translateX(-50%) rotateX(56deg);
+      transform-origin: 50% 100%;
+      border-left: 3px solid rgba(126, 245, 255, .92);
+      border-right: 3px solid rgba(255, 93, 245, .9);
+      background:
+        linear-gradient(90deg,
+          transparent 0 24.7%, rgba(176, 240, 255, .85) 24.9% 25.2%, transparent 25.4% 49.7%,
+          rgba(176, 240, 255, .85) 49.9% 50.2%, transparent 50.4% 74.7%,
+          rgba(176, 240, 255, .85) 74.9% 75.2%, transparent 75.4%),
+        repeating-linear-gradient(0deg, rgba(95, 185, 255, .22) 0 2px, transparent 2px 62px),
+        linear-gradient(90deg, rgba(15, 47, 94, .08), rgba(4, 13, 37, .72), rgba(56, 19, 87, .1));
+      box-shadow: 0 0 24px rgba(94, 229, 255, .56), inset 0 0 54px rgba(71, 107, 200, .44);
+      overflow: hidden;
+    }
+
+    .lane-board::before,
+    .lane-board::after {
+      content: "";
+      position: absolute;
+      left: -3%;
+      right: -3%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--cyan), white, var(--pink));
+      box-shadow: 0 0 16px var(--cyan), 0 0 26px var(--pink);
+    }
+
+    .lane-board::before {
+      top: 0;
+    }
+
+    .lane-board::after {
+      bottom: 0;
+      height: 8px;
+    }
+
+    .note-layer {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+    }
+
+    .note {
+      position: absolute;
+      width: 20%;
+      height: 28px;
+      margin-left: -10%;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,255,255,.95), var(--cyan) 22%, #4ac8ff 80%);
+      box-shadow: 0 0 10px rgba(116, 244, 255, .95), 0 0 24px rgba(70, 200, 255, .65);
+      transform-origin: 50% 50%;
+      will-change: top, transform, opacity, filter;
+    }
+
+    .note.pink {
+      background: linear-gradient(180deg, rgba(255,255,255,.98), var(--pink) 28%, #bd55ff 86%);
+      box-shadow: 0 0 10px rgba(255, 107, 249, .96), 0 0 24px rgba(196, 70, 255, .7);
+    }
+
+    .note.gold {
+      background: linear-gradient(180deg, white, var(--gold) 28%, #ff8a62 86%);
+      box-shadow: 0 0 10px rgba(255, 223, 95, .95), 0 0 24px rgba(255, 124, 105, .7);
+    }
+
+    .note.hold {
+      height: 92px;
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.98), var(--cyan) 12%, rgba(120,242,255,.36) 100%);
+    }
+
+    .note.hold::after {
+      content: "HOLD";
+      position: absolute;
+      inset: auto 0 8px;
+      text-align: center;
+      color: rgba(255,255,255,.92);
+      font-size: 10px;
+      font-weight: 1000;
+    }
+
+    .note.flick {
+      height: 30px;
+      clip-path: polygon(0 50%, 28% 0, 100% 0, 78% 50%, 100% 100%, 28% 100%);
+      background: linear-gradient(90deg, white, var(--gold) 34%, var(--pink));
+    }
+
+    .note.flick::after {
+      content: ">";
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-54%);
+      font-size: 22px;
+      font-weight: 1000;
+      color: white;
+      text-shadow: 0 0 8px rgba(255,255,255,.9);
+    }
+
+    .hit-line {
+      position: absolute;
+      left: 5%;
+      right: 5%;
+      bottom: 92px;
+      height: 8px;
+      background: linear-gradient(90deg, var(--pink), white, var(--cyan));
+      border-radius: 999px;
+      box-shadow: 0 0 18px var(--cyan), 0 0 26px var(--pink);
+      z-index: 3;
+    }
+
+    .hit-line::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 78px;
+      transform: translateY(-50%);
+      background:
+        radial-gradient(circle at 12.5% 50%, rgba(120, 242, 255, .88) 0 9px, rgba(120, 242, 255, .32) 10px 28px, transparent 30px),
+        radial-gradient(circle at 37.5% 50%, rgba(255, 101, 248, .88) 0 9px, rgba(255, 101, 248, .32) 10px 28px, transparent 30px),
+        radial-gradient(circle at 62.5% 50%, rgba(120, 242, 255, .88) 0 9px, rgba(120, 242, 255, .32) 10px 28px, transparent 30px),
+        radial-gradient(circle at 87.5% 50%, rgba(255, 101, 248, .88) 0 9px, rgba(255, 101, 248, .32) 10px 28px, transparent 30px);
+      filter: drop-shadow(0 0 12px rgba(255,255,255,.7));
+      pointer-events: none;
+    }
+
+    .layout-horizontal .playfield {
+      width: min(900px, 88vw);
+      height: min(50vh, 430px);
+      bottom: 104px;
+      perspective: none;
+    }
+
+    .layout-horizontal .lane-board {
+      left: 50%;
+      bottom: 0;
+      width: 94%;
+      height: 100%;
+      transform: translateX(-50%);
+      border-left: 5px solid rgba(255, 255, 255, .92);
+      border-right: 2px solid rgba(126, 245, 255, .48);
+      border-top: 2px solid rgba(126, 245, 255, .55);
+      border-bottom: 2px solid rgba(255, 93, 245, .55);
+      background:
+        repeating-linear-gradient(90deg, rgba(120, 242, 255, .13) 0 2px, transparent 2px 72px),
+        linear-gradient(180deg,
+          transparent 0 24.5%, rgba(176, 240, 255, .7) 24.8% 25.2%, transparent 25.5% 49.5%,
+          rgba(176, 240, 255, .7) 49.8% 50.2%, transparent 50.5% 74.5%,
+          rgba(176, 240, 255, .7) 74.8% 75.2%, transparent 75.5%),
+        linear-gradient(90deg, rgba(7, 14, 40, .86), rgba(18, 34, 78, .46), rgba(72, 16, 92, .34));
+    }
+
+    .layout-horizontal .lane-board::before {
+      left: 8%;
+      right: auto;
+      top: -4%;
+      bottom: -4%;
+      width: 7px;
+      height: auto;
+      background: linear-gradient(180deg, var(--cyan), white, var(--pink));
+    }
+
+    .layout-horizontal .lane-board::after {
+      left: 8%;
+      right: auto;
+      top: 0;
+      bottom: 0;
+      width: 92px;
+      height: auto;
+      background:
+        radial-gradient(circle at 50% 12.5%, rgba(120, 242, 255, .95) 0 10px, rgba(120, 242, 255, .28) 11px 34px, transparent 36px),
+        radial-gradient(circle at 50% 37.5%, rgba(255, 101, 248, .95) 0 10px, rgba(255, 101, 248, .28) 11px 34px, transparent 36px),
+        radial-gradient(circle at 50% 62.5%, rgba(120, 242, 255, .95) 0 10px, rgba(120, 242, 255, .28) 11px 34px, transparent 36px),
+        radial-gradient(circle at 50% 87.5%, rgba(255, 101, 248, .95) 0 10px, rgba(255, 101, 248, .28) 11px 34px, transparent 36px);
+      box-shadow: none;
+      transform: translateX(-50%);
+    }
+
+    .layout-horizontal .note {
+      width: 72px;
+      height: 30px;
+      margin-left: -36px;
+      transform-origin: 50% 50%;
+    }
+
+    .layout-horizontal .note.hold {
+      width: 118px;
+      height: 32px;
+    }
+
+    .layout-horizontal .note.hold::after {
+      inset: 50% 8px auto;
+      transform: translateY(-50%);
+      text-align: right;
+    }
+
+    .layout-horizontal .note.flick::after {
+      content: "<";
+      left: 12px;
+      right: auto;
+    }
+
+    .layout-horizontal .hit-line {
+      left: 10.5%;
+      right: auto;
+      top: 0;
+      bottom: auto;
+      width: 8px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--cyan), white, var(--pink));
+    }
+
+    .layout-horizontal .hit-line::before {
+      display: none;
+    }
+
+    .layout-horizontal .pads {
+      left: max(14px, calc(50% - min(900px, 88vw) * .52));
+      top: 50%;
+      bottom: auto;
+      width: clamp(58px, 8vw, 86px);
+      height: min(50vh, 430px);
+      transform: translateY(-50%);
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(4, 1fr);
+      gap: 0;
+      align-items: center;
+      z-index: 9;
+    }
+
+    .layout-horizontal .pad {
+      position: relative;
+      width: clamp(48px, 7vw, 74px);
+      height: clamp(48px, 7vw, 74px);
+      justify-self: center;
+      border-width: 2px;
+      font-size: clamp(17px, 2.5vw, 26px);
+      background:
+        radial-gradient(circle, rgba(255,255,255,.98) 0 5%, rgba(93,238,255,.68) 6% 24%, rgba(20,42,104,.72) 45%, rgba(3,8,26,.66) 75%);
+    }
+
+    .layout-horizontal .pad:nth-child(even) {
+      background:
+        radial-gradient(circle, rgba(255,255,255,.98) 0 5%, rgba(255,108,246,.66) 6% 24%, rgba(63,39,104,.72) 45%, rgba(3,8,26,.66) 75%);
+    }
+
+    .layout-horizontal .pad::after {
+      content: "";
+      position: absolute;
+      left: calc(100% + 4px);
+      width: clamp(18px, 4vw, 54px);
+      height: 2px;
+      background: linear-gradient(90deg, rgba(255,255,255,.8), rgba(120,242,255,.12));
+      box-shadow: 0 0 10px rgba(120, 242, 255, .55);
+      pointer-events: none;
+    }
+
+    .layout-taiko .playfield {
+      width: min(920px, 88vw);
+      height: min(42vh, 340px);
+      bottom: 116px;
+      perspective: none;
+    }
+
+    .layout-taiko .lane-board {
+      left: 50%;
+      bottom: 0;
+      width: 94%;
+      height: 100%;
+      transform: translateX(-50%);
+      clip-path: none;
+      background:
+        linear-gradient(90deg, rgba(4, 11, 31, .58), rgba(14, 32, 72, .68) 18%, rgba(6, 12, 32, .76) 100%),
+        repeating-linear-gradient(0deg, rgba(150, 242, 255, .18) 0 2px, transparent 2px 48%);
+      border: 1px solid rgba(142, 236, 255, .42);
+      box-shadow: inset 0 0 34px rgba(92, 218, 255, .18), 0 0 26px rgba(93, 226, 255, .18);
+    }
+
+    .layout-taiko .lane-board::before {
+      left: 11%;
+      right: auto;
+      top: -7%;
+      bottom: -7%;
+      width: 7px;
+      background: linear-gradient(180deg, transparent, rgba(255, 255, 255, .96), rgba(255, 107, 241, .86), transparent);
+      box-shadow: 0 0 26px rgba(255, 113, 244, .62);
+    }
+
+    .layout-taiko .lane-board::after {
+      left: 11%;
+      right: auto;
+      top: 0;
+      bottom: 0;
+      width: min(13vw, 118px);
+      height: auto;
+      background:
+        radial-gradient(circle at 50% 32%, rgba(255,255,255,.96) 0 7%, rgba(92,231,255,.46) 10% 28%, transparent 31%),
+        radial-gradient(circle at 50% 68%, rgba(255,255,255,.96) 0 7%, rgba(255,108,246,.46) 10% 28%, transparent 31%);
+      opacity: .95;
+    }
+
+    .layout-taiko .note {
+      width: 64px;
+      height: 64px;
+      margin-left: -32px;
+      border-radius: 50%;
+      transform-origin: 50% 50%;
+      display: grid;
+      place-items: center;
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 0 0 12px rgba(255, 255, 255, .95), 0 0 20px rgba(120, 242, 255, .75);
+    }
+
+    .layout-taiko .note.pink {
+      background: radial-gradient(circle, #fff 0 7%, #ff84ef 9% 36%, #8f1f71 58%, rgba(30, 2, 40, .88) 100%);
+    }
+
+    .layout-taiko .note.arrow-left::before { content: "←"; }
+    .layout-taiko .note.arrow-up::before { content: "↑"; }
+    .layout-taiko .note.arrow-down::before { content: "↓"; }
+    .layout-taiko .note.arrow-right::before { content: "→"; }
+
+    .layout-taiko .hit-line {
+      left: 11%;
+      right: auto;
+      top: 0;
+      bottom: auto;
+      width: 7px;
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(255,255,255,.88);
+      box-shadow: 0 0 28px rgba(255, 115, 245, .78);
+    }
+
+    .layout-taiko .hit-line::before {
+      display: none;
+    }
+
+    .layout-taiko .pads {
+      left: 50%;
+      right: auto;
+      bottom: 12px;
+      width: min(520px, 76vw);
+      height: 84px;
+      transform: translateX(-50%);
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      z-index: 9;
+    }
+
+    .layout-taiko .pad {
+      height: 78px;
+      font-size: 30px;
+      background: radial-gradient(circle, rgba(255,255,255,.96) 0 6%, rgba(255,108,246,.48) 8% 23%, rgba(24,24,72,.5) 48%, rgba(3,8,26,.2) 78%);
+    }
+
+    .pads {
+      position: absolute;
+      right: auto;
+      left: 50%;
+      bottom: 10px;
+      width: min(560px, 72vw);
+      height: 88px;
+      transform: translateX(-50%);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      z-index: 6;
+      pointer-events: auto;
+      align-items: end;
+    }
+
+    .pad {
+      height: 82px;
+      border: 2px solid rgba(171, 246, 255, .9);
+      border-radius: 50%;
+      color: white;
+      background: radial-gradient(circle, rgba(255,255,255,.94) 0 5%, rgba(93,238,255,.52) 6% 21%, rgba(35,53,112,.24) 45%, rgba(5,9,27,.1) 70%);
+      box-shadow: 0 0 18px rgba(114, 242, 255, .8), inset 0 0 24px rgba(255,255,255,.22);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 24px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .09s ease, filter .09s ease, border-color .09s ease;
+    }
+
+    .miraisi-btn {
+      position: absolute;
+      left: 50%;
+      bottom: 156px;
+      z-index: 7;
+      width: min(260px, 42vw);
+      min-height: 48px;
+      transform: translateX(-50%);
+      border: 1px solid rgba(255, 232, 126, .88);
+      border-radius: 8px;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(255, 216, 96, .42), rgba(255, 101, 248, .26)),
+        rgba(8, 16, 42, .68);
+      box-shadow: 0 0 18px rgba(255, 220, 92, .38), inset 0 0 20px rgba(255,255,255,.1);
+      font-weight: 1000;
+      cursor: pointer;
+      pointer-events: auto;
+      text-shadow: 0 0 8px rgba(255,255,255,.8);
+    }
+
+    .miraisi-btn:disabled {
+      cursor: wait;
+      opacity: .58;
+      filter: grayscale(.35);
+    }
+
+    .miraisi-btn.active {
+      border-color: white;
+      filter: brightness(1.28);
+      box-shadow: 0 0 22px rgba(255, 240, 128, .68), 0 0 38px rgba(120, 242, 255, .32);
+    }
+
+    .pad:nth-child(even) {
+      border-color: rgba(255, 136, 249, .9);
+      background: radial-gradient(circle, rgba(255,255,255,.94) 0 5%, rgba(255,108,246,.5) 6% 21%, rgba(63,39,104,.24) 45%, rgba(5,9,27,.1) 70%);
+      box-shadow: 0 0 18px rgba(255, 112, 246, .68), inset 0 0 24px rgba(255,255,255,.22);
+    }
+
+    .pad.active {
+      transform: scale(.94);
+      filter: brightness(1.55);
+    }
+
+    .judgement {
+      position: absolute;
+      left: 50%;
+      bottom: 31%;
+      transform: translateX(-50%);
+      z-index: 8;
+      min-width: 360px;
+      text-align: center;
+      font-size: clamp(48px, 7vw, 92px);
+      font-style: italic;
+      font-weight: 1000;
+      color: white;
+      opacity: 0;
+      text-shadow: 0 0 10px var(--cyan), 0 0 26px var(--pink), 0 4px 0 rgba(47, 18, 80, .9);
+      pointer-events: none;
+    }
+
+    .judgement.show {
+      animation: pop .42s ease-out;
+    }
+
+    @keyframes pop {
+      0% { opacity: 0; transform: translateX(-50%) scale(.74); }
+      22% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+      100% { opacity: 0; transform: translateX(-50%) scale(1); }
+    }
+
+    .toolbar {
+      position: absolute;
+      left: 22px;
+      top: 132px;
+      z-index: 10;
+      width: min(360px, calc(100vw - 44px));
+      padding: 14px;
+      border: 1px solid rgba(153, 234, 255, .64);
+      border-radius: 8px;
+      background: rgba(6, 12, 32, .7);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 22px rgba(83, 211, 255, .28);
+    }
+
+    .toolbar h1 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .url-control {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 64px;
+      gap: 8px;
+    }
+
+    .url-control input {
+      min-width: 0;
+      min-height: 38px;
+      border: 1px solid rgba(147, 237, 255, .4);
+      border-radius: 8px;
+      padding: 0 10px;
+      color: white;
+      background: rgba(255,255,255,.08);
+      outline: none;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .url-control input::placeholder {
+      color: rgba(231, 247, 255, .58);
+    }
+
+    .track-select {
+      grid-column: 1 / -1;
+      min-width: 0;
+      min-height: 38px;
+      border: 1px solid rgba(147, 237, 255, .46);
+      border-radius: 8px;
+      padding: 0 10px;
+      color: white;
+      background: rgba(255,255,255,.08);
+      outline: none;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .track-select option {
+      color: #07102e;
+    }
+
+    .tuning {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 6px 9px;
+      border: 1px solid rgba(147, 237, 255, .34);
+      border-radius: 8px;
+      background: rgba(255,255,255,.06);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tuning input {
+      width: 100%;
+      accent-color: var(--pink);
+    }
+
+    .tuning output {
+      min-width: 58px;
+      text-align: right;
+      color: #aef8ff;
+    }
+
+    .file-btn,
+    .main-btn,
+    .ghost-btn {
+      min-height: 38px;
+      border: 1px solid rgba(147, 237, 255, .72);
+      border-radius: 8px;
+      color: white;
+      background: linear-gradient(135deg, rgba(69, 148, 255, .36), rgba(255, 91, 245, .22));
+      box-shadow: inset 0 0 16px rgba(255,255,255,.06);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      text-align: center;
+      padding: 0 9px;
+      font-weight: 800;
+    }
+
+    .main-btn {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, rgba(74, 228, 255, .7), rgba(255, 89, 245, .58));
+    }
+
+    .ghost-btn {
+      background: rgba(255,255,255,.08);
+    }
+
+    .ghost-btn.recording {
+      border-color: rgba(255, 220, 105, .95);
+      background: linear-gradient(135deg, rgba(255, 202, 73, .52), rgba(255, 81, 181, .42));
+      box-shadow: 0 0 18px rgba(255, 118, 216, .42), inset 0 0 16px rgba(255,255,255,.12);
+    }
+
+    .result-modal {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      place-items: center;
+      padding: 22px;
+      background: rgba(2, 7, 22, .56);
+      backdrop-filter: blur(8px);
+    }
+
+    .result-modal.show {
+      display: grid;
+    }
+
+    .result-card {
+      width: min(520px, calc(100vw - 44px));
+      border: 1px solid rgba(154, 238, 255, .78);
+      border-radius: 8px;
+      padding: 22px;
+      background: linear-gradient(135deg, rgba(12, 35, 86, .88), rgba(45, 12, 76, .88));
+      box-shadow: 0 0 34px rgba(100, 229, 255, .42), inset 0 0 32px rgba(255,255,255,.08);
+      text-align: center;
+    }
+
+    .result-card h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .result-status {
+      margin: 8px 0 0;
+      min-height: 26px;
+      color: #fff2a8;
+      font-size: 18px;
+      font-weight: 1000;
+      text-shadow: 0 0 12px rgba(255, 225, 105, .72), 0 0 22px rgba(255, 101, 248, .45);
+    }
+
+    .result-status.failed {
+      color: #ff9eb8;
+      text-shadow: 0 0 12px rgba(255, 90, 125, .72);
+    }
+
+    .result-rank {
+      margin: 12px 0 6px;
+      font-size: 92px;
+      line-height: .85;
+      font-weight: 1000;
+      text-shadow: 0 0 14px var(--cyan), 0 0 28px var(--pink);
+    }
+
+    .result-score {
+      margin: 0 0 18px;
+      font-size: 34px;
+      font-weight: 900;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .result-stat {
+      border: 1px solid rgba(154, 238, 255, .28);
+      border-radius: 8px;
+      padding: 10px;
+      background: rgba(255,255,255,.07);
+    }
+
+    .result-stat span {
+      display: block;
+      color: rgba(238, 250, 255, .72);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .result-stat strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 22px;
+    }
+
+    .result-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .result-actions .main-btn {
+      grid-column: auto;
+    }
+
+    .chart-editor {
+      width: min(760px, calc(100vw - 44px));
+      text-align: left;
+    }
+
+    .chart-editor textarea {
+      width: 100%;
+      height: min(48vh, 420px);
+      margin: 14px 0;
+      resize: vertical;
+      border: 1px solid rgba(154, 238, 255, .42);
+      border-radius: 8px;
+      padding: 12px;
+      color: #eefaff;
+      background: rgba(3, 8, 24, .72);
+      font: 13px/1.45 Consolas, "Cascadia Mono", monospace;
+      outline: none;
+    }
+
+    .editor-status {
+      min-height: 18px;
+      margin: 0 0 12px;
+      color: #aef8ff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    input[type="file"] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+    }
+
+    .meta {
+      margin: 10px 0 0;
+      color: rgba(238, 250, 255, .78);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .fever {
+      position: absolute;
+      right: 26px;
+      bottom: 22px;
+      z-index: 8;
+      width: min(410px, 44vw);
+      pointer-events: none;
+    }
+
+    .fever-bar {
+      height: 24px;
+      border: 2px solid rgba(172, 239, 255, .74);
+      background: rgba(5, 9, 31, .62);
+    }
+
+    .fever-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #76f2ff, #c77bff, #ff6ee9, #ffe471);
+      transition: width .16s linear;
+    }
+
+    .fever-text {
+      margin-top: 4px;
+      text-align: right;
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 1000;
+      text-shadow: 0 0 12px var(--pink);
+    }
+
+    .pause {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      z-index: 12;
+      width: 64px;
+      height: 64px;
+      border: 1px solid rgba(214, 245, 255, .86);
+      border-radius: 8px;
+      background: rgba(255,255,255,.14);
+      color: white;
+      font-size: 34px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(129, 231, 255, .44);
+    }
+
+    .flash {
+      position: absolute;
+      inset: 0;
+      z-index: 9;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle at 50% 76%, rgba(255,255,255,.72), transparent 25%);
+    }
+
+    .flash.hit {
+      animation: flash .18s ease-out;
+    }
+
+    .flash.guard {
+      animation: guardFlash .32s ease-out;
+      background: radial-gradient(circle at 50% 74%, rgba(255, 235, 128, .82), transparent 28%);
+    }
+
+    @keyframes flash {
+      0% { opacity: .8; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes guardFlash {
+      0% { opacity: .95; }
+      100% { opacity: 0; }
+    }
+
+    .pause-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 24;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 50% 38%, rgba(120, 242, 255, .2), transparent 28%),
+        rgba(0, 6, 24, .5);
+      backdrop-filter: blur(4px);
+      pointer-events: auto;
+    }
+
+    .pause-overlay.show {
+      display: grid;
+    }
+
+    .pause-card {
+      width: min(440px, calc(100vw - 40px));
+      border: 1px solid rgba(156, 234, 255, .72);
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+      background: linear-gradient(145deg, rgba(7, 16, 45, .88), rgba(31, 12, 61, .82));
+      box-shadow: 0 0 28px rgba(90, 224, 255, .38), inset 0 0 28px rgba(255,255,255,.08);
+    }
+
+    .pause-card h2 {
+      margin: 0;
+      color: white;
+      font-size: clamp(42px, 8vw, 78px);
+      line-height: .9;
+      font-weight: 1000;
+      letter-spacing: 0;
+      text-shadow: 0 0 12px var(--cyan), 0 0 26px var(--pink);
+    }
+
+    .pause-card p {
+      margin: 12px 0 20px;
+      color: rgba(235, 248, 255, .86);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .pause-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .device-switch {
+      position: fixed;
+      left: 96px;
+      bottom: 12px;
+      z-index: 30;
+      display: flex;
+      gap: 6px;
+      padding: 6px;
+      border: 1px solid rgba(153, 234, 255, .45);
+      border-radius: 8px;
+      background: rgba(4, 10, 28, .72);
+      backdrop-filter: blur(10px);
+    }
+
+    .device-switch button {
+      min-width: 54px;
+      height: 36px;
+      border: 1px solid rgba(147, 237, 255, .58);
+      border-radius: 8px;
+      color: white;
+      background: rgba(255,255,255,.08);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .mode-pc #pcMode,
+    .mode-sp #spMode {
+      background: linear-gradient(135deg, rgba(74, 228, 255, .7), rgba(255, 89, 245, .58));
+    }
+
+    .rotate-msg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      place-items: center;
+      padding: 26px;
+      text-align: center;
+      color: white;
+      background: rgba(0, 8, 28, .94);
+      font-size: clamp(22px, 6vw, 42px);
+      font-weight: 1000;
+      text-shadow: 0 0 18px var(--cyan), 0 0 28px var(--pink);
+    }
+
+    .drop-hint {
+      display: none;
+      position: fixed;
+      inset: 18px;
+      z-index: 35;
+      place-items: center;
+      border: 2px dashed rgba(120, 242, 255, .86);
+      border-radius: 8px;
+      color: white;
+      background: rgba(2, 8, 28, .76);
+      backdrop-filter: blur(10px);
+      font-size: clamp(20px, 4vw, 44px);
+      font-weight: 1000;
+      text-align: center;
+      pointer-events: none;
+      text-shadow: 0 0 16px var(--cyan), 0 0 28px var(--pink);
+    }
+
+    .clean-toggle {
+      position: fixed;
+      left: 12px;
+      bottom: 12px;
+      z-index: 31;
+      min-width: 72px;
+      height: 38px;
+      border: 1px solid rgba(147, 237, 255, .7);
+      border-radius: 8px;
+      color: white;
+      background: rgba(4, 10, 28, .72);
+      backdrop-filter: blur(10px);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .clean-view .clean-toggle {
+      min-width: 76px;
+      border-color: rgba(255, 255, 255, .56);
+      background: linear-gradient(135deg, rgba(29, 65, 122, .72), rgba(62, 18, 110, .72));
+      box-shadow: 0 0 16px rgba(120, 242, 255, .32);
+    }
+
+    .clean-view .toolbar,
+    .clean-view .device-switch {
+      display: none;
+    }
+
+    .title-mode .hud,
+    .title-mode .pause,
+    .title-mode .combo,
+    .title-mode .playfield,
+    .title-mode .pads,
+    .title-mode .miraisi-btn,
+    .title-mode .judgement,
+    .title-mode .fever,
+    .title-mode .toolbar,
+    .title-mode .device-switch,
+    .title-mode .clean-toggle {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .title-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 26;
+      display: block;
+      padding: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(64, 182, 255, .42), transparent 36%),
+        linear-gradient(180deg, #0d6dea 0%, #0841b0 45%, #061039 100%);
+      pointer-events: auto;
+    }
+
+    .title-screen::before,
+    .title-screen::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-position: center center;
+      background-repeat: no-repeat;
+      pointer-events: none;
+    }
+
+    .title-screen::before {
+      z-index: 0;
+      background-size: cover;
+      opacity: .74;
+      transform: scale(1.05);
+      filter: blur(18px) saturate(1.18) brightness(.9);
+    }
+
+    .title-screen::after {
+      z-index: 1;
+      background-size: contain;
+      filter: drop-shadow(0 0 22px rgba(103, 226, 255, .28));
+    }
+
+    .title-screen.title-art-pc::before {
+      background-image: url("mira-title-pc-generated.png");
+    }
+
+    .title-screen.title-art-pc::after {
+      background-image: url("mira-title-pc-generated.png");
+    }
+
+    .title-screen.title-art-sp::before {
+      background-image: url("mira-title-sp-generated.png");
+    }
+
+    .title-screen.title-art-sp::after {
+      background-image: url("mira-title-sp-generated.png");
+    }
+
+    .title-screen[hidden] {
+      display: none;
+    }
+
+    .title-copy {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .title-bgm,
+    .title-start {
+      position: absolute;
+      pointer-events: auto;
+      border: 1px solid rgba(170, 245, 255, .9);
+      border-radius: 8px;
+      color: white;
+      background: linear-gradient(135deg, rgba(34, 154, 255, .66), rgba(58, 16, 160, .72));
+      box-shadow: 0 0 18px rgba(120, 242, 255, .48), 0 0 34px rgba(255, 101, 248, .26), inset 0 0 18px rgba(255,255,255,.13);
+      font-weight: 1000;
+      cursor: pointer;
+      text-shadow: 0 0 10px rgba(255,255,255,.78);
+    }
+
+    .title-device-switch {
+      position: absolute;
+      left: 50%;
+      top: clamp(14px, 2.2vw, 24px);
+      z-index: 3;
+      display: flex;
+      gap: 6px;
+      padding: 6px;
+      transform: translateX(-50%);
+      border: 1px solid rgba(170, 245, 255, .72);
+      border-radius: 8px;
+      background: rgba(4, 12, 42, .58);
+      backdrop-filter: blur(10px);
+      pointer-events: auto;
+    }
+
+    .title-device-switch button {
+      min-width: 62px;
+      min-height: 34px;
+      border: 1px solid rgba(170, 245, 255, .48);
+      border-radius: 8px;
+      color: white;
+      background: rgba(255,255,255,.08);
+      font-size: 13px;
+      font-weight: 1000;
+      cursor: pointer;
+    }
+
+    .title-device-switch button.active {
+      background: linear-gradient(135deg, rgba(74, 228, 255, .72), rgba(255, 89, 245, .56));
+      box-shadow: 0 0 14px rgba(120, 242, 255, .42);
+    }
+
+    .device-switch,
+    .title-device-switch {
+      display: none;
+    }
+
+    .title-bgm {
+      left: clamp(18px, 3vw, 34px);
+      top: clamp(18px, 3vw, 34px);
+      min-width: 140px;
+      min-height: 48px;
+      font-size: 18px;
+    }
+
+    .title-start {
+      left: 50%;
+      bottom: clamp(116px, 16vh, 220px);
+      width: min(320px, 72vw);
+      min-height: 58px;
+      transform: translateX(-50%);
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .title-art-pc .title-start {
+      left: 40%;
+      bottom: 27%;
+      opacity: .08;
+    }
+
+    .title-art-sp .title-start {
+      left: 50%;
+      bottom: 22%;
+      opacity: .08;
+    }
+
+    .title-art-pc .title-bgm,
+    .title-art-sp .title-bgm {
+      opacity: .08;
+    }
+
+    .title-hotspot {
+      position: absolute;
+      border: 0;
+      padding: 0;
+      color: transparent;
+      background: transparent;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .title-hotspot.setting {
+      right: 5%;
+      top: 2.4%;
+      width: 18%;
+      height: 6.5%;
+    }
+
+    .title-hotspot.story,
+    .title-hotspot.ranking,
+    .title-hotspot.collection,
+    .title-hotspot.option {
+      bottom: 9.2%;
+      width: 18%;
+      height: 8.2%;
+    }
+
+    .title-hotspot.story { left: 5%; }
+    .title-hotspot.ranking { left: 29%; }
+    .title-hotspot.collection { left: 53%; }
+    .title-hotspot.option { left: 77%; }
+
+    .title-toast {
+      position: absolute;
+      left: 50%;
+      bottom: clamp(72px, 10vh, 140px);
+      z-index: 2;
+      min-width: min(320px, 72vw);
+      padding: 12px 18px;
+      transform: translateX(-50%);
+      border: 1px solid rgba(170, 245, 255, .8);
+      border-radius: 8px;
+      color: white;
+      background: rgba(4, 12, 42, .78);
+      box-shadow: 0 0 18px rgba(120, 242, 255, .42);
+      text-align: center;
+      font-size: 16px;
+      font-weight: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .title-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-8px);
+    }
+
+    .dragging .drop-hint {
+      display: grid;
+    }
+
+    .asset-status {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      border: 1px solid rgba(153, 234, 255, .22);
+      border-radius: 8px;
+      background: rgba(4, 10, 28, .58);
+      color: rgba(236, 250, 255, .86);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .asset-status div {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 8px;
+      align-items: baseline;
+    }
+
+    .asset-status span {
+      color: rgba(149, 232, 255, .78);
+      font-weight: 900;
+    }
+
+    .asset-status strong {
+      overflow: hidden;
+      min-width: 0;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .asset-notice {
+      margin: 0;
+      color: #ffe9a8;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .maker-panel {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid rgba(255, 218, 112, .42);
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(255, 210, 92, .12), rgba(255, 101, 248, .1)), rgba(4, 10, 28, .54);
+    }
+
+    .maker-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: #fff2b6;
+      font-size: 12px;
+      font-weight: 1000;
+    }
+
+    .maker-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .maker-stat {
+      min-width: 0;
+      padding: 7px;
+      border: 1px solid rgba(154, 238, 255, .24);
+      border-radius: 8px;
+      background: rgba(255,255,255,.06);
+    }
+
+    .maker-stat span,
+    .timeline-label span {
+      display: block;
+      color: rgba(222, 245, 255, .68);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .maker-stat strong,
+    .timeline-label strong {
+      display: block;
+      overflow: hidden;
+      min-width: 0;
+      margin-top: 2px;
+      color: white;
+      font-size: 13px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .timeline-track {
+      position: relative;
+      height: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(143, 235, 255, .32);
+      border-radius: 999px;
+      background: rgba(255,255,255,.1);
+    }
+
+    .timeline-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(120, 242, 255, .82), rgba(255, 101, 248, .75), rgba(255, 217, 105, .78));
+      box-shadow: 0 0 14px rgba(120, 242, 255, .28);
+    }
+
+    .maker-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .miraisi-btn {
+      left: 18px;
+      bottom: 104px;
+      width: min(280px, 38vw);
+      transform: none;
+    }
+
+    .toolbar {
+      max-height: calc(100vh - 116px);
+      overflow: auto;
+    }
+
+    .mira-character-wrap {
+      left: 0;
+      width: min(36vw, 280px);
+      height: min(72vh, 520px);
+      opacity: .88;
+    }
+
+    @media (orientation: portrait) and (pointer: coarse) {
+      .rotate-msg {
+        display: grid;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .hud {
+        inset: 12px 12px auto 12px;
+        grid-template-columns: 1fr auto;
+      }
+
+      .rank {
+        display: none;
+      }
+
+      .life {
+        min-width: 172px;
+        margin-right: 62px;
+      }
+
+      .panel {
+        min-width: 160px;
+        padding: 9px 10px;
+      }
+
+      .score {
+        font-size: 32px;
+      }
+
+      .delta {
+        display: none;
+      }
+
+      .combo {
+        right: 18px;
+        top: 23%;
+      }
+
+      .combo span {
+        font-size: 18px;
+      }
+
+      .toolbar {
+        left: 12px;
+        top: 12px;
+        bottom: auto;
+        width: min(320px, calc(100vw - 24px));
+        max-height: calc(100vh - 24px);
+        overflow: auto;
+        padding: 10px;
+      }
+
+      .toolbar h1 {
+        font-size: 16px;
+      }
+
+      .fever {
+        display: none;
+      }
+
+      .pause {
+        width: 52px;
+        height: 52px;
+        font-size: 28px;
+      }
+
+      .miraisi-btn {
+        bottom: 112px;
+        width: min(240px, calc(100vw - 32px));
+      }
+
+      .judgement {
+        min-width: 260px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="device-switch" aria-label="表示モード">
+    <button id="pcMode" type="button">PC</button>
+    <button id="spMode" type="button">SP</button>
+  </div>
+  <button id="cleanView" class="clean-toggle" type="button">UI OFF</button>
+  <div id="rotateMsg" class="rotate-msg">スマホは横向きで遊んでください</div>
+  <div id="dropHint" class="drop-hint">MP3 / WAV / MP4 / JSON をここにドロップ</div>
+  <main class="stage">
+    <video id="mvFill" class="mv-fill" playsinline muted loop aria-hidden="true"></video>
+    <video id="mv" playsinline muted loop></video>
+    <iframe id="youtubeBg" class="youtube-bg" title="MV background" allow="autoplay; encrypted-media; picture-in-picture" hidden></iframe>
+    <div id="demoBg" class="demo-bg"></div>
+    <div class="vignette"></div>
+    <div id="miraCharacterWrap" class="mira-character-wrap" hidden>
+      <img id="miraCharacter" class="mira-character" alt="MIRA character">
+    </div>
+    <audio id="song"></audio>
+
+    <section id="titleScreen" class="title-screen" aria-label="タイトル画面">
+      <div class="title-copy">
+        <div class="title-device-switch" aria-label="タイトル表示切替">
+          <button id="titlePc" type="button">PC</button>
+          <button id="titleSp" type="button">スマホ</button>
+        </div>
+        <button id="titleBgm" class="title-bgm" type="button">♪ BGM OFF</button>
+        <button id="titleStart" class="title-start" type="button">START</button>
+        <button class="title-hotspot setting" type="button" data-soon="SETTING">SETTING</button>
+        <button class="title-hotspot story" type="button" data-soon="STORY">STORY</button>
+        <button class="title-hotspot ranking" type="button" data-soon="RANKING">RANKING</button>
+        <button class="title-hotspot collection" type="button" data-soon="COLLECTION">COLLECTION</button>
+        <button class="title-hotspot option" type="button" data-soon="OPTION">OPTION</button>
+        <div id="titleToast" class="title-toast">COMING SOON</div>
+      </div>
+    </section>
+
+    <section class="hud" aria-label="ゲーム情報">
+      <div class="panel score-panel">
+        <p class="score-label">SCORE</p>
+        <div class="score-row">
+          <div id="score" class="score">0000000</div>
+          <div id="delta" class="delta">+0000</div>
+        </div>
+      </div>
+      <div class="panel rank">
+        <strong id="rank">C</strong>
+        <p class="small-label">SCORE RANK</p>
+      </div>
+      <div class="panel life">
+        <p class="small-label">LIFE <span id="lifeText">1000</span></p>
+        <div class="life-bar"><div id="lifeFill" class="life-fill"></div></div>
+      </div>
+    </section>
+
+    <button id="pause" class="pause" type="button" title="一時停止">Ⅱ</button>
+
+    <div class="combo" aria-live="polite">
+      <span>COMBO</span>
+      <strong id="combo">0</strong>
+    </div>
+
+    <section class="playfield" aria-label="ノーツレーン">
+      <div class="lane-board">
+        <div id="noteLayer" class="note-layer"></div>
+      </div>
+      <div class="hit-line"></div>
+    </section>
+
+    <div class="pads" aria-label="タップボタン">
+      <button class="pad" type="button" data-lane="0">D</button>
+      <button class="pad" type="button" data-lane="1">F</button>
+      <button class="pad" type="button" data-lane="2">J</button>
+      <button class="pad" type="button" data-lane="3">K</button>
+    </div>
+
+    <button id="miraisiSkill" class="miraisi-btn" type="button">ミライシ READY</button>
+
+    <div id="judgement" class="judgement">PERFECT</div>
+    <div id="flash" class="flash"></div>
+
+    <section id="pauseOverlay" class="pause-overlay" aria-label="ポーズ画面" aria-hidden="true">
+      <div class="pause-card">
+        <h2>PAUSED</h2>
+        <p>Space / 右上ボタンでも再開できます</p>
+        <div class="pause-actions">
+          <button id="resumePause" class="main-btn" type="button">RESUME</button>
+          <button id="restartPause" class="ghost-btn" type="button">RESTART</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="toolbar" aria-label="素材読み込み">
+      <h1>MIRA Rhythm Prototype</h1>
+      <div class="controls">
+        <select id="trackSelect" class="track-select" aria-label="曲選択">
+          <option value="">曲リスト読込中...</option>
+        </select>
+        <button id="loadTrack" class="ghost-btn" type="button">曲読込</button>
+        <button id="reloadTracks" class="ghost-btn" type="button">更新</button>
+        <button id="start" class="main-btn" type="button">START</button>
+        <div class="asset-status" aria-label="現在の素材">
+          <div><span>曲</span><strong id="assetSong">光の名前</strong></div>
+          <div><span>音源</span><strong id="assetAudio">hikari-no-namae.mp3</strong></div>
+          <div><span>MV</span><strong id="assetMv">アニメ背景</strong></div>
+          <div><span>ミラ</span><strong id="assetCharacter">未読込</strong></div>
+          <div><span>譜面</span><strong id="assetChart">mira-demo</strong></div>
+          <p id="assetNotice" class="asset-notice">同梱音源を使用中です。MP4 / JSONをドロップするとMVや譜面を差し替えられます。</p>
+        </div>
+        <label class="file-btn">MV読込<input id="videoInput" type="file" accept="video/*"></label>
+        <label class="file-btn">音源読込<input id="audioInput" type="file" accept="audio/*"></label>
+        <label class="file-btn">ミラ読込<input id="characterInput" type="file" accept="image/*"></label>
+        <button id="characterSway" class="ghost-btn" type="button">揺れON</button>
+        <div class="url-control">
+          <input id="mvUrlInput" type="url" inputmode="url" placeholder="YouTube / MP4 MV URL">
+          <button id="loadMvUrl" class="ghost-btn" type="button">URL</button>
+        </div>
+        <button id="autoPlay" class="ghost-btn" type="button">AUTO OFF</button>
+        <button id="autoChart" class="ghost-btn" type="button">譜面生成</button>
+        <button id="reset" class="ghost-btn" type="button">RESET</button>
+        <section class="maker-panel" aria-label="リズムゲーム作成モード">
+          <div class="maker-head">
+            <span>作成モード</span>
+            <button id="saveProject" class="ghost-btn" type="button">データ保存</button>
+          </div>
+          <div class="maker-stats">
+            <div class="maker-stat"><span>素材</span><strong id="makerAssets">音源+MV</strong></div>
+            <div class="maker-stat"><span>長さ</span><strong id="makerDuration">90s</strong></div>
+            <div class="maker-stat"><span>ノーツ</span><strong id="makerNotes">0</strong></div>
+          </div>
+          <div class="timeline-label"><span>動画/画像タイムライン</span><strong id="makerTimelineText">背景全体に配置</strong></div>
+          <div class="timeline-track"><div id="makerTimelineFill" class="timeline-fill"></div></div>
+          <label class="tuning">
+            <span>出現率</span>
+            <input id="noteDensityInput" type="range" min="50" max="180" step="10" value="100">
+            <output id="noteDensityText">100%</output>
+          </label>
+          <label class="tuning">
+            <span>速度</span>
+            <input id="noteSpeedInput" type="range" min="240" max="700" step="5" value="325">
+            <output id="noteSpeedText">3.25s</output>
+          </label>
+          <div class="maker-actions">
+            <button id="applyMakerChart" class="ghost-btn" type="button">出現率で生成</button>
+            <button id="openMakerJson" class="ghost-btn" type="button">JSON編集</button>
+          </div>
+        </section>
+        <label class="file-btn">譜面読込<input id="chartInput" type="file" accept="application/json,.json"></label>
+        <button id="saveChart" class="ghost-btn" type="button">譜面保存</button>
+        <button id="recordChart" class="ghost-btn" type="button">録音OFF</button>
+        <button id="clearRecorded" class="ghost-btn" type="button">録音消去</button>
+        <button id="editChart" class="ghost-btn" type="button">譜面編集</button>
+        <button id="showResult" class="ghost-btn" type="button">RESULT</button>
+        <label class="tuning">
+          <span>判定</span>
+          <input id="offsetInput" type="range" min="-240" max="240" step="5" value="0">
+          <output id="offsetText">0ms</output>
+        </label>
+        <label class="tuning">
+          <span>背景暗</span>
+          <input id="bgDimInput" type="range" min="0" max="70" step="5" value="28">
+          <output id="bgDimText">28%</output>
+        </label>
+        <label class="tuning">
+          <span>背景ぼかし</span>
+          <input id="bgBlurInput" type="range" min="0" max="8" step="1" value="0">
+          <output id="bgBlurText">0px</output>
+        </label>
+        <button id="autoOffset" class="ghost-btn" type="button">自動補正</button>
+        <button id="clearTiming" class="ghost-btn" type="button">測定消去</button>
+      </div>
+      <p id="meta" class="meta">D/F/J/K または画面下の円をタップ。MVだけ読んだ場合は動画音声で遊べます。</p>
+    </aside>
+
+    <div class="fever">
+      <div class="fever-bar"><div id="feverFill" class="fever-fill"></div></div>
+      <div id="feverText" class="fever-text">FEVER</div>
+    </div>
+
+    <section id="resultModal" class="result-modal" aria-label="リザルト">
+      <div class="result-card">
+        <h2 id="resultTitle">RESULT</h2>
+        <p id="resultStatus" class="result-status">CLEAR</p>
+        <div id="resultRank" class="result-rank">C</div>
+        <p id="resultScore" class="result-score">0000000</p>
+        <div class="result-grid">
+          <div class="result-stat"><span>MAX COMBO</span><strong id="resultCombo">0</strong></div>
+          <div class="result-stat"><span>ACCURACY</span><strong id="resultAccuracy">0%</strong></div>
+          <div class="result-stat"><span>PERFECT</span><strong id="resultPerfect">0</strong></div>
+          <div class="result-stat"><span>GREAT / GOOD</span><strong id="resultGreatGood">0 / 0</strong></div>
+          <div class="result-stat"><span>MISS</span><strong id="resultMiss">0</strong></div>
+          <div class="result-stat"><span>LIFE / NOTES</span><strong id="resultNotes">0 / 0</strong></div>
+        </div>
+        <div class="result-actions">
+          <button id="closeResult" class="ghost-btn" type="button">CLOSE</button>
+          <button id="retryResult" class="main-btn" type="button">RETRY</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="editorModal" class="result-modal" aria-label="譜面編集">
+      <div class="result-card chart-editor">
+        <h2>CHART EDITOR</h2>
+        <textarea id="chartEditor" spellcheck="false"></textarea>
+        <p id="editorStatus" class="editor-status"></p>
+        <div class="result-actions">
+          <button id="closeEditor" class="ghost-btn" type="button">CLOSE</button>
+          <button id="applyChart" class="main-btn" type="button">APPLY</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      running: false,
+      paused: false,
+      titleVisible: true,
+      titleBgmOn: false,
+      titleDevice: "pc",
+      startTime: 0,
+      pauseTime: 0,
+      chart: [],
+      spawned: new Set(),
+      active: [],
+      score: 0,
+      combo: 0,
+      maxCombo: 0,
+      judged: 0,
+      perfect: 0,
+      great: 0,
+      good: 0,
+      miss: 0,
+      life: 1000,
+      fever: 0,
+      timingSamples: [],
+      autoPlay: false,
+      speed: 3.25,
+      noteDensity: 1,
+      layout: "depth",
+      trialSaveLocked: true,
+      duration: 90,
+      offsetMs: 0,
+      chartName: "mira-demo",
+      recording: false,
+      recordedChart: [],
+      finished: false,
+      clearStatus: "CLEAR",
+      usingAudio: false,
+      assetSong: "光の名前",
+      assetAudio: "hikari-no-namae.mp3",
+      assetMv: "アニメ背景",
+      assetCharacter: "未読込",
+      assetChart: "mira-demo",
+      placeholderAudio: false,
+      characterSway: true,
+      miraisiUntil: 0,
+      miraisiCooldownUntil: 0,
+      raf: 0
+    };
+
+    const els = {
+      mv: document.getElementById("mv"),
+      mvFill: document.getElementById("mvFill"),
+      pcMode: document.getElementById("pcMode"),
+      spMode: document.getElementById("spMode"),
+      cleanView: document.getElementById("cleanView"),
+      rotateMsg: document.getElementById("rotateMsg"),
+      dropHint: document.getElementById("dropHint"),
+      youtubeBg: document.getElementById("youtubeBg"),
+      miraCharacterWrap: document.getElementById("miraCharacterWrap"),
+      miraCharacter: document.getElementById("miraCharacter"),
+      song: document.getElementById("song"),
+      demoBg: document.getElementById("demoBg"),
+      titleScreen: document.getElementById("titleScreen"),
+      titlePc: document.getElementById("titlePc"),
+      titleSp: document.getElementById("titleSp"),
+      titleStart: document.getElementById("titleStart"),
+      titleBgm: document.getElementById("titleBgm"),
+      titleToast: document.getElementById("titleToast"),
+      noteLayer: document.getElementById("noteLayer"),
+      score: document.getElementById("score"),
+      delta: document.getElementById("delta"),
+      combo: document.getElementById("combo"),
+      rank: document.getElementById("rank"),
+      lifeFill: document.getElementById("lifeFill"),
+      lifeText: document.getElementById("lifeText"),
+      feverFill: document.getElementById("feverFill"),
+      feverText: document.getElementById("feverText"),
+      judgement: document.getElementById("judgement"),
+      flash: document.getElementById("flash"),
+      meta: document.getElementById("meta"),
+      start: document.getElementById("start"),
+      pause: document.getElementById("pause"),
+      pauseOverlay: document.getElementById("pauseOverlay"),
+      resumePause: document.getElementById("resumePause"),
+      restartPause: document.getElementById("restartPause"),
+      reset: document.getElementById("reset"),
+      autoPlay: document.getElementById("autoPlay"),
+      autoChart: document.getElementById("autoChart"),
+      saveProject: document.getElementById("saveProject"),
+      makerAssets: document.getElementById("makerAssets"),
+      makerDuration: document.getElementById("makerDuration"),
+      makerNotes: document.getElementById("makerNotes"),
+      makerTimelineText: document.getElementById("makerTimelineText"),
+      makerTimelineFill: document.getElementById("makerTimelineFill"),
+      noteDensityInput: document.getElementById("noteDensityInput"),
+      noteDensityText: document.getElementById("noteDensityText"),
+      noteSpeedInput: document.getElementById("noteSpeedInput"),
+      noteSpeedText: document.getElementById("noteSpeedText"),
+      applyMakerChart: document.getElementById("applyMakerChart"),
+      openMakerJson: document.getElementById("openMakerJson"),
+      saveChart: document.getElementById("saveChart"),
+      recordChart: document.getElementById("recordChart"),
+      clearRecorded: document.getElementById("clearRecorded"),
+      editChart: document.getElementById("editChart"),
+      showResult: document.getElementById("showResult"),
+      resultModal: document.getElementById("resultModal"),
+      resultTitle: document.getElementById("resultTitle"),
+      resultStatus: document.getElementById("resultStatus"),
+      resultRank: document.getElementById("resultRank"),
+      resultScore: document.getElementById("resultScore"),
+      resultCombo: document.getElementById("resultCombo"),
+      resultAccuracy: document.getElementById("resultAccuracy"),
+      resultPerfect: document.getElementById("resultPerfect"),
+      resultGreatGood: document.getElementById("resultGreatGood"),
+      resultMiss: document.getElementById("resultMiss"),
+      resultNotes: document.getElementById("resultNotes"),
+      closeResult: document.getElementById("closeResult"),
+      retryResult: document.getElementById("retryResult"),
+      editorModal: document.getElementById("editorModal"),
+      chartEditor: document.getElementById("chartEditor"),
+      editorStatus: document.getElementById("editorStatus"),
+      closeEditor: document.getElementById("closeEditor"),
+      applyChart: document.getElementById("applyChart"),
+      trackSelect: document.getElementById("trackSelect"),
+      assetSong: document.getElementById("assetSong"),
+      assetAudio: document.getElementById("assetAudio"),
+      assetMv: document.getElementById("assetMv"),
+      assetCharacter: document.getElementById("assetCharacter"),
+      assetChart: document.getElementById("assetChart"),
+      assetNotice: document.getElementById("assetNotice"),
+      loadTrack: document.getElementById("loadTrack"),
+      reloadTracks: document.getElementById("reloadTracks"),
+      videoInput: document.getElementById("videoInput"),
+      audioInput: document.getElementById("audioInput"),
+      characterInput: document.getElementById("characterInput"),
+      characterSway: document.getElementById("characterSway"),
+      mvUrlInput: document.getElementById("mvUrlInput"),
+      loadMvUrl: document.getElementById("loadMvUrl"),
+      chartInput: document.getElementById("chartInput"),
+      offsetInput: document.getElementById("offsetInput"),
+      offsetText: document.getElementById("offsetText"),
+      autoOffset: document.getElementById("autoOffset"),
+      clearTiming: document.getElementById("clearTiming"),
+      bgDimInput: document.getElementById("bgDimInput"),
+      bgDimText: document.getElementById("bgDimText"),
+      bgBlurInput: document.getElementById("bgBlurInput"),
+      bgBlurText: document.getElementById("bgBlurText"),
+      miraisiSkill: document.getElementById("miraisiSkill"),
+      titleSoonButtons: [...document.querySelectorAll("[data-soon]")],
+      pads: [...document.querySelectorAll(".pad")]
+    };
+
+    const laneX = [12.5, 37.5, 62.5, 87.5];
+    const horizontalLaneY = [12.5, 37.5, 62.5, 87.5];
+    const taikoLaneY = [32, 68];
+    const keys = new Map([["d", 0], ["f", 1], ["j", 2], ["k", 3]]);
+    const stageOneTiming = {
+      hit: .68,
+      perfect: .25,
+      great: .48,
+      lateMiss: .78
+    };
+    const horizontalTiming = {
+      hit: .82,
+      perfect: .32,
+      great: .58,
+      lateMiss: .92
+    };
+    function currentTiming() {
+      return state.layout === "horizontal" || state.layout === "taiko" ? horizontalTiming : stageOneTiming;
+    }
+    const tracksManifest = "mira-tracks.json";
+    const bundledAudio = "hikari-no-namae.mp3";
+    const bundledChart = "hikari-no-namae-chart.json";
+    let initialLoadPromise = null;
+    const fallbackTracks = [
+      {
+        id: "hikari-no-namae-easy",
+        title: "光の名前",
+        artist: "MIRA",
+        audio: bundledAudio,
+        chart: "hikari-no-namae-easy-chart.json",
+        mvUrl: "mira-hikari-mv.mp4",
+        difficulty: "Stage 1"
+      },
+      {
+        id: "hikari-no-namae-stage2-horizontal",
+        title: "光の名前",
+        artist: "MIRA",
+        audio: bundledAudio,
+        chart: "hikari-no-namae-stage2-horizontal-chart.json",
+        mvUrl: "mira-hikari-mv.mp4",
+        difficulty: "Stage 2 / 横流れ",
+        layout: "horizontal"
+      }
+    ];
+
+    function selectDevice() {
+      localStorage.removeItem("miraRhythmMode");
+      document.body.classList.remove("mode-pc", "mode-sp");
+      setTitleDevice();
+    }
+
+    function setTitleDevice() {
+      state.titleDevice = "common";
+      els.titleScreen.classList.add("title-art-pc");
+      els.titleScreen.classList.remove("title-art-sp");
+      els.titlePc.classList.add("active");
+      els.titleSp.classList.remove("active");
+    }
+
+    function setTitleVisible(visible) {
+      state.titleVisible = visible;
+      document.body.classList.toggle("title-mode", visible);
+      els.titleScreen.hidden = !visible;
+    }
+
+    function updateTitleBgmUi() {
+      els.titleBgm.textContent = state.titleBgmOn ? "♪ BGM ON" : "♪ BGM OFF";
+    }
+
+    function showComingSoon(label = "COMING SOON") {
+      els.titleToast.textContent = `${label} / COMING SOON`;
+      els.titleToast.classList.remove("show");
+      void els.titleToast.offsetWidth;
+      els.titleToast.classList.add("show");
+      clearTimeout(showComingSoon.timer);
+      showComingSoon.timer = setTimeout(() => els.titleToast.classList.remove("show"), 1200);
+    }
+
+    async function toggleTitleBgm() {
+      if (!state.titleVisible) return;
+      if (initialLoadPromise) await initialLoadPromise.catch(() => {});
+      state.titleBgmOn = !state.titleBgmOn;
+      updateTitleBgmUi();
+      if (state.titleBgmOn) {
+        els.song.loop = true;
+        els.song.volume = .42;
+        safeSeek(els.song, 0);
+        els.song.play().catch(() => {
+          state.titleBgmOn = false;
+          updateTitleBgmUi();
+          showComingSoon("BGM");
+        });
+      } else {
+        els.song.pause();
+      }
+    }
+
+    function makeDemoChart(duration = 92, densityScale = state.noteDensity) {
+      const chart = [];
+      let t = 1.2;
+      let phrase = 0;
+      const scale = Math.max(.5, Math.min(1.8, Number(densityScale || 1)));
+      while (t < duration) {
+        const density = (phrase % 4 === 3 ? 0.24 : 0.36) / scale;
+        const lane = (phrase + Math.floor(t * 2)) % 4;
+        chart.push({
+          time: Number(t.toFixed(3)),
+          lane,
+          type: phrase % 9 === 0 ? "gold" : phrase % 3 === 0 ? "pink" : "cyan",
+          kind: phrase % 18 === 8 ? "hold" : phrase % 14 === 6 ? "flick" : "tap",
+          duration: phrase % 18 === 8 ? .72 : undefined
+        });
+        if (scale >= .85 && phrase % 5 === 2) {
+          chart.push({ time: Number((t + 0.13).toFixed(3)), lane: (lane + 2) % 4, type: "pink" });
+        }
+        if (scale >= 1.15 && phrase % 8 === 5) {
+          chart.push({ time: Number((t + 0.26).toFixed(3)), lane: (lane + 1) % 4, type: "cyan" });
+        }
+        t += density;
+        phrase += 1;
+      }
+      return chart;
+    }
+
+    function updateHud(delta = 0) {
+      const now = Date.now();
+      const guardMs = Math.max(0, state.miraisiUntil - now);
+      const cooldownMs = Math.max(0, state.miraisiCooldownUntil - now);
+      els.score.textContent = String(state.score).padStart(7, "0");
+      els.delta.textContent = `+${String(delta).padStart(4, "0")}`;
+      els.combo.textContent = state.combo;
+      els.lifeText.textContent = Math.max(0, Math.round(state.life));
+      els.lifeFill.style.width = `${Math.max(0, state.life / 10)}%`;
+      els.feverFill.style.width = `${Math.min(100, state.fever)}%`;
+      els.feverText.textContent = state.fever >= 100 ? "FEVER!!" : "FEVER";
+      els.miraisiSkill.classList.toggle("active", guardMs > 0);
+      els.miraisiSkill.disabled = cooldownMs > 0 && guardMs <= 0;
+      els.miraisiSkill.textContent = guardMs > 0
+        ? `ミライシ 無敵 ${Math.ceil(guardMs / 1000)}s`
+        : cooldownMs > 0
+          ? `ミライシ ${Math.ceil(cooldownMs / 1000)}s`
+          : "ミライシ READY";
+      const ratio = state.score / Math.max(1, state.chart.length * 1000);
+      els.rank.textContent = ratio > .94 ? "SS" : ratio > .86 ? "S" : ratio > .72 ? "A" : ratio > .55 ? "B" : "C";
+    }
+
+    function currentRank() {
+      const ratio = state.score / Math.max(1, state.chart.length * 1000);
+      return ratio > .94 ? "SS" : ratio > .86 ? "S" : ratio > .72 ? "A" : ratio > .55 ? "B" : "C";
+    }
+
+    function showJudge(text) {
+      els.judgement.textContent = text;
+      els.judgement.classList.remove("show");
+      void els.judgement.offsetWidth;
+      els.judgement.classList.add("show");
+      els.flash.classList.remove("hit");
+      void els.flash.offsetWidth;
+      els.flash.classList.add("hit");
+    }
+
+    let sfxContext = null;
+    function ensureSfxContext() {
+      const AudioCtor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtor) return null;
+      if (!sfxContext) sfxContext = new AudioCtor();
+      if (sfxContext.state === "suspended") sfxContext.resume().catch(() => {});
+      return sfxContext;
+    }
+
+    function playTone(ctx, frequency, start, duration, volume, type = "sine", pan = 0) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const panner = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+      osc.type = type;
+      osc.frequency.setValueAtTime(frequency, start);
+      osc.frequency.exponentialRampToValueAtTime(frequency * 1.012, start + duration);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(volume, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      if (panner) {
+        panner.pan.setValueAtTime(pan, start);
+        osc.connect(gain).connect(panner).connect(ctx.destination);
+      } else {
+        osc.connect(gain).connect(ctx.destination);
+      }
+      osc.start(start);
+      osc.stop(start + duration + 0.02);
+    }
+
+    function playHitSfx(label, lane, combo) {
+      const ctx = ensureSfxContext();
+      if (!ctx) return;
+      if (ctx.state === "suspended") {
+        ctx.resume().then(() => playHitSfx(label, lane, combo)).catch(() => {});
+        return;
+      }
+      if (state.layout === "taiko") {
+        playDrumSfx(lane, combo);
+        return;
+      }
+      const now = ctx.currentTime;
+      const pan = [-0.42, -0.14, 0.14, 0.42][lane] || 0;
+      const isPerfect = label.startsWith("PERFECT");
+      const isGreat = label.startsWith("GREAT");
+      const base = isPerfect ? 1046.5 : isGreat ? 880 : 698.5;
+      const volume = isPerfect ? 0.085 : isGreat ? 0.068 : 0.052;
+      playTone(ctx, base, now, 0.105, volume, "sine", pan);
+      playTone(ctx, base * 1.5, now + 0.018, 0.13, volume * 0.72, "triangle", pan);
+      if (label.includes("HOLD") || label.includes("FLICK")) {
+        playTone(ctx, base * 2, now + 0.035, 0.16, volume * 0.55, "sine", pan);
+      }
+      if (combo > 0 && combo % 25 === 0) {
+        playTone(ctx, 1760, now + 0.055, 0.18, 0.05, "sine", 0);
+        playTone(ctx, 2349.3, now + 0.085, 0.18, 0.038, "triangle", 0);
+      }
+    }
+
+    function playDrumSfx(lane, combo) {
+      const ctx = ensureSfxContext();
+      if (!ctx) return;
+      if (ctx.state === "suspended") {
+        ctx.resume().then(() => playDrumSfx(lane, combo)).catch(() => {});
+        return;
+      }
+      const now = ctx.currentTime;
+      const pan = lane === 0 ? -0.16 : 0.16;
+      const base = lane === 0 ? 124 : 156;
+      playTone(ctx, base, now, 0.15, 0.22, "sine", pan);
+      playTone(ctx, base * 2.02, now + 0.006, 0.09, 0.095, "triangle", pan);
+      if (combo > 0 && combo % 20 === 0) {
+        playTone(ctx, 220, now + 0.035, 0.13, 0.09, "sine", 0);
+      }
+    }
+
+    function playMissSfx() {
+      const ctx = ensureSfxContext();
+      if (!ctx) return;
+      if (ctx.state === "suspended") {
+        ctx.resume().then(playMissSfx).catch(() => {});
+        return;
+      }
+      const now = ctx.currentTime;
+      playTone(ctx, 164.8, now, 0.11, 0.035, "triangle", 0);
+    }
+
+    function guardFlash() {
+      els.flash.classList.remove("hit", "guard");
+      void els.flash.offsetWidth;
+      els.flash.classList.add("guard");
+    }
+
+    function applyMissDamage(amount) {
+      if (Date.now() < state.miraisiUntil) {
+        showJudge("GUARD");
+        guardFlash();
+        return false;
+      }
+      state.life = Math.max(0, state.life - amount);
+      return true;
+    }
+
+    function activateMiraisi() {
+      if (!state.running || state.paused) return;
+      const now = Date.now();
+      if (now < state.miraisiUntil || now < state.miraisiCooldownUntil) return;
+      state.miraisiUntil = now + 3000;
+      state.miraisiCooldownUntil = now + 30000;
+      showJudge("ミライシ");
+      guardFlash();
+      updateHud();
+    }
+
+    function currentTime() {
+      if (!state.running) return 0;
+      const media = primaryMedia();
+      const mediaTime = media && media.src ? media.currentTime : NaN;
+      const baseTime = Number.isFinite(mediaTime) && mediaTime >= 0
+        ? mediaTime
+        : (performance.now() - state.startTime) / 1000;
+      return baseTime + state.offsetMs / 1000;
+    }
+
+    function normalizeChart(notes) {
+      return notes
+        .map(note => ({
+          time: Number(note.time),
+          lane: Math.max(0, Math.min(3, Number(note.lane))),
+          type: ["cyan", "pink", "gold"].includes(note.type) ? note.type : "cyan",
+          kind: ["tap", "hold", "flick"].includes(note.kind) ? note.kind : "tap",
+          arrow: ["left", "up", "down", "right"].includes(note.arrow) ? note.arrow : "",
+          duration: Math.max(.2, Math.min(4, Number(note.duration || 0)))
+        }))
+        .filter(note => Number.isFinite(note.time) && Number.isFinite(note.lane) && note.time >= 0)
+        .sort((a, b) => a.time - b.time || a.lane - b.lane)
+        .map((note, index) => ({ ...note, id: `${note.time}:${note.lane}:${index}` }));
+    }
+
+    function setStageLayout(layout = "depth") {
+      state.layout = layout === "horizontal" || layout === "taiko" ? layout : "depth";
+      document.body.classList.toggle("layout-horizontal", state.layout === "horizontal");
+      document.body.classList.toggle("layout-taiko", state.layout === "taiko");
+      updatePadMode();
+    }
+
+    function updatePadMode() {
+      const labels = state.layout === "taiko" ? ["←", "↑", "↓", "→"] : ["D", "F", "J", "K"];
+      const lanes = state.layout === "taiko" ? [0, 0, 1, 1] : [0, 1, 2, 3];
+      const arrows = state.layout === "taiko" ? ["left", "up", "down", "right"] : ["", "", "", ""];
+      els.pads.forEach((pad, index) => {
+        pad.textContent = labels[index] || "";
+        pad.dataset.lane = String(lanes[index] || 0);
+        pad.dataset.arrow = arrows[index] || "";
+      });
+    }
+
+    function setChart(notes, name = state.chartName, layout = state.layout) {
+      state.chart = normalizeChart(notes);
+      state.chartName = name || "mira-chart";
+      state.assetChart = state.chartName;
+      setStageLayout(layout);
+      state.spawned.clear();
+      state.active.forEach(note => note.el && note.el.remove());
+      state.active = [];
+      els.meta.textContent = `${state.chartName}: ${state.chart.length} notes`;
+      updateAssetStatus();
+      updateHud();
+    }
+
+    function setOffset(ms = 0) {
+      state.offsetMs = Number(ms || 0);
+      els.offsetInput.value = String(Math.max(-240, Math.min(240, state.offsetMs)));
+      els.offsetText.textContent = `${state.offsetMs}ms`;
+    }
+
+    function updateAssetStatus() {
+      els.assetSong.textContent = state.assetSong || "未設定";
+      els.assetAudio.textContent = state.assetAudio || "未設定";
+      els.assetMv.textContent = state.assetMv || "アニメ背景";
+      els.assetCharacter.textContent = state.assetCharacter || "未読込";
+      els.assetChart.textContent = `${state.assetChart || state.chartName || "未設定"} / ${state.chart.length} notes`;
+      els.assetNotice.textContent = state.placeholderAudio
+        ? "これは仮音源です。正しいMP3 / WAV / MP4 / JSONをドロップすると差し替わります。"
+        : "同梱またはユーザー音源を使用中です。必要ならMVや譜面JSONもドロップできます。";
+      updateMakerPanel();
+    }
+
+    function updateMakerPanel() {
+      const hasAudio = state.assetAudio && state.assetAudio !== "未設定";
+      const hasMv = state.assetMv && state.assetMv !== "アニメ背景";
+      const hasCharacter = state.assetCharacter && state.assetCharacter !== "未読込";
+      const assetCount = [hasAudio, hasMv, hasCharacter].filter(Boolean).length;
+      els.makerAssets.textContent = assetCount ? `${assetCount}素材` : "素材待ち";
+      els.makerDuration.textContent = `${Math.max(1, Math.round(state.duration))}s`;
+      els.makerNotes.textContent = `${state.chart.length}`;
+      els.makerTimelineText.textContent = hasMv
+        ? `${state.assetMv} / ${Math.max(1, Math.round(state.duration))}s`
+        : hasCharacter
+          ? `${state.assetCharacter} / 静止画背景`
+          : "背景全体に配置";
+      els.makerTimelineFill.style.width = `${Math.min(100, Math.max(8, state.duration / Math.max(30, state.duration) * 100))}%`;
+      els.noteDensityInput.value = String(Math.round(state.noteDensity * 100));
+      els.noteDensityText.textContent = `${Math.round(state.noteDensity * 100)}%`;
+      els.noteSpeedInput.value = String(Math.round(state.speed * 100));
+      els.noteSpeedText.textContent = `${state.speed.toFixed(2)}s`;
+    }
+
+    function setNoteDensity(percent) {
+      state.noteDensity = Math.max(.5, Math.min(1.8, Number(percent || 100) / 100));
+      updateMakerPanel();
+    }
+
+    function setNoteSpeed(value) {
+      state.speed = Math.max(2.4, Math.min(7.0, Number(value || 325) / 100));
+      updateMakerPanel();
+    }
+
+    function updateCharacterSwayUi() {
+      document.body.classList.toggle("mira-sway-off", !state.characterSway);
+      els.characterSway.textContent = state.characterSway ? "揺れON" : "揺れOFF";
+    }
+
+    function rememberTiming(rawDiff) {
+      state.timingSamples.push(rawDiff);
+      if (state.timingSamples.length > 40) state.timingSamples.shift();
+    }
+
+    function applyAutoOffset() {
+      if (state.timingSamples.length < 6) {
+        els.meta.textContent = `自動補正: あと${6 - state.timingSamples.length}回ほど叩いてから使ってください。`;
+        return;
+      }
+      const sorted = [...state.timingSamples].sort((a, b) => a - b);
+      const trim = Math.min(4, Math.floor(sorted.length / 5));
+      const usable = sorted.slice(trim, sorted.length - trim);
+      const average = usable.reduce((sum, diff) => sum + diff, 0) / Math.max(1, usable.length);
+      const nextOffset = Math.max(-240, Math.min(240, Math.round(state.offsetMs + average * 1000)));
+      setOffset(nextOffset);
+      els.meta.textContent = `自動補正: 平均${Math.round(average * 1000)}msを反映しました。譜面保存でJSONに残せます。`;
+    }
+
+    function clearTimingSamples() {
+      state.timingSamples = [];
+      els.meta.textContent = "タイミング測定を消去しました。";
+    }
+
+    function applyBackgroundTuning() {
+      const dim = Number(els.bgDimInput.value);
+      const blur = Number(els.bgBlurInput.value);
+      document.documentElement.style.setProperty("--bg-dim", String(dim / 100));
+      document.documentElement.style.setProperty("--bg-blur", `${blur}px`);
+      els.bgDimText.textContent = `${dim}%`;
+      els.bgBlurText.textContent = `${blur}px`;
+    }
+
+    function populateTrackSelect(tracks) {
+      els.trackSelect.innerHTML = "";
+      tracks.forEach(track => {
+        const option = document.createElement("option");
+        option.value = track.id;
+        option.textContent = `${track.title || track.id}${track.difficulty ? ` / ${track.difficulty}` : ""}`;
+        els.trackSelect.appendChild(option);
+      });
+      els.trackSelect.dataset.tracks = JSON.stringify(tracks);
+    }
+
+    function selectedTrack() {
+      const tracks = JSON.parse(els.trackSelect.dataset.tracks || "[]");
+      return tracks.find(track => track.id === els.trackSelect.value) || tracks[0] || fallbackTracks[0];
+    }
+
+    function updateRecordUi() {
+      els.recordChart.textContent = state.recording ? "録音ON" : "録音OFF";
+      els.recordChart.classList.toggle("recording", state.recording);
+    }
+
+    function updateAutoPlayUi() {
+      els.autoPlay.textContent = state.autoPlay ? "AUTO ON" : "AUTO OFF";
+      els.autoPlay.classList.toggle("recording", state.autoPlay);
+    }
+
+    function updateTrialUi() {
+      els.saveChart.textContent = state.trialSaveLocked ? "譜面保存 LOCK" : "譜面保存";
+      els.saveProject.textContent = state.trialSaveLocked ? "データ保存 LOCK" : "データ保存";
+    }
+
+    function updateCleanViewUi() {
+      els.cleanView.textContent = document.body.classList.contains("clean-view") ? "MENU" : "UI OFF";
+    }
+
+    function setCleanView(enabled) {
+      document.body.classList.toggle("clean-view", Boolean(enabled));
+      updateCleanViewUi();
+    }
+
+    function toggleCleanView() {
+      setCleanView(!document.body.classList.contains("clean-view"));
+    }
+
+    function recordLane(lane) {
+      const time = Math.max(0, currentTime());
+      const type = state.recordedChart.length % 8 === 0 ? "gold" : lane % 2 === 0 ? "cyan" : "pink";
+      state.recordedChart.push({ time: Number(time.toFixed(3)), lane, type });
+      state.chart = normalizeChart(state.recordedChart);
+      state.chartName = "mira-recorded-chart";
+      els.meta.textContent = `録音中: ${state.recordedChart.length} notes`;
+      pulsePad(lane);
+      showJudge("REC");
+      updateHud(0);
+    }
+
+    function spawnNote(note) {
+      const el = document.createElement("div");
+      const arrowClass = note.arrow ? `arrow-${note.arrow}` : "";
+      el.className = `note ${note.type || ""} ${note.kind || "tap"} ${arrowClass}`;
+      if (state.layout === "horizontal" || state.layout === "taiko") {
+        const y = state.layout === "taiko" ? taikoLaneY[note.lane] : horizontalLaneY[note.lane];
+        el.style.top = `${y}%`;
+      } else {
+        el.style.left = `${laneX[note.lane]}%`;
+      }
+      if (note.kind === "hold") {
+        if (state.layout === "horizontal" || state.layout === "taiko") {
+          el.style.width = `${Math.max(96, Math.min(220, 96 + note.duration * 62))}px`;
+        } else {
+          el.style.height = `${Math.max(70, Math.min(180, 70 + note.duration * 44))}px`;
+        }
+      }
+      note.el = el;
+      note.hit = false;
+      note.missed = false;
+      els.noteLayer.appendChild(el);
+      state.active.push(note);
+    }
+
+    function render() {
+      if (!state.running || state.paused) return;
+      const now = currentTime();
+      const ahead = state.speed;
+      const timing = currentTiming();
+      for (const note of state.chart) {
+        if (!state.spawned.has(note.id) && note.time - now <= ahead) {
+          state.spawned.add(note.id);
+          spawnNote(note);
+        }
+      }
+
+      for (const note of state.active) {
+        if (!note.el) continue;
+        const remain = note.time - now;
+        const glow = Math.max(0, 1 - Math.abs(remain) / timing.hit);
+        if (state.layout === "horizontal" || state.layout === "taiko") {
+          const progress = Math.max(0, Math.min(1.1, 1 - (remain / ahead)));
+          const x = Math.max(8, Math.min(112, 108 - progress * 100));
+          const scale = .86 + glow * .22;
+          note.el.style.left = `${x}%`;
+          note.el.style.transform = `translate(-50%, -50%) scale(${scale})`;
+          note.el.style.opacity = remain < -timing.lateMiss ? "0" : String(Math.max(.42, Math.min(1, 1 - Math.max(0, progress - 1) * 3)));
+          note.el.style.filter = `brightness(${(1.05 + glow * .56).toFixed(2)}) saturate(1.25) drop-shadow(0 0 ${Math.round(8 + glow * 24)}px rgba(139, 244, 255, ${(.35 + glow * .48).toFixed(2)}))`;
+          note.el.style.zIndex = String(100 - note.lane);
+        } else {
+          const progress = Math.max(0, Math.min(1.12, 1 - (remain / ahead)));
+          const depth = Math.max(0, Math.min(1, progress));
+          const eased = depth * depth * (3 - 2 * depth);
+          const y = Math.max(-8, Math.min(104, -6 + eased * 103));
+          const scale = .36 + Math.pow(depth, 1.22) * 1.08;
+          const lift = (1 - depth) * -46;
+          const brightness = 0.78 + depth * 0.68 + glow * 0.46;
+          note.el.style.top = `${y}%`;
+          note.el.style.transform = `translate3d(0, ${lift}px, ${Math.round(depth * 90)}px) translateY(-50%) scale(${scale})`;
+          note.el.style.opacity = remain < -timing.lateMiss ? "0" : String(Math.max(.34, Math.min(1, .36 + depth * .72)));
+          note.el.style.filter = `brightness(${brightness.toFixed(2)}) saturate(${(1.05 + depth * .35).toFixed(2)}) drop-shadow(0 0 ${Math.round(5 + depth * 18 + glow * 14)}px rgba(139, 244, 255, ${(.25 + depth * .42 + glow * .28).toFixed(2)}))`;
+          note.el.style.zIndex = String(Math.round(depth * 100));
+        }
+        if (state.autoPlay && !state.recording && !note.hit && !note.missed && Math.abs(remain) <= 0.018) {
+          autoHit(note);
+        }
+        if (!note.hit && !note.missed && remain < -timing.lateMiss) miss(note, false);
+      }
+
+      state.active = state.active.filter(note => {
+        if (note.el && (note.hit || note.missed) && note.time - now < -0.45) {
+          note.el.remove();
+          return false;
+        }
+        return note.time - now > -1;
+      });
+
+      updateHud();
+      const lastNote = state.chart[state.chart.length - 1];
+      const media = primaryMedia();
+      const mediaEnded = media && media.src && media.ended;
+      if (!state.recording && !state.finished && ((lastNote && now > lastNote.time + 1.2 && state.active.length === 0) || mediaEnded)) {
+        finishGame("CLEAR");
+        return;
+      }
+      state.raf = requestAnimationFrame(render);
+    }
+
+    function hitLane(lane, arrow = "") {
+      if (!state.running || state.paused) return;
+      ensureSfxContext();
+      if (state.recording) {
+        recordLane(lane);
+        return;
+      }
+      const now = currentTime();
+      const candidates = state.active
+        .filter(note => !note.hit && !note.missed && note.lane === lane && (state.layout !== "taiko" || !note.arrow || note.arrow === arrow))
+        .map(note => ({ note, diff: Math.abs(note.time - now) }))
+        .sort((a, b) => a.diff - b.diff);
+      const timing = currentTiming();
+
+      pulsePad(lane);
+      if (!candidates.length || candidates[0].diff > timing.hit) {
+        showJudge("SAFE");
+        return;
+      }
+
+      const { note, diff } = candidates[0];
+      rememberTiming(note.time - now);
+      let label = "GOOD";
+      let gain = 640;
+      const strict = note.kind === "flick" ? timing.perfect * .88 : timing.perfect;
+      const greatWindow = note.kind === "flick" ? timing.great * .9 : timing.great;
+      if (diff <= strict) {
+        label = "PERFECT";
+        gain = 1000;
+        state.perfect += 1;
+      } else if (diff <= greatWindow) {
+        label = "GREAT";
+        gain = 760;
+        state.great += 1;
+      } else {
+        state.good += 1;
+      }
+      if (note.kind === "hold") {
+        label = `${label} HOLD`;
+        gain += Math.round(Math.min(4, note.duration) * 180);
+        state.life = Math.min(1000, state.life + Math.min(32, note.duration * 10));
+      } else if (note.kind === "flick") {
+        label = `${label} FLICK`;
+        gain += 180;
+        state.fever = Math.min(100, state.fever + 2.6);
+      }
+      note.hit = true;
+      if (note.el) note.el.remove();
+      state.judged += 1;
+      state.combo += 1;
+      state.maxCombo = Math.max(state.maxCombo, state.combo);
+      state.score += Math.round(gain * (1 + Math.min(1, state.combo / 200) * .25));
+      state.life = Math.min(1000, state.life + 8);
+      state.fever = Math.min(100, state.fever + (note.type === "gold" ? 4.5 : 2.4));
+      playHitSfx(label, lane, state.combo);
+      showJudge(label);
+      updateHud(gain);
+    }
+
+    function autoHit(note) {
+      pulsePad(note.lane);
+      note.hit = true;
+      if (note.el) note.el.remove();
+      state.judged += 1;
+      state.perfect += 1;
+      state.combo += 1;
+      state.maxCombo = Math.max(state.maxCombo, state.combo);
+      const bonus = note.kind === "hold" ? Math.round(Math.min(4, note.duration) * 180) : note.kind === "flick" ? 180 : 0;
+      const gain = 1000 + bonus;
+      state.score += Math.round(gain * (1 + Math.min(1, state.combo / 200) * .25));
+      state.life = Math.min(1000, state.life + 8);
+      state.fever = Math.min(100, state.fever + (note.type === "gold" ? 4.5 : 2.4));
+      const label = note.kind === "hold" ? "AUTO HOLD" : note.kind === "flick" ? "AUTO FLICK" : "AUTO";
+      playHitSfx("PERFECT", note.lane, state.combo);
+      showJudge(label);
+      updateHud(gain);
+    }
+
+    function miss(note, visible = true) {
+      note.missed = true;
+      state.combo = 0;
+      state.judged += 1;
+      state.miss += 1;
+      const damaged = applyMissDamage(8);
+      if (visible && damaged) playMissSfx();
+      if (visible && damaged) showJudge("MISS");
+      updateHud();
+      if (state.life <= 0 && !state.finished) finishGame("FAILED");
+    }
+
+    function pulsePad(lane) {
+      const pad = els.pads[lane];
+      pad.classList.add("active");
+      setTimeout(() => pad.classList.remove("active"), 90);
+    }
+
+    function primaryMedia() {
+      return state.usingAudio && els.song.src ? els.song : els.mv;
+    }
+
+    function safeSeek(media, time) {
+      if (!media || !media.src) return;
+      try {
+        media.currentTime = time;
+      } catch (error) {
+        media.addEventListener("loadedmetadata", () => {
+          try {
+            media.currentTime = time;
+          } catch (_) {}
+        }, { once: true });
+      }
+    }
+
+    function seekLoadedMedia(time) {
+      safeSeek(els.song, time);
+      safeSeek(els.mv, time);
+      safeSeek(els.mvFill, time);
+    }
+
+    function pauseLoadedMedia() {
+      els.song.pause();
+      els.mv.pause();
+      els.mvFill.pause();
+    }
+
+    function updatePauseUi() {
+      const show = state.running && state.paused;
+      els.pauseOverlay.classList.toggle("show", show);
+      els.pauseOverlay.setAttribute("aria-hidden", show ? "false" : "true");
+      els.pause.textContent = show ? "▶" : "Ⅱ";
+    }
+
+    async function playLoadedMedia() {
+      if (state.usingAudio && els.song.src) {
+        safeSeek(els.song, els.song.currentTime || 0);
+        await els.song.play();
+        if (els.mv.src) {
+          els.mv.muted = true;
+          safeSeek(els.mv, els.song.currentTime || 0);
+          els.mvFill.muted = true;
+          safeSeek(els.mvFill, els.song.currentTime || 0);
+          els.mvFill.play().catch(() => {});
+          els.mv.play().catch(() => {
+            els.meta.textContent = "音源でゲーム開始。MV背景は読み込み中または再生待ちです。";
+          });
+        }
+      } else if (els.mv.src) {
+        els.mv.muted = false;
+        els.mvFill.muted = true;
+        safeSeek(els.mvFill, els.mv.currentTime || 0);
+        els.mvFill.play().catch(() => {});
+        await els.mv.play();
+      }
+    }
+
+    async function startGame() {
+      setTitleVisible(false);
+      setCleanView(true);
+      state.titleBgmOn = false;
+      els.song.loop = false;
+      els.song.volume = 1;
+      updateTitleBgmUi();
+      if (initialLoadPromise) {
+        els.meta.textContent = "曲データを確認中...";
+        await initialLoadPromise.catch(() => {});
+      }
+      resetGame(false);
+      state.running = true;
+      state.paused = false;
+      state.finished = false;
+      els.resultModal.classList.remove("show");
+      updatePauseUi();
+      const media = primaryMedia();
+      state.duration = Number.isFinite(media.duration) && media.duration > 2 ? media.duration : state.duration;
+      if (!state.chart.length) setChart(makeDemoChart(state.duration), "mira-demo");
+      if (state.recording) {
+        state.recordedChart = [];
+        state.chart = [];
+        state.chartName = "mira-recorded-chart";
+        state.spawned.clear();
+        state.active.forEach(note => note.el && note.el.remove());
+        state.active = [];
+        els.meta.textContent = "録音中: 0 notes";
+      }
+      state.startTime = performance.now();
+      try {
+        seekLoadedMedia(0);
+        await playLoadedMedia();
+      } catch (error) {
+        state.running = false;
+        state.paused = false;
+        cancelAnimationFrame(state.raf);
+        els.start.textContent = "START";
+        updatePauseUi();
+        els.meta.textContent = "ブラウザが自動再生を止めました。もう一度STARTを押してください。";
+        return;
+      }
+      els.start.textContent = "RESTART";
+      state.raf = requestAnimationFrame(render);
+    }
+
+    function togglePause() {
+      if (!state.running) return;
+      state.paused = !state.paused;
+      if (state.paused) {
+        state.pauseTime = performance.now();
+        pauseLoadedMedia();
+        cancelAnimationFrame(state.raf);
+        updatePauseUi();
+      } else {
+        const media = primaryMedia();
+        if (!media || !media.src) {
+          state.startTime += performance.now() - state.pauseTime;
+        }
+        playLoadedMedia().catch(() => {
+          state.paused = true;
+          updatePauseUi();
+          els.meta.textContent = "再生を再開できませんでした。STARTを押し直してください。";
+        });
+        updatePauseUi();
+        state.raf = requestAnimationFrame(render);
+      }
+    }
+
+    function resetGame(clearChart = true) {
+      cancelAnimationFrame(state.raf);
+      state.running = false;
+      state.paused = false;
+      state.startTime = 0;
+      state.spawned.clear();
+      state.active.forEach(note => note.el && note.el.remove());
+      state.active = [];
+      if (clearChart) setChart(makeDemoChart(state.duration), "mira-demo");
+      if (clearChart) state.recordedChart = [];
+      state.score = 0;
+      state.combo = 0;
+      state.maxCombo = 0;
+      state.judged = 0;
+      state.perfect = 0;
+      state.great = 0;
+      state.good = 0;
+      state.miss = 0;
+      state.life = 1000;
+      state.fever = 0;
+      state.miraisiUntil = 0;
+      state.miraisiCooldownUntil = 0;
+      state.timingSamples = [];
+      state.finished = false;
+      state.clearStatus = "CLEAR";
+      els.resultModal.classList.remove("show");
+      els.start.textContent = "START";
+      updatePauseUi();
+      updateHud();
+    }
+
+    function finishGame(status = "CLEAR") {
+      state.finished = true;
+      state.clearStatus = status;
+      state.running = false;
+      cancelAnimationFrame(state.raf);
+      pauseLoadedMedia();
+      els.start.textContent = "START";
+      updatePauseUi();
+      showResult();
+    }
+
+    function showResult() {
+      const total = Math.max(1, state.chart.length);
+      const weighted = state.perfect + state.great * .82 + state.good * .55;
+      const accuracy = Math.max(0, Math.min(100, (weighted / total) * 100));
+      const fullCombo = state.miss === 0 && state.maxCombo >= state.chart.length && state.chart.length > 0;
+      const failed = state.clearStatus === "FAILED" || state.life <= 0;
+      const status = failed ? "FAILED" : fullCombo ? "FULL COMBO" : "STAGE CLEAR";
+      els.resultTitle.textContent = failed ? "GAME OVER" : "RESULT";
+      els.resultStatus.textContent = status;
+      els.resultStatus.classList.toggle("failed", failed);
+      els.resultRank.textContent = currentRank();
+      els.resultScore.textContent = String(state.score).padStart(7, "0");
+      els.resultCombo.textContent = state.maxCombo;
+      els.resultAccuracy.textContent = `${accuracy.toFixed(1)}%`;
+      els.resultPerfect.textContent = state.perfect;
+      els.resultGreatGood.textContent = `${state.great} / ${state.good}`;
+      els.resultMiss.textContent = state.miss;
+      els.resultNotes.textContent = `${Math.max(0, Math.round(state.life))} / ${state.chart.length}`;
+      els.resultModal.classList.add("show");
+    }
+
+    async function generateChartFromArrayBuffer(arrayBuffer, name) {
+      const ctx = new AudioContext();
+      const audioBuffer = await ctx.decodeAudioData(arrayBuffer.slice(0));
+      const data = audioBuffer.getChannelData(0);
+      const sampleRate = audioBuffer.sampleRate;
+      const window = Math.floor(sampleRate * .115);
+      const chart = [];
+      let lastEnergy = 0;
+      let lastNoteTime = -99;
+      let lane = 0;
+      const densityScale = Math.max(.5, Math.min(1.8, state.noteDensity || 1));
+      const threshold = .075 / Math.sqrt(densityScale);
+      const rise = Math.max(1.04, 1.22 - Math.max(0, densityScale - 1) * .18);
+      const minGap = Math.max(.08, .2 / densityScale);
+      for (let i = 0; i < data.length; i += window) {
+        let sum = 0;
+        for (let j = 0; j < window && i + j < data.length; j += 24) {
+          const v = data[i + j];
+          sum += v * v;
+        }
+        const energy = Math.sqrt(sum / Math.max(1, window / 24));
+        const time = i / sampleRate;
+        if (time > .8 && time - lastNoteTime >= minGap && energy > threshold && energy > lastEnergy * rise) {
+          chart.push({ time: Number(time.toFixed(3)), lane: lane % 4, type: chart.length % 12 === 0 ? "gold" : chart.length % 3 === 0 ? "pink" : "cyan" });
+          lastNoteTime = time;
+          lane += energy > .16 ? 2 : 1;
+        }
+        lastEnergy = lastEnergy * .72 + energy * .28;
+      }
+      await ctx.close();
+      state.chart = normalizeChart(chart.length > 24 ? chart : makeDemoChart(audioBuffer.duration));
+      state.chartName = name.replace(/\.[^.]+$/, "") || "mira-audio-chart";
+      state.assetChart = state.chartName;
+      state.duration = audioBuffer.duration;
+      els.meta.textContent = `譜面生成: ${state.chart.length} notes / ${Math.round(state.duration)} sec`;
+      updateAssetStatus();
+    }
+
+    async function generateChartFromAudio(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      await generateChartFromArrayBuffer(arrayBuffer, file.name);
+    }
+
+    async function loadTrackManifest() {
+      try {
+        const response = await fetch(tracksManifest, { cache: "no-store" });
+        if (!response.ok) throw new Error("manifest unavailable");
+        const data = await response.json();
+        const tracks = Array.isArray(data.tracks) && data.tracks.length ? data.tracks : fallbackTracks;
+        populateTrackSelect(tracks);
+        return tracks;
+      } catch (error) {
+        populateTrackSelect(fallbackTracks);
+        return fallbackTracks;
+      }
+    }
+
+    async function applyTrack(track = selectedTrack()) {
+      try {
+        if (!track) throw new Error("track missing");
+        pauseLoadedMedia();
+        clearYoutubeBackground();
+        resetGame(false);
+        els.song.src = track.audio || bundledAudio;
+        els.song.load();
+        state.usingAudio = true;
+        state.chartName = track.title || track.id || "mira-track";
+        state.assetSong = track.title || track.id || "MIRA";
+        state.assetAudio = track.audio || bundledAudio;
+        state.placeholderAudio = (track.audio || bundledAudio) === bundledAudio;
+        if (track.mvUrl) {
+          els.mvUrlInput.value = track.mvUrl;
+          loadMvUrl(track.mvUrl);
+        } else {
+          els.mvUrlInput.value = "";
+          els.mv.removeAttribute("src");
+          els.mv.load();
+          els.mvFill.removeAttribute("src");
+          els.mvFill.load();
+          els.demoBg.style.display = "";
+          state.assetMv = "アニメ背景";
+        }
+        const chartResponse = await fetch(track.chart || bundledChart, { cache: "no-store" });
+        if (chartResponse.ok) {
+        const data = await chartResponse.json();
+        setChart(data.notes || [], data.title || track.title || "MIRA", data.layout || track.layout || "depth");
+        if (Number.isFinite(Number(data.displaySpeed))) state.speed = Number(data.displaySpeed);
+        if (Number.isFinite(Number(data.noteDensity))) state.noteDensity = Number(data.noteDensity);
+        setOffset(data.offsetMs || track.offsetMs || 0);
+        updateMakerPanel();
+        els.meta.textContent = `${state.chartName}: ${state.chart.length} notes / ${track.artist || "MIRA"}`;
+        updateAssetStatus();
+        return;
+      }
+        const response = await fetch(track.audio || bundledAudio, { cache: "no-store" });
+        if (!response.ok) throw new Error("default audio unavailable");
+        await generateChartFromArrayBuffer(await response.arrayBuffer(), track.title || "MIRA");
+        setOffset(track.offsetMs || 0);
+        els.meta.textContent = `${state.chartName}: ${state.chart.length} notes / 自動生成`;
+        updateAssetStatus();
+      } catch (error) {
+        els.meta.textContent = "曲プリセットを読み込めませんでした。音源読込からMP3 / WAVを選んでください。";
+      }
+    }
+
+    async function loadBundledAudio() {
+      const tracks = await loadTrackManifest();
+      await applyTrack(tracks[0]);
+    }
+
+    function loadVideo(file) {
+      if (!file) return;
+      clearYoutubeBackground();
+      const url = URL.createObjectURL(file);
+      els.mv.src = url;
+      els.mv.muted = true;
+      els.mv.load();
+      els.mvFill.src = url;
+      els.mvFill.muted = true;
+      els.mvFill.load();
+      els.demoBg.style.display = "none";
+      state.usingAudio = Boolean(els.song.src);
+      state.assetMv = file.name;
+      els.meta.textContent = state.usingAudio ? `MV: ${file.name} / 音源と同期再生` : `MV: ${file.name}`;
+      updateAssetStatus();
+    }
+
+    function loadCharacter(file) {
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      els.miraCharacter.src = url;
+      els.miraCharacterWrap.hidden = false;
+      state.assetCharacter = file.name;
+      state.characterSway = true;
+      updateCharacterSwayUi();
+      updateAssetStatus();
+      els.meta.textContent = `ミラ読込: ${file.name} / ゆらゆら表示中`;
+    }
+
+    function clearYoutubeBackground() {
+      els.youtubeBg.hidden = true;
+      els.youtubeBg.src = "about:blank";
+    }
+
+    function youtubeEmbedUrl(input) {
+      let url;
+      try {
+        url = new URL(input);
+      } catch (error) {
+        return "";
+      }
+      let id = "";
+      if (url.hostname.includes("youtu.be")) {
+        id = url.pathname.split("/").filter(Boolean)[0] || "";
+      } else if (url.hostname.includes("youtube.com")) {
+        id = url.searchParams.get("v") || "";
+        if (!id && url.pathname.includes("/shorts/")) id = url.pathname.split("/shorts/")[1].split("/")[0];
+        if (!id && url.pathname.includes("/embed/")) id = url.pathname.split("/embed/")[1].split("/")[0];
+      }
+      if (!/^[\w-]{6,}$/.test(id)) return "";
+      const params = new URLSearchParams({
+        autoplay: "1",
+        mute: "1",
+        loop: "1",
+        playlist: id,
+        controls: "0",
+        playsinline: "1",
+        modestbranding: "1",
+        rel: "0"
+      });
+      return `https://www.youtube.com/embed/${id}?${params.toString()}`;
+    }
+
+    function loadMvUrl(source = "") {
+      const raw = (source || els.mvUrlInput.value).trim();
+      if (!raw) return;
+      const embed = youtubeEmbedUrl(raw);
+      if (embed) {
+        els.mv.removeAttribute("src");
+        els.mv.load();
+        els.mvFill.removeAttribute("src");
+        els.mvFill.load();
+        els.youtubeBg.src = embed;
+        els.youtubeBg.hidden = false;
+        els.demoBg.style.display = "none";
+        state.usingAudio = Boolean(els.song.src);
+        state.assetMv = `YouTube: ${raw}`;
+        els.meta.textContent = "YouTube MV背景: 音源ファイル側を主音声として再生します。";
+        updateAssetStatus();
+        return;
+      }
+      const videoSrc = (() => {
+        try {
+          return new URL(raw).href;
+        } catch (error) {
+          return raw;
+        }
+      })();
+      clearYoutubeBackground();
+      els.mv.src = videoSrc;
+      els.mv.muted = true;
+      els.mv.load();
+      els.mvFill.src = videoSrc;
+      els.mvFill.muted = true;
+      els.mvFill.load();
+      els.demoBg.style.display = "none";
+      state.usingAudio = Boolean(els.song.src);
+      state.assetMv = raw;
+      els.meta.textContent = raw.includes("://")
+        ? "MV URL背景: 音源と同期再生します。"
+        : `同梱MV背景: ${raw} / 音源と同期再生します。`;
+      updateAssetStatus();
+    }
+
+    async function loadAudio(file) {
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      els.song.src = url;
+      els.song.load();
+      state.usingAudio = true;
+      els.mv.muted = true;
+      els.mvFill.muted = true;
+      state.assetSong = file.name.replace(/\.[^.]+$/, "");
+      state.assetAudio = file.name;
+      state.placeholderAudio = false;
+      els.meta.textContent = `音源: ${file.name} / 譜面解析中...`;
+      updateAssetStatus();
+      await generateChartFromAudio(file);
+    }
+
+    async function loadChart(file) {
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        const source = data && data.chart && Array.isArray(data.chart.notes) ? data.chart : data;
+        const notes = Array.isArray(source) ? source : source.notes;
+        if (!Array.isArray(notes)) throw new Error("notes array missing");
+        state.offsetMs = Number(source.offsetMs || 0);
+        if (Number.isFinite(Number(source.displaySpeed))) state.speed = Number(source.displaySpeed);
+        if (Number.isFinite(Number(source.noteDensity))) state.noteDensity = Number(source.noteDensity);
+        els.offsetInput.value = String(Math.max(-240, Math.min(240, state.offsetMs)));
+        els.offsetText.textContent = `${state.offsetMs}ms`;
+        setChart(notes, source.title || data.title || file.name.replace(/\.[^.]+$/, ""), source.layout || data.layout || "depth");
+        els.meta.textContent = `譜面読込: ${state.chartName} / ${state.chart.length} notes`;
+        updateAssetStatus();
+      } catch (error) {
+        els.meta.textContent = "譜面JSONを読み込めませんでした。";
+      }
+    }
+
+    async function loadDroppedFiles(files) {
+      const list = [...files];
+      let loaded = 0;
+      for (const file of list) {
+        const name = file.name.toLowerCase();
+        if (file.type.startsWith("video/") || /\.(mp4|webm|mov|m4v)$/i.test(name)) {
+          loadVideo(file);
+          loaded += 1;
+        } else if (file.type.startsWith("audio/") || /\.(wav|mp3|m4a|ogg)$/i.test(name)) {
+          await loadAudio(file);
+          loaded += 1;
+        } else if (file.type.startsWith("image/") || /\.(png|jpe?g|webp|gif)$/i.test(name)) {
+          loadCharacter(file);
+          loaded += 1;
+        } else if (name.endsWith(".json")) {
+          await loadChart(file);
+          loaded += 1;
+        }
+      }
+      els.meta.textContent = loaded
+        ? `ドロップ読込: ${loaded} files`
+        : "ドロップ読込: MP3 / WAV / MP4 / PNG / JSON を入れてください。";
+    }
+
+    function chartPayload() {
+      return {
+        title: state.chartName || "mira-chart",
+        version: 1,
+        layout: state.layout,
+        lanes: 4,
+        offsetMs: state.offsetMs,
+        displaySpeed: Number(state.speed.toFixed(2)),
+        noteDensity: Number(state.noteDensity.toFixed(2)),
+        notes: normalizeChart(state.chart).map(note => ({
+          time: Number(note.time.toFixed(3)),
+          lane: note.lane,
+          type: note.type,
+          kind: note.kind || "tap",
+          duration: note.kind === "hold" ? Number(note.duration.toFixed(3)) : undefined
+        }))
+      };
+    }
+
+    function openChartEditor() {
+      els.chartEditor.value = JSON.stringify(chartPayload(), null, 2);
+      els.editorStatus.textContent = `${state.chartName}: ${state.chart.length} notes`;
+      els.editorModal.classList.add("show");
+    }
+
+    function applyChartEditor() {
+      try {
+        const data = JSON.parse(els.chartEditor.value);
+        const source = data && data.chart && Array.isArray(data.chart.notes) ? data.chart : data;
+        const notes = Array.isArray(source) ? source : source.notes;
+        if (!Array.isArray(notes)) throw new Error("notes array missing");
+        state.offsetMs = Number(source.offsetMs || 0);
+        if (Number.isFinite(Number(source.displaySpeed))) state.speed = Number(source.displaySpeed);
+        if (Number.isFinite(Number(source.noteDensity))) state.noteDensity = Number(source.noteDensity);
+        els.offsetInput.value = String(Math.max(-240, Math.min(240, state.offsetMs)));
+        els.offsetText.textContent = `${state.offsetMs}ms`;
+        setChart(notes, source.title || data.title || state.chartName || "mira-chart", source.layout || data.layout || state.layout);
+        els.editorStatus.textContent = `反映しました: ${state.chart.length} notes`;
+        els.meta.textContent = `譜面編集: ${state.chartName} / ${state.chart.length} notes`;
+      } catch (error) {
+        els.editorStatus.textContent = "JSONを反映できませんでした。notes配列を確認してください。";
+      }
+    }
+
+    function saveChart() {
+      if (state.trialSaveLocked) {
+        els.meta.textContent = "試乗版では譜面保存はLOCK中です。製品版でJSON保存を解放予定です。";
+        showJudge("LOCKED");
+        return;
+      }
+      const payload = chartPayload();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${payload.title || "mira-chart"}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      els.meta.textContent = `譜面保存: ${payload.notes.length} notes`;
+    }
+
+    function makerProjectPayload() {
+      return {
+        type: "mira-rhythm-maker-project",
+        version: 1,
+        title: state.assetSong || state.chartName || "MIRA Rhythm",
+        assets: {
+          audio: state.assetAudio || "",
+          mv: state.assetMv || "",
+          character: state.assetCharacter || ""
+        },
+        timeline: {
+          duration: Number(state.duration.toFixed(3)),
+          background: {
+            mode: state.assetMv && state.assetMv !== "アニメ背景" ? "video" : "image-or-demo",
+            start: 0,
+            end: Number(state.duration.toFixed(3))
+          }
+        },
+        maker: {
+          noteDensity: Number(state.noteDensity.toFixed(2)),
+          displaySpeed: Number(state.speed.toFixed(2)),
+          lanes: 4
+        },
+        chart: chartPayload()
+      };
+    }
+
+    function saveMakerProject() {
+      if (state.trialSaveLocked) {
+        els.meta.textContent = "試乗版では作成データ保存はLOCK中です。製品版の目玉機能として残しています。";
+        showJudge("LOCKED");
+        return;
+      }
+      const payload = makerProjectPayload();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${payload.title || "mira-rhythm"}-project.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      els.meta.textContent = `作成データ保存: ${payload.chart.notes.length} notes / 速度 ${payload.maker.displaySpeed}s`;
+    }
+
+    els.start.addEventListener("click", startGame);
+    els.titleStart.addEventListener("click", startGame);
+    els.titleBgm.addEventListener("click", toggleTitleBgm);
+    els.titlePc.addEventListener("click", () => selectDevice("pc"));
+    els.titleSp.addEventListener("click", () => selectDevice("sp"));
+    els.titleSoonButtons.forEach(button => {
+      button.addEventListener("click", () => showComingSoon(button.dataset.soon || "COMING SOON"));
+    });
+    els.pause.addEventListener("click", togglePause);
+    els.resumePause.addEventListener("click", togglePause);
+    els.restartPause.addEventListener("click", startGame);
+    els.miraisiSkill.addEventListener("click", activateMiraisi);
+    els.reset.addEventListener("click", () => resetGame(true));
+    els.autoPlay.addEventListener("click", () => {
+      state.autoPlay = !state.autoPlay;
+      updateAutoPlayUi();
+      els.meta.textContent = state.autoPlay
+        ? "AUTO ON: 譜面とMVの流れを観賞・確認できます。"
+        : "AUTO OFF: 手動プレイに戻りました。";
+    });
+    els.autoChart.addEventListener("click", () => {
+      setChart(makeDemoChart(state.duration), "mira-demo", "depth");
+      els.meta.textContent = `デモ譜面: ${state.chart.length} notes`;
+      updateHud();
+    });
+    els.applyMakerChart.addEventListener("click", () => {
+      setChart(makeDemoChart(state.duration, state.noteDensity), `${state.assetSong || "mira"}-maker-chart`, "depth");
+      els.meta.textContent = `作成モード生成: 出現率 ${Math.round(state.noteDensity * 100)}% / ${state.chart.length} notes`;
+      updateHud();
+    });
+    els.openMakerJson.addEventListener("click", openChartEditor);
+    els.saveProject.addEventListener("click", saveMakerProject);
+    els.saveChart.addEventListener("click", saveChart);
+    els.editChart.addEventListener("click", openChartEditor);
+    els.closeEditor.addEventListener("click", () => els.editorModal.classList.remove("show"));
+    els.applyChart.addEventListener("click", applyChartEditor);
+    els.showResult.addEventListener("click", showResult);
+    els.closeResult.addEventListener("click", () => els.resultModal.classList.remove("show"));
+    els.retryResult.addEventListener("click", startGame);
+    els.recordChart.addEventListener("click", () => {
+      state.recording = !state.recording;
+      updateRecordUi();
+      els.meta.textContent = state.recording
+        ? "録音ON: STARTして曲に合わせてD/F/J/Kを叩くと譜面になります。"
+        : `録音OFF: ${state.recordedChart.length} notes`;
+    });
+    els.clearRecorded.addEventListener("click", () => {
+      state.recordedChart = [];
+      if (state.chartName === "mira-recorded-chart") setChart([], "mira-recorded-chart");
+      els.meta.textContent = "録音譜面を消去しました。";
+    });
+    els.loadTrack.addEventListener("click", () => applyTrack(selectedTrack()));
+    els.reloadTracks.addEventListener("click", async () => {
+      const tracks = await loadTrackManifest();
+      els.meta.textContent = `曲リスト更新: ${tracks.length} songs`;
+    });
+    els.trackSelect.addEventListener("change", () => {
+      const track = selectedTrack();
+      els.meta.textContent = `${track.title || track.id}: 読み込み中...`;
+      applyTrack(track);
+    });
+    els.videoInput.addEventListener("change", event => loadVideo(event.target.files[0]));
+    els.audioInput.addEventListener("change", event => loadAudio(event.target.files[0]));
+    els.characterInput.addEventListener("change", event => loadCharacter(event.target.files[0]));
+    els.characterSway.addEventListener("click", () => {
+      state.characterSway = !state.characterSway;
+      updateCharacterSwayUi();
+      els.meta.textContent = state.characterSway ? "ミラ揺れ: ON" : "ミラ揺れ: OFF";
+    });
+    els.loadMvUrl.addEventListener("click", loadMvUrl);
+    els.mvUrlInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        loadMvUrl();
+      }
+    });
+    els.chartInput.addEventListener("change", event => loadChart(event.target.files[0]));
+    els.autoOffset.addEventListener("click", applyAutoOffset);
+    els.clearTiming.addEventListener("click", clearTimingSamples);
+    els.offsetInput.addEventListener("input", event => {
+      state.offsetMs = Number(event.target.value);
+      els.offsetText.textContent = `${state.offsetMs}ms`;
+    });
+    els.noteDensityInput.addEventListener("input", event => setNoteDensity(event.target.value));
+    els.noteSpeedInput.addEventListener("input", event => setNoteSpeed(event.target.value));
+    els.bgDimInput.addEventListener("input", applyBackgroundTuning);
+    els.bgBlurInput.addEventListener("input", applyBackgroundTuning);
+    els.pcMode.addEventListener("click", () => selectDevice("pc"));
+    els.spMode.addEventListener("click", () => selectDevice("sp"));
+    els.cleanView.addEventListener("click", toggleCleanView);
+
+    window.addEventListener("dragover", event => {
+      event.preventDefault();
+      document.body.classList.add("dragging");
+    });
+    window.addEventListener("dragleave", event => {
+      if (event.clientX <= 0 || event.clientY <= 0 || event.clientX >= window.innerWidth || event.clientY >= window.innerHeight) {
+        document.body.classList.remove("dragging");
+      }
+    });
+    window.addEventListener("drop", async event => {
+      event.preventDefault();
+      document.body.classList.remove("dragging");
+      await loadDroppedFiles(event.dataTransfer.files);
+    });
+
+    els.pads.forEach(pad => {
+      pad.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        ensureSfxContext();
+        hitLane(Number(pad.dataset.lane), pad.dataset.arrow || "");
+      });
+    });
+
+    window.addEventListener("keydown", event => {
+      const targetTag = event.target && event.target.tagName ? event.target.tagName.toLowerCase() : "";
+      const editingText = targetTag === "input" || targetTag === "textarea" || targetTag === "select";
+      if (editingText) return;
+      const arrowLanes = new Map([
+        ["ArrowLeft", { lane: 0, arrow: "left" }],
+        ["ArrowUp", { lane: 0, arrow: "up" }],
+        ["ArrowDown", { lane: 1, arrow: "down" }],
+        ["ArrowRight", { lane: 1, arrow: "right" }]
+      ]);
+      const arrowInput = arrowLanes.get(event.key);
+      const lane = state.layout === "taiko" ? arrowInput?.lane : keys.get(event.key.toLowerCase());
+      if (state.layout === "taiko" && arrowLanes.has(event.key)) event.preventDefault();
+      if (lane !== undefined) {
+        ensureSfxContext();
+        hitLane(lane, arrowInput?.arrow || "");
+      }
+      if (event.code === "Space") {
+        event.preventDefault();
+        togglePause();
+      }
+      if (event.key.toLowerCase() === "h") toggleCleanView();
+    });
+
+    selectDevice();
+    resetGame(true);
+    updateRecordUi();
+    updateAutoPlayUi();
+    updateTrialUi();
+    updateCharacterSwayUi();
+    updateTitleBgmUi();
+    updateCleanViewUi();
+    updateAssetStatus();
+    applyBackgroundTuning();
+    setTitleVisible(true);
+    initialLoadPromise = loadBundledAudio();
+  </script>
+</body>
+</html>

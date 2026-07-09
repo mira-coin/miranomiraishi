@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ミラ無双 横スクロールアクション体験版</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Noto Sans JP", "Yu Gothic UI", system-ui, sans-serif;
+      --cyan: #56dcff;
+      --gold: #ffd36a;
+      --pink: #ff66c7;
+    }
+    * { box-sizing: border-box; touch-action: none; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #060914; color: white; }
+    canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+    .hud {
+      position: fixed;
+      top: max(10px, env(safe-area-inset-top));
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .logo {
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(8,12,28,.55), rgba(8,12,28,.2));
+      text-shadow: 0 3px 0 #000, 0 0 18px rgba(82,224,255,.85);
+      font-weight: 1000;
+      font-size: clamp(18px, 3.5vw, 34px);
+      letter-spacing: .02em;
+    }
+    .stats { display: flex; gap: 8px; flex-wrap: wrap; justify-content: end; }
+    .chip {
+      min-width: 78px;
+      padding: 8px 10px;
+      border: 2px solid rgba(255,255,255,.22);
+      border-radius: 10px;
+      background: rgba(3,6,18,.62);
+      box-shadow: inset 0 0 18px rgba(86,220,255,.16), 0 8px 24px rgba(0,0,0,.35);
+      text-align: center;
+    }
+    .chip small { display: block; font-size: 10px; color: #bdeeff; font-weight: 1000; }
+    .chip b { display: block; font-size: 21px; color: var(--gold); line-height: 1.1; }
+    .title {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: end center;
+      padding: 24px 18px max(36px, env(safe-area-inset-bottom));
+      background: #050815 url("../images/mira-musou-title-screen.png") center / cover no-repeat;
+      z-index: 5;
+    }
+    .title::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0 62%, rgba(0,0,0,.42));
+      pointer-events: none;
+    }
+    .start {
+      position: relative;
+      min-width: min(430px, 74vw);
+      min-height: 72px;
+      border: 3px solid #fff1b7;
+      border-radius: 999px;
+      color: #fff9da;
+      background: linear-gradient(180deg, #ffe08a, #b86910 52%, #784107);
+      box-shadow: 0 8px 0 #351b02, 0 0 32px rgba(255,204,90,.75), inset 0 3px 10px rgba(255,255,255,.7);
+      text-shadow: 0 3px 0 #4b2500;
+      font: inherit;
+      font-size: clamp(26px, 6vw, 44px);
+      font-weight: 1000;
+      cursor: pointer;
+    }
+    .touch {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .pad, .actions { display: grid; gap: 8px; pointer-events: auto; }
+    .pad { grid-template-columns: repeat(3, 54px); grid-template-rows: repeat(2, 54px); }
+    .actions { grid-template-columns: repeat(2, 64px); }
+    .pad button, .actions button {
+      min-height: 54px;
+      padding: 0;
+      border: 2px solid rgba(255,255,255,.24);
+      border-radius: 13px;
+      color: #fff;
+      background: rgba(4,8,24,.5);
+      box-shadow: inset 0 0 18px rgba(86,220,255,.16), 0 8px 24px rgba(0,0,0,.3);
+      backdrop-filter: blur(10px);
+      font: inherit;
+      font-weight: 1000;
+    }
+    .pad .up { grid-column: 2; }
+    .pad .left { grid-column: 1; grid-row: 2; }
+    .pad .down { grid-column: 2; grid-row: 2; }
+    .pad .right { grid-column: 3; grid-row: 2; }
+    .actions .wide { grid-column: span 2; color: #061018; background: linear-gradient(135deg, var(--cyan), #fff 52%, var(--pink)); }
+    .hidden { display: none !important; }
+    @media (max-width: 720px) {
+      .hud { flex-direction: column; }
+      .stats { justify-content: start; }
+      .chip { min-width: 68px; padding: 7px 8px; }
+      .pad { grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(2, 48px); }
+      .actions { grid-template-columns: repeat(2, 58px); }
+      .pad button, .actions button { min-height: 48px; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div class="hud">
+    <div class="logo">ミラの未来視外伝 ミラ無双</div>
+    <div class="stats">
+      <div class="chip"><small>SCORE</small><b id="score">0</b></div>
+      <div class="chip"><small>HP</small><b id="hp">100</b></div>
+      <div class="chip"><small>COMBO</small><b id="combo">0</b></div>
+      <div class="chip"><small>未来視</small><b id="future">0</b></div>
+    </div>
+  </div>
+
+  <div class="title" id="title">
+    <button class="start" id="start">GAME START</button>
+  </div>
+
+  <div class="touch">
+    <div class="pad" aria-label="移動">
+      <button class="up" data-key="jump">▲</button>
+      <button class="left" data-key="left">◀</button>
+      <button class="down" data-key="down">▼</button>
+      <button class="right" data-key="right">▶</button>
+    </div>
+    <div class="actions" aria-label="攻撃">
+      <button data-key="attack">斬</button>
+      <button data-key="dash">避</button>
+      <button class="wide" data-key="special">未来視</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.querySelector("#game");
+    const ctx = canvas.getContext("2d");
+    const title = document.querySelector("#title");
+    const scoreEl = document.querySelector("#score");
+    const hpEl = document.querySelector("#hp");
+    const comboEl = document.querySelector("#combo");
+    const futureEl = document.querySelector("#future");
+    const keys = new Set();
+    const imgs = {};
+    const sources = {
+      bg: "../images/mira-musou-bg-main.jpg",
+      player: "../images/mira-musou-player.png",
+      enemy: "../images/mira-musou-enemy.png",
+      slash: "../images/mira-musou-slash.png"
+    };
+    let w = 0, h = 0, dpr = 1, last = 0, running = false;
+    let camera = 0, score = 0, combo = 0, comboTime = 0, spawn = 0, clearText = "";
+    const world = 5000;
+    const gravity = 1800;
+    const player = { x: 360, y: 0, vx: 0, vy: 0, hp: 100, future: 0, face: 1, ground: true, atk: 0, inv: 0, special: 0 };
+    let enemies = [];
+    let slashes = [];
+    let particles = [];
+
+    function loadImages() {
+      return Promise.all(Object.entries(sources).map(([key, src]) => new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => { imgs[key] = img; resolve(); };
+        img.onerror = resolve;
+        img.src = src;
+      })));
+    }
+
+    function resize() {
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      w = innerWidth; h = innerHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      player.y = Math.min(player.y || ground() - 112, ground() - 112);
+    }
+    function ground() { return h * .79; }
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+    function rnd(a, b) { return a + Math.random() * (b - a); }
+    function hit(a, b) {
+      return Math.abs(a.x - b.x) * 2 < (a.w + b.w) && Math.abs(a.y - b.y) * 2 < (a.h + b.h);
+    }
+
+    function reset() {
+      running = true; camera = 0; score = 0; combo = 0; comboTime = 0; spawn = 0; clearText = "";
+      Object.assign(player, { x: 360, y: ground() - 112, vx: 0, vy: 0, hp: 100, future: 0, face: 1, ground: true, atk: 0, inv: 0, special: 0 });
+      enemies = []; slashes = []; particles = [];
+      for (let i = 0; i < 9; i++) addEnemy(850 + i * 360);
+      updateHud();
+    }
+    function addEnemy(x) {
+      enemies.push({ x, y: ground() - 92, w: 120, h: 130, hp: 36, vx: -rnd(35, 90), stun: 0, flash: 0 });
+    }
+    function slash(power) {
+      const big = power > 1;
+      slashes.push({ x: player.x + player.face * (big ? 128 : 92), y: player.y - 40, w: big ? 270 : 180, h: big ? 150 : 104, face: player.face, life: big ? .25 : .16, damage: big ? 92 : 30, big });
+      for (let i = 0; i < (big ? 26 : 10); i++) spark(player.x + player.face * rnd(30, big ? 210 : 130), player.y + rnd(-95, 25), big ? "#ffd36a" : "#56dcff");
+    }
+    function spark(x, y, color) {
+      particles.push({ x, y, vx: rnd(-260, 260), vy: rnd(-310, 100), r: rnd(2, 6), life: rnd(.28, .72), max: .72, color });
+    }
+
+    function update(dt) {
+      if (!running) return;
+      const left = keys.has("left") || keys.has("ArrowLeft") || keys.has("a") || keys.has("A");
+      const right = keys.has("right") || keys.has("ArrowRight") || keys.has("d") || keys.has("D");
+      const jump = keys.has("jump") || keys.has("ArrowUp") || keys.has("w") || keys.has("W") || keys.has(" ");
+      const attack = keys.has("attack") || keys.has("j") || keys.has("J");
+      const dash = keys.has("dash") || keys.has("Shift");
+      const special = keys.has("special") || keys.has("k") || keys.has("K");
+
+      player.vx *= Math.pow(.001, dt);
+      if (left) { player.vx -= 2100 * dt; player.face = -1; }
+      if (right) { player.vx += 2300 * dt; player.face = 1; }
+      if (jump && player.ground) { player.vy = -780; player.ground = false; }
+      if (dash && player.inv <= 0) { player.vx += player.face * 780; player.inv = .35; }
+      if (attack && player.atk <= 0) { player.atk = .25; slash(1); }
+      if (special && player.future >= 100 && player.special <= 0) { player.future = 0; player.special = 1.1; slash(2); }
+      player.atk -= dt; player.inv -= dt; player.special -= dt;
+      player.vx = clamp(player.vx, -520, 680);
+      player.vy += gravity * dt;
+      player.x = clamp(player.x + player.vx * dt, 180, world - 240);
+      player.y += player.vy * dt;
+      if (player.y >= ground() - 112) { player.y = ground() - 112; player.vy = 0; player.ground = true; }
+      camera = clamp(player.x - w * .34, 0, world - w);
+
+      spawn -= dt;
+      if (spawn <= 0 && camera < world - 900) { addEnemy(camera + w + rnd(180, 430)); spawn = rnd(1.1, 1.8); }
+      enemies.forEach(e => {
+        e.flash -= dt; e.stun -= dt;
+        if (e.stun <= 0) {
+          e.vx += Math.sign(player.x - e.x) * 150 * dt;
+          e.vx = clamp(e.vx, -130, 110);
+          e.x += e.vx * dt;
+        }
+        if (player.inv <= 0 && hit({ x: player.x, y: player.y - 12, w: 92, h: 150 }, e)) {
+          player.hp = clamp(player.hp - 10, 0, 100);
+          player.inv = .8;
+          player.vx = -player.face * 420;
+          combo = 0;
+          for (let i = 0; i < 10; i++) spark(player.x, player.y - 50, "#ff66c7");
+        }
+      });
+      slashes.forEach(s => {
+        s.life -= dt;
+        enemies.forEach(e => {
+          if (e.hp > 0 && hit(s, e)) {
+            e.hp -= s.damage; e.stun = .3; e.flash = .12; e.x += player.face * 42;
+            score += s.damage; combo += 1; comboTime = 1.2; player.future = clamp(player.future + 13, 0, 100);
+            for (let i = 0; i < 9; i++) spark(e.x, e.y + rnd(-45, 50), "#56dcff");
+          }
+        });
+      });
+      slashes = slashes.filter(s => s.life > 0);
+      enemies = enemies.filter(e => e.hp > 0 && e.x > camera - 300);
+      particles.forEach(p => { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 640 * dt; });
+      particles = particles.filter(p => p.life > 0);
+      comboTime -= dt; if (comboTime <= 0) combo = 0;
+      if (player.hp <= 0) finish("GAME OVER");
+      if (player.x > world - 360 && enemies.length < 4) finish("STAGE CLEAR");
+      updateHud();
+    }
+    function finish(text) { running = false; clearText = text; title.classList.remove("hidden"); document.querySelector("#start").textContent = text + " / RETRY"; }
+    function updateHud() {
+      scoreEl.textContent = Math.floor(score);
+      hpEl.textContent = Math.ceil(player.hp);
+      comboEl.textContent = combo;
+      futureEl.textContent = Math.floor(player.future);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      drawBackground();
+      drawFloor();
+      enemies.forEach(drawEnemy);
+      slashes.forEach(drawSlash);
+      drawPlayer();
+      particles.forEach(drawParticle);
+      drawProgress();
+    }
+    function sx(x) { return x - camera; }
+    function drawBackground() {
+      const img = imgs.bg;
+      if (!img) return;
+      const scale = Math.max(h / img.height, w / img.width);
+      const bw = img.width * scale, bh = img.height * scale;
+      const y = (h - bh) * .5;
+      for (let i = -1; i < Math.ceil(w / bw) + 2; i++) {
+        const x = i * bw - (camera * .22 % bw);
+        ctx.drawImage(img, x, y, bw, bh);
+      }
+      ctx.fillStyle = "rgba(0,0,0,.16)";
+      ctx.fillRect(0, 0, w, h);
+    }
+    function drawFloor() {
+      const y = ground();
+      ctx.save();
+      ctx.globalAlpha = .8;
+      ctx.strokeStyle = "rgba(88,222,255,.9)";
+      ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      ctx.globalAlpha = .25;
+      for (let i = 0; i < 20; i++) {
+        const x = ((i * 180 - camera * .8) % (w + 180)) - 90;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 95, h + 20); ctx.stroke();
+      }
+      ctx.restore();
+    }
+    function drawPlayer() {
+      ctx.save();
+      ctx.translate(sx(player.x), player.y);
+      if (player.inv > 0 && Math.floor(performance.now() / 70) % 2) ctx.globalAlpha = .55;
+      ctx.scale(player.face, 1);
+      ctx.shadowColor = "rgba(86,220,255,.9)";
+      ctx.shadowBlur = 24;
+      const img = imgs.player;
+      if (img) ctx.drawImage(img, -92, -165, 184, 252);
+      ctx.restore();
+    }
+    function drawEnemy(e) {
+      const x = sx(e.x);
+      if (x < -220 || x > w + 220) return;
+      ctx.save();
+      ctx.translate(x, e.y);
+      ctx.scale(player.x < e.x ? 1 : -1, 1);
+      ctx.shadowColor = e.flash > 0 ? "#fff" : "rgba(255,102,199,.8)";
+      ctx.shadowBlur = e.flash > 0 ? 28 : 16;
+      const img = imgs.enemy;
+      if (img) ctx.drawImage(img, -86, -98, 172, 168);
+      ctx.restore();
+    }
+    function drawSlash(s) {
+      ctx.save();
+      ctx.translate(sx(s.x), s.y);
+      ctx.scale(s.face, 1);
+      ctx.globalAlpha = clamp(s.life * 7, 0, 1);
+      ctx.shadowColor = s.big ? "#ffd36a" : "#56dcff";
+      ctx.shadowBlur = 34;
+      const img = imgs.slash;
+      if (img) ctx.drawImage(img, -s.w * .52, -s.h * .55, s.w, s.h);
+      ctx.restore();
+    }
+    function drawParticle(p) {
+      ctx.save();
+      ctx.globalAlpha = clamp(p.life / p.max, 0, 1);
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 16;
+      ctx.beginPath(); ctx.arc(sx(p.x), p.y, p.r, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+    function drawProgress() {
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,.2)";
+      ctx.fillRect(18, h - 14, w - 36, 5);
+      ctx.fillStyle = "#56dcff";
+      ctx.fillRect(18, h - 14, (w - 36) * clamp(player.x / world, 0, 1), 5);
+      ctx.restore();
+    }
+    function step(t) {
+      const dt = Math.min(.033, (t - last) / 1000 || 0);
+      last = t; update(dt); draw(); requestAnimationFrame(step);
+    }
+    addEventListener("resize", resize);
+    addEventListener("keydown", e => keys.add(e.key));
+    addEventListener("keyup", e => keys.delete(e.key));
+    document.querySelectorAll("[data-key]").forEach(btn => {
+      const key = btn.dataset.key;
+      btn.addEventListener("pointerdown", e => { e.preventDefault(); keys.add(key); });
+      btn.addEventListener("pointerup", () => keys.delete(key));
+      btn.addEventListener("pointercancel", () => keys.delete(key));
+      btn.addEventListener("pointerleave", () => keys.delete(key));
+    });
+    document.querySelector("#start").addEventListener("click", () => { title.classList.add("hidden"); reset(); });
+    resize();
+    loadImages().then(() => requestAnimationFrame(step));
+  </script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
