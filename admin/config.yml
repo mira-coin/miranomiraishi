@@ -1,0 +1,68 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images"
+public_folder: "images"
+
+locale: "ja"
+
+collections:
+  - name: "content"
+    label: "ホームページ内容"
+    files:
+      - name: "data"
+        label: "カード一覧・サイト設定"
+        file: "data.json"
+        description: "作品カードの追加・編集や、サイトの基本設定ができます。編集したら右上の「公開」を押してください。"
+        fields:
+          - { label: "バージョン", name: "version", widget: "hidden", default: "1.0.0" }
+          - { label: "更新日", name: "updatedAt", widget: "hidden", default: "2026-07-09" }
+          - label: "サイト設定"
+            name: "site"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "サイトタイトル", name: "title", widget: "string" }
+              - { label: "サブタイトル", name: "subtitle", widget: "string" }
+              - { label: "公開URL", name: "canonicalUrl", widget: "string" }
+              - { label: "サイト説明", name: "description", widget: "text" }
+              - { label: "上部の小見出し", name: "eyebrow", widget: "string" }
+              - { label: "ヒーロー画像", name: "heroImage", widget: "image", choose_url: false }
+              - { label: "AIルーム画像", name: "aiRoomImage", widget: "image", choose_url: false }
+              - { label: "BGMファイル", name: "bgm", widget: "string", required: false }
+          - label: "カード一覧"
+            name: "items"
+            label_singular: "カード"
+            widget: "list"
+            summary: "{{fields.title}}  （{{fields.section}}）"
+            fields:
+              - { label: "ID（英数字のユニーク名）", name: "id", widget: "string", hint: "例: game-new-001。他と重複しない英数字にしてください。" }
+              - label: "種類"
+                name: "type"
+                widget: "select"
+                options: ["manga", "image", "video", "voice", "link", "goods", "music", "game"]
+                default: "game"
+              - label: "表示場所（セクション）"
+                name: "section"
+                widget: "select"
+                options: ["hero", "manga", "game", "music", "goods", "world", "ai-idol", "links"]
+                default: "game"
+              - { label: "並び順（小さいほど先）", name: "order", widget: "number", value_type: "int", default: 50 }
+              - { label: "ラベル（左上の小さいタグ）", name: "label", widget: "string", required: false }
+              - { label: "アイコン文字", name: "icon", widget: "string", required: false }
+              - { label: "タイトル", name: "title", widget: "string" }
+              - { label: "説明文", name: "description", widget: "text", required: false }
+              - { label: "サムネ画像", name: "image", widget: "image", required: false, choose_url: false }
+              - { label: "リンク先URL（またはgames/xxx.html）", name: "url", widget: "string", required: false }
+              - { label: "ボタンの文字", name: "buttonLabel", widget: "string", required: false }
+              - { label: "音声パス（BGMカードのみ）", name: "audio", widget: "string", required: false }
+              - { label: "YouTube ID", name: "youtubeId", widget: "string", required: false }
+              - { label: "動画URL/mp4", name: "video", widget: "string", required: false }
+              - label: "複数リンク（ボタンを複数出したい時）"
+                name: "links"
+                widget: "list"
+                required: false
+                fields:
+                  - { label: "ボタン名", name: "label", widget: "string" }
+                  - { label: "URL", name: "url", widget: "string" }
