@@ -23,6 +23,15 @@
       ' ／ 快進撃中 ― 今、世界でも最も勢いある個人プロジェクト！' +
       ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>';
     document.body.insertBefore(bar, document.body.firstChild);
+    // remove the now-unused "Admin" nav entry (editor was deleted)
+    try {
+      [].slice.call(document.querySelectorAll('a,button')).forEach(function (el) {
+        var href = (el.getAttribute && (el.getAttribute("href") || "")) || "";
+        var txt = (el.textContent || "").trim().toLowerCase();
+        if (el.closest && el.closest("#news-ticker")) return;
+        if (/(^|\/)admin(\.html|\/|$)/i.test(href) || txt === "admin") el.remove();
+      });
+    } catch (e) {}
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
