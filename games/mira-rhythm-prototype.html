@@ -3790,6 +3790,59 @@
         else if (e.key === "Enter") { e.preventDefault(); playSelected(); }
       });
     })();
+    // ===== Menu BGM「女神の共演」: title + stage select, loop, stop in game =====
+    (function () {
+      const bgm = document.createElement("audio");
+      bgm.id = "menuBgm";
+      bgm.loop = true;
+      bgm.preload = "auto";
+      bgm.src = "megami-kyoen.mp3";
+      bgm.volume = 0.5;
+      document.body.appendChild(bgm);
+      let wantBgm = true;
+
+      function inMenu() {
+        const ms = document.getElementById("modeSelect");
+        const ss = document.getElementById("stageSelect");
+        return document.body.classList.contains("title-mode")
+          || (ms && ms.classList.contains("show"))
+          || (ss && ss.classList.contains("show"));
+      }
+      function playBgm() { if (wantBgm && inMenu()) bgm.play().catch(() => {}); }
+      function pauseBgm() { try { bgm.pause(); } catch (e) {} }
+
+      // start on first user gesture (autoplay policy)
+      const kick = () => playBgm();
+      window.addEventListener("pointerdown", kick, true);
+      window.addEventListener("keydown", kick, true);
+
+      // repurpose the title BGM button to toggle THIS menu bgm
+      const tb = document.getElementById("titleBgm");
+      if (tb) {
+        try { if (typeof toggleTitleBgm === "function") tb.removeEventListener("click", toggleTitleBgm); } catch (e) {}
+        tb.textContent = "♪ BGM ON";
+        tb.addEventListener("click", e => {
+          e.stopPropagation();
+          wantBgm = !wantBgm;
+          tb.textContent = wantBgm ? "♪ BGM ON" : "♪ BGM OFF";
+          if (wantBgm) playBgm(); else pauseBgm();
+        });
+      }
+
+      // stop bgm when a game/stage starts; resume when back to menu
+      if (typeof startGame === "function") {
+        const _sg = startGame;
+        startGame = async function () { pauseBgm(); return _sg.apply(this, arguments); };
+      }
+      if (typeof showModeSelect === "function") {
+        const _sm = showModeSelect;
+        showModeSelect = function () { const r = _sm.apply(this, arguments); setTimeout(playBgm, 0); return r; };
+      }
+      if (typeof backToTitle === "function") {
+        const _bt = backToTitle;
+        backToTitle = function () { const r = _bt.apply(this, arguments); setTimeout(playBgm, 0); return r; };
+      }
+    })();
     els.start.addEventListener("click", startGame);
     els.titleStart.addEventListener("click", () => showModeSelect());
     els.titleBgm.addEventListener("click", toggleTitleBgm);
