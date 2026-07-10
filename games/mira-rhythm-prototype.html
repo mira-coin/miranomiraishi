@@ -1751,25 +1751,30 @@
     .mm-menu-btn{background:transparent;border:1px solid rgba(150,180,255,.4);color:#cbd8ff;padding:8px 18px;border-radius:999px;font-size:12px;letter-spacing:.16em;cursor:pointer;}
     .mm-menu-btn:hover{background:rgba(120,150,255,.16);}
     /* ===== JUICE: gameplay feel + menu presentation ===== */
+    /* hit burst */
     .hit-burst{position:absolute;z-index:9;pointer-events:none;width:120px;height:120px;margin:-60px 0 0 -60px;}
     .hit-burst .ring{position:absolute;inset:18px;border-radius:50%;border:3px solid var(--brst,#8ef);box-shadow:0 0 16px var(--brst,#8ef);animation:burstRing .42s ease-out forwards;}
     .hit-burst .spark{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;background:var(--brst,#8ef);box-shadow:0 0 8px var(--brst,#8ef);animation:burstSpark .5s ease-out forwards;}
     @keyframes burstRing{0%{transform:scale(.25);opacity:.95}100%{transform:scale(1.6);opacity:0}}
     @keyframes burstSpark{0%{transform:translate(-50%,-50%);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy)));opacity:0}}
+    /* combo punch / break */
     .combo.punch strong{animation:comboPunch .2s ease-out;}
     @keyframes comboPunch{0%{transform:scale(1.45);filter:brightness(1.7) drop-shadow(0 0 14px var(--cyan))}100%{transform:scale(1);filter:none}}
     .combo.break{animation:comboBreak .32s ease;}
     @keyframes comboBreak{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}60%{transform:translateX(7px)}}
+    /* judgement per-type color */
     .judgement.j-perfect{color:#eafff9;text-shadow:0 0 16px #6ffcd6,0 0 34px #35b0ff,0 4px 0 rgba(18,58,58,.9);}
     .judgement.j-great{color:#eafcff;text-shadow:0 0 15px #7fe3ff,0 0 32px #4a7bff,0 4px 0 rgba(18,28,80,.9);}
     .judgement.j-good{color:#fff0fb;text-shadow:0 0 13px #ff9be8,0 0 28px #c46bff,0 4px 0 rgba(60,18,80,.9);}
     .judgement.j-miss{color:#ffd7de;text-shadow:0 0 13px #ff5a7a,0 0 26px #ff2d55,0 4px 0 rgba(70,10,24,.9);}
     .judgement.j-safe{color:#dfe6ff;opacity:.92;}
+    /* ambient danmaku particles (menus) */
     .mm-overlay::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.75;
       background-image:radial-gradient(2px 2px at 20% 30%,rgba(160,200,255,.55),transparent),radial-gradient(2px 2px at 70% 60%,rgba(200,160,255,.5),transparent),radial-gradient(1.5px 1.5px at 40% 82%,rgba(140,240,255,.5),transparent),radial-gradient(2px 2px at 85% 22%,rgba(180,180,255,.5),transparent),radial-gradient(1.5px 1.5px at 55% 45%,rgba(160,220,255,.45),transparent),radial-gradient(1.5px 1.5px at 12% 66%,rgba(200,180,255,.4),transparent);
       animation:mmDrift 16s linear infinite;}
     .mm-overlay>*{position:relative;z-index:1;}
     @keyframes mmDrift{0%{transform:translateY(0)}100%{transform:translateY(-46px)}}
+    /* menu entrance */
     .mm-overlay.show .mm-title{animation:titleIn .6s ease both;}
     @keyframes titleIn{0%{opacity:0;letter-spacing:.5em;filter:blur(7px)}100%{opacity:1;filter:blur(0)}}
     .mm-overlay.show .mm-cards>*{animation:cardIn .5s cubic-bezier(.2,.8,.2,1) both;}
@@ -1777,6 +1782,7 @@
     .mm-overlay.show .mm-cards>*:nth-child(3){animation-delay:.14s}
     .mm-overlay.show .mm-cards>*:nth-child(4){animation-delay:.21s}
     @keyframes cardIn{0%{opacity:0;transform:translateY(30px) scale(.95)}100%{opacity:1;transform:translateY(0) scale(1)}}
+    /* playfield ambient drift behind notes */
     .playfield::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.6;
       background-image:radial-gradient(2px 2px at 15% 18%,rgba(140,220,255,.4),transparent),radial-gradient(2px 2px at 80% 38%,rgba(255,160,240,.32),transparent),radial-gradient(1.5px 1.5px at 45% 70%,rgba(180,200,255,.32),transparent),radial-gradient(1.5px 1.5px at 65% 12%,rgba(160,240,255,.3),transparent);
       animation:mmDrift 12s linear infinite;}
@@ -1806,6 +1812,45 @@
       background-image:radial-gradient(2px 2px at 18% 20%,rgba(255,200,120,.42),transparent),radial-gradient(2px 2px at 78% 40%,rgba(255,140,170,.36),transparent),radial-gradient(1.5px 1.5px at 45% 72%,rgba(255,180,120,.34),transparent),radial-gradient(1.5px 1.5px at 62% 14%,rgba(255,220,150,.32),transparent);}
     .stage-soul .combo strong{color:#ffe0a0;}
     .stage-soul .judgement{text-shadow:0 0 14px #ffcf6b,0 0 30px #ff6a3c,0 4px 0 rgba(60,24,10,.9);}
+    /* ===== STAGE SELECT redesign: left preview + right scroll list ===== */
+    #stageSelect.mm-overlay{padding:0;gap:0;flex-direction:row;align-items:stretch;justify-content:stretch;overflow:hidden;}
+    #stageSelect .stg-wrap{display:flex;width:100%;height:100%;}
+    .stg-preview{position:relative;flex:1 1 60%;min-width:0;overflow:hidden;background:#05030f;display:flex;align-items:flex-end;}
+    #stgVid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92;}
+    .stg-preview::after{content:"";position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(90deg,transparent 40%,rgba(6,7,14,.55) 78%,rgba(6,7,14,.92)),linear-gradient(0deg,rgba(6,7,14,.92),transparent 46%);}
+    .stg-pv-info{position:relative;z-index:2;padding:7vh 3.5vw;max-width:70%;}
+    .stg-pv-stage{font-size:13px;letter-spacing:.36em;color:#7fe3ff;text-transform:uppercase;}
+    .stg-pv-title{font-size:clamp(28px,4.4vw,58px);font-weight:800;margin:8px 0 6px;line-height:1.06;text-shadow:0 4px 26px rgba(0,0,0,.65);}
+    .stg-pv-meta{font-size:14px;color:#c3d0ee;margin-bottom:22px;letter-spacing:.06em;}
+    .stg-play{display:inline-flex;align-items:center;gap:10px;padding:14px 34px;border-radius:999px;cursor:pointer;
+      font-size:16px;font-weight:800;letter-spacing:.14em;color:#04121a;border:none;
+      background:linear-gradient(90deg,#8fe6ff,#c9a8ff);box-shadow:0 10px 34px rgba(120,180,255,.5),0 0 0 1px rgba(255,255,255,.3) inset;
+      transition:transform .15s ease,box-shadow .15s ease;}
+    .stg-play:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 16px 44px rgba(140,190,255,.65);}
+    .stage-soul-pv .stg-play{background:linear-gradient(90deg,#ffcf6b,#ff6a8b);}
+    .stg-right{flex:0 0 min(430px,40%);display:flex;flex-direction:column;padding:3.4vh 20px 3vh;gap:12px;
+      background:linear-gradient(180deg,rgba(11,7,48,.96),rgba(5,3,15,.98));border-left:1px solid rgba(150,180,255,.22);}
+    .stg-head{font-size:16px;letter-spacing:.3em;color:#8fd4ff;font-weight:800;text-align:center;}
+    .stg-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:6px 4px;}
+    .stg-list::-webkit-scrollbar{width:6px;}
+    .stg-list::-webkit-scrollbar-thumb{background:rgba(140,180,255,.4);border-radius:3px;}
+    .stg-item{position:relative;padding:13px 16px;border-radius:12px;cursor:pointer;
+      border:1px solid rgba(150,180,255,.22);background:rgba(30,34,70,.55);transition:.15s;}
+    .stg-item .n{font-size:10px;letter-spacing:.28em;color:#7fe3ff;}
+    .stg-item .t{font-size:17px;font-weight:700;margin:2px 0 1px;}
+    .stg-item .d{font-size:11px;color:#9fb0da;}
+    .stg-item:hover{border-color:rgba(150,200,255,.6);background:rgba(46,52,100,.6);}
+    .stg-item.sel{border-color:#7fe3ff;background:rgba(90,150,255,.3);box-shadow:0 0 22px rgba(120,180,255,.4);transform:translateX(-5px);}
+    .stg-item.soon{opacity:.42;cursor:not-allowed;}
+    .stg-item.soon:hover{transform:none;background:rgba(30,34,70,.55);border-color:rgba(150,180,255,.22);}
+    .stg-back2{margin-top:6px;background:transparent;border:1px solid rgba(150,180,255,.4);color:#cbd8ff;padding:9px 20px;border-radius:999px;letter-spacing:.22em;font-size:12px;cursor:pointer;}
+    .stg-back2:hover{background:rgba(120,150,255,.16);}
+    @media (max-width:820px){
+      #stageSelect .stg-wrap{flex-direction:column;}
+      .stg-preview{flex:0 0 42%;}
+      .stg-right{flex:1;border-left:none;border-top:1px solid rgba(150,180,255,.22);}
+    }
   </style>
 </head>
 <body>
@@ -3595,6 +3640,7 @@
       const _ms = playMissSfx;
       playMissSfx = function () { try { _ms(); } catch (e) {} breakCombo(); };
     }
+    // menu selection SE
     let _uiCtx = null;
     function uiBlip(freq, dur, vol) {
       freq = freq || 660; dur = dur || .12; vol = vol || .14;
@@ -3611,11 +3657,12 @@
       } catch (e) {}
     }
     document.addEventListener("click", e => {
-      const el = e.target.closest && e.target.closest(".mm-card, .mm-back, .mm-menu-btn, .mk-back");
+      const el = e.target.closest && e.target.closest(".mm-card, .mm-back, #cardStage, #cardMaker, .mm-menu-btn, .mk-back");
       if (!el) return;
       if (el.classList.contains("locked")) { uiBlip(220, .1, .1); return; }
-      uiBlip((el.classList.contains("mm-back") || el.classList.contains("mk-back")) ? 480 : 720, .13, .13);
+      uiBlip(el.classList.contains("mm-back") || el.classList.contains("mk-back") ? 480 : 720, .13, .13);
     }, true);
+
     // ===== STAGE 4 "魂の歓喜" soul-skin wiring =====
     (function () {
       if (typeof startStage === "function") {
@@ -3630,6 +3677,118 @@
         const _sm = showModeSelect;
         showModeSelect = function () { document.body.classList.remove("stage-soul"); return _sm(); };
       }
+    })();
+    // ===== STAGE SELECT redesign: left MV preview + right scroll list =====
+    (function () {
+      const sel = document.getElementById("stageSelect");
+      if (!sel) return;
+      sel.innerHTML =
+        '<div class="stg-wrap">' +
+          '<div class="stg-preview" id="stgPreview">' +
+            '<video id="stgVid" muted loop playsinline preload="metadata"></video>' +
+            '<div class="stg-pv-info">' +
+              '<div class="stg-pv-stage" id="stgPvStage">STAGE 1</div>' +
+              '<div class="stg-pv-title" id="stgPvTitle">—</div>' +
+              '<div class="stg-pv-meta" id="stgPvMeta">MIRA</div>' +
+              '<button class="stg-play" id="stgPlay" type="button">▶ PLAY</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="stg-right">' +
+            '<div class="stg-head">STAGE SELECT</div>' +
+            '<div class="stg-list" id="stgList"></div>' +
+            '<button class="stg-back2" id="stgBack2" type="button">← MODE</button>' +
+          '</div>' +
+        '</div>';
+
+      const vid = document.getElementById("stgVid");
+      const pvStage = document.getElementById("stgPvStage");
+      const pvTitle = document.getElementById("stgPvTitle");
+      const pvMeta = document.getElementById("stgPvMeta");
+      const preview = document.getElementById("stgPreview");
+      const listEl = document.getElementById("stgList");
+      const playBtn = document.getElementById("stgPlay");
+      const back2 = document.getElementById("stgBack2");
+
+      let stgTracks = [];
+      let stgIndex = 0;
+
+      function llabel(l) { return l === "horizontal" ? "よこ" : (l === "taiko" ? "横2レーン" : "たて"); }
+
+      function selectStage(i) {
+        if (!stgTracks.length) return;
+        i = Math.max(0, Math.min(stgTracks.length - 1, i));
+        stgIndex = i;
+        const t = stgTracks[i];
+        [...listEl.querySelectorAll(".stg-item")].forEach(el => {
+          el.classList.toggle("sel", Number(el.dataset.i) === i);
+        });
+        pvStage.textContent = t.difficulty || ("STAGE " + (i + 1));
+        pvTitle.textContent = t.title || t.id || ("Stage " + (i + 1));
+        pvMeta.textContent = (t.artist || "MIRA") + (t.layout ? ("  ・  " + llabel(t.layout)) : "");
+        preview.classList.toggle("stage-soul-pv", t.skin === "soul");
+        if (t.mvUrl) { vid.src = t.mvUrl; vid.load(); vid.play().catch(() => {}); }
+        else { vid.removeAttribute("src"); vid.load(); }
+        const cur = listEl.querySelector('.stg-item[data-i="' + i + '"]');
+        if (cur) cur.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+
+      function playSelected() {
+        if (!stgTracks.length) return;
+        try { vid.pause(); } catch (e) {}
+        if (typeof uiBlip === "function") uiBlip(760, .14, .14);
+        startStage(stgTracks[stgIndex]);
+      }
+
+      async function openStageSelectNew() {
+        if (typeof rb !== "undefined") { rb.modeSelect.classList.remove("show"); }
+        sel.classList.add("show");
+        listEl.innerHTML = '<div class="stg-item soon"><div class="t">読み込み中...</div></div>';
+        let tracks = [];
+        try { tracks = await loadTrackManifest(); } catch (e) { tracks = []; }
+        if (!tracks || !tracks.length) tracks = (typeof fallbackTracks !== "undefined") ? fallbackTracks : [];
+        stgTracks = tracks;
+        listEl.innerHTML = "";
+        tracks.forEach((t, i) => {
+          const it = document.createElement("div");
+          it.className = "stg-item";
+          it.dataset.i = i;
+          it.tabIndex = 0;
+          it.innerHTML =
+            '<div class="n">STAGE ' + (i + 1) + "</div>" +
+            '<div class="t">' + (t.title || t.id || ("Stage " + (i + 1))) + "</div>" +
+            '<div class="d">' + (t.artist || "MIRA") + (t.layout ? ("  ・  " + llabel(t.layout)) : "") + "</div>";
+          it.addEventListener("click", () => { selectStage(i); });
+          it.addEventListener("dblclick", () => { selectStage(i); playSelected(); });
+          listEl.appendChild(it);
+        });
+        const soon = document.createElement("div");
+        soon.className = "stg-item soon";
+        soon.innerHTML = '<div class="n">NEXT</div><div class="t">新ステージ SOON</div><div class="d">自曲MVを続々追加予定</div>';
+        listEl.appendChild(soon);
+        selectStage(0);
+      }
+
+      // rebind the MODE→STAGE entry to the new opener
+      if (typeof rb !== "undefined" && rb.cardStage) {
+        if (typeof openStageSelect === "function") {
+          try { rb.cardStage.removeEventListener("click", openStageSelect); } catch (e) {}
+        }
+        openStageSelect = openStageSelectNew; // keydown handler in menu uses this name
+        rb.cardStage.addEventListener("click", () => openStageSelect());
+      }
+
+      playBtn.addEventListener("click", playSelected);
+      back2.addEventListener("click", () => {
+        try { vid.pause(); } catch (e) {}
+        sel.classList.remove("show");
+        if (typeof rb !== "undefined") rb.modeSelect.classList.add("show");
+      });
+      document.addEventListener("keydown", e => {
+        if (!sel.classList.contains("show")) return;
+        if (e.key === "ArrowDown") { e.preventDefault(); selectStage(stgIndex + 1); }
+        else if (e.key === "ArrowUp") { e.preventDefault(); selectStage(stgIndex - 1); }
+        else if (e.key === "Enter") { e.preventDefault(); playSelected(); }
+      });
     })();
     els.start.addEventListener("click", startGame);
     els.titleStart.addEventListener("click", () => showModeSelect());
