@@ -1750,6 +1750,37 @@
     .lock-note{font-size:11px;color:#ffb4c8;letter-spacing:.06em;margin:6px 0 0;}
     .mm-menu-btn{background:transparent;border:1px solid rgba(150,180,255,.4);color:#cbd8ff;padding:8px 18px;border-radius:999px;font-size:12px;letter-spacing:.16em;cursor:pointer;}
     .mm-menu-btn:hover{background:rgba(120,150,255,.16);}
+    /* ===== JUICE: gameplay feel + menu presentation ===== */
+    .hit-burst{position:absolute;z-index:9;pointer-events:none;width:120px;height:120px;margin:-60px 0 0 -60px;}
+    .hit-burst .ring{position:absolute;inset:18px;border-radius:50%;border:3px solid var(--brst,#8ef);box-shadow:0 0 16px var(--brst,#8ef);animation:burstRing .42s ease-out forwards;}
+    .hit-burst .spark{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;background:var(--brst,#8ef);box-shadow:0 0 8px var(--brst,#8ef);animation:burstSpark .5s ease-out forwards;}
+    @keyframes burstRing{0%{transform:scale(.25);opacity:.95}100%{transform:scale(1.6);opacity:0}}
+    @keyframes burstSpark{0%{transform:translate(-50%,-50%);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy)));opacity:0}}
+    .combo.punch strong{animation:comboPunch .2s ease-out;}
+    @keyframes comboPunch{0%{transform:scale(1.45);filter:brightness(1.7) drop-shadow(0 0 14px var(--cyan))}100%{transform:scale(1);filter:none}}
+    .combo.break{animation:comboBreak .32s ease;}
+    @keyframes comboBreak{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}60%{transform:translateX(7px)}}
+    .judgement.j-perfect{color:#eafff9;text-shadow:0 0 16px #6ffcd6,0 0 34px #35b0ff,0 4px 0 rgba(18,58,58,.9);}
+    .judgement.j-great{color:#eafcff;text-shadow:0 0 15px #7fe3ff,0 0 32px #4a7bff,0 4px 0 rgba(18,28,80,.9);}
+    .judgement.j-good{color:#fff0fb;text-shadow:0 0 13px #ff9be8,0 0 28px #c46bff,0 4px 0 rgba(60,18,80,.9);}
+    .judgement.j-miss{color:#ffd7de;text-shadow:0 0 13px #ff5a7a,0 0 26px #ff2d55,0 4px 0 rgba(70,10,24,.9);}
+    .judgement.j-safe{color:#dfe6ff;opacity:.92;}
+    .mm-overlay::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.75;
+      background-image:radial-gradient(2px 2px at 20% 30%,rgba(160,200,255,.55),transparent),radial-gradient(2px 2px at 70% 60%,rgba(200,160,255,.5),transparent),radial-gradient(1.5px 1.5px at 40% 82%,rgba(140,240,255,.5),transparent),radial-gradient(2px 2px at 85% 22%,rgba(180,180,255,.5),transparent),radial-gradient(1.5px 1.5px at 55% 45%,rgba(160,220,255,.45),transparent),radial-gradient(1.5px 1.5px at 12% 66%,rgba(200,180,255,.4),transparent);
+      animation:mmDrift 16s linear infinite;}
+    .mm-overlay>*{position:relative;z-index:1;}
+    @keyframes mmDrift{0%{transform:translateY(0)}100%{transform:translateY(-46px)}}
+    .mm-overlay.show .mm-title{animation:titleIn .6s ease both;}
+    @keyframes titleIn{0%{opacity:0;letter-spacing:.5em;filter:blur(7px)}100%{opacity:1;filter:blur(0)}}
+    .mm-overlay.show .mm-cards>*{animation:cardIn .5s cubic-bezier(.2,.8,.2,1) both;}
+    .mm-overlay.show .mm-cards>*:nth-child(2){animation-delay:.07s}
+    .mm-overlay.show .mm-cards>*:nth-child(3){animation-delay:.14s}
+    .mm-overlay.show .mm-cards>*:nth-child(4){animation-delay:.21s}
+    @keyframes cardIn{0%{opacity:0;transform:translateY(30px) scale(.95)}100%{opacity:1;transform:translateY(0) scale(1)}}
+    .playfield::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.6;
+      background-image:radial-gradient(2px 2px at 15% 18%,rgba(140,220,255,.4),transparent),radial-gradient(2px 2px at 80% 38%,rgba(255,160,240,.32),transparent),radial-gradient(1.5px 1.5px at 45% 70%,rgba(180,200,255,.32),transparent),radial-gradient(1.5px 1.5px at 65% 12%,rgba(160,240,255,.3),transparent);
+      animation:mmDrift 12s linear infinite;}
+    .title-mode .playfield::before,.maker-mode .playfield::before{display:none;}
   </style>
 </head>
 <body>
@@ -3485,6 +3516,81 @@
       if (ra) { const b = mkBtn("MENU"); b.addEventListener("click", showModeSelect); ra.appendChild(b); }
     })();
 
+    // ===== JUICE: hit feedback, combo punch, colored judge, menu SE =====
+    function _playfield() { return document.querySelector(".playfield"); }
+    function _laneCenter(lane) {
+      const pad = els.pads[lane], pf = _playfield();
+      if (!pad || !pf) return null;
+      const r = pad.getBoundingClientRect(), pr = pf.getBoundingClientRect();
+      return { x: r.left + r.width / 2 - pr.left, y: pr.height - 92 };
+    }
+    function spawnHitBurst(lane, label) {
+      const pf = _playfield(), c = _laneCenter(lane);
+      if (!pf || !c) return;
+      const t = (label || "").toUpperCase();
+      const color = /PERFECT|AUTO/.test(t) ? "#7ffce0" : /GREAT/.test(t) ? "#7fd8ff" : /GOOD/.test(t) ? "#ff9be8" : "#ff7aa0";
+      const b = document.createElement("div");
+      b.className = "hit-burst";
+      b.style.left = c.x + "px"; b.style.top = c.y + "px";
+      b.style.setProperty("--brst", color);
+      const ring = document.createElement("div"); ring.className = "ring"; b.appendChild(ring);
+      const n = /PERFECT|AUTO/.test(t) ? 10 : 7;
+      for (let i = 0; i < n; i++) {
+        const s = document.createElement("div"); s.className = "spark";
+        const a = Math.PI * 2 * i / n + Math.random() * .5;
+        const d = 30 + Math.random() * 30;
+        s.style.setProperty("--dx", (Math.cos(a) * d).toFixed(0) + "px");
+        s.style.setProperty("--dy", (Math.sin(a) * d - 8).toFixed(0) + "px");
+        b.appendChild(s);
+      }
+      pf.appendChild(b);
+      setTimeout(() => b.remove(), 520);
+    }
+    function punchCombo() { const c = document.querySelector(".combo"); if (!c) return; c.classList.remove("punch"); void c.offsetWidth; c.classList.add("punch"); }
+    function breakCombo() { const c = document.querySelector(".combo"); if (!c) return; c.classList.remove("break"); void c.offsetWidth; c.classList.add("break"); }
+    if (typeof playHitSfx === "function") {
+      const _hs = playHitSfx;
+      playHitSfx = function (label, lane, combo) { try { _hs(label, lane, combo); } catch (e) {} spawnHitBurst(lane, label); punchCombo(); };
+    }
+    if (typeof showJudge === "function") {
+      const _sj = showJudge;
+      showJudge = function (text) {
+        _sj(text);
+        const j = els.judgement; if (!j) return;
+        j.classList.remove("j-perfect", "j-great", "j-good", "j-miss", "j-safe");
+        const t = (text || "").toUpperCase();
+        if (t.indexOf("PERFECT") === 0 || t.indexOf("AUTO") === 0) j.classList.add("j-perfect");
+        else if (t.indexOf("GREAT") === 0) j.classList.add("j-great");
+        else if (t.indexOf("GOOD") === 0) j.classList.add("j-good");
+        else if (t.indexOf("MISS") === 0) j.classList.add("j-miss");
+        else j.classList.add("j-safe");
+      };
+    }
+    if (typeof playMissSfx === "function") {
+      const _ms = playMissSfx;
+      playMissSfx = function () { try { _ms(); } catch (e) {} breakCombo(); };
+    }
+    let _uiCtx = null;
+    function uiBlip(freq, dur, vol) {
+      freq = freq || 660; dur = dur || .12; vol = vol || .14;
+      try {
+        _uiCtx = _uiCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if (_uiCtx.state === "suspended") _uiCtx.resume();
+        const o = _uiCtx.createOscillator(), g = _uiCtx.createGain();
+        o.type = "triangle"; o.frequency.value = freq;
+        o.connect(g).connect(_uiCtx.destination);
+        const t = _uiCtx.currentTime;
+        g.gain.setValueAtTime(vol, t);
+        g.gain.exponentialRampToValueAtTime(.001, t + dur);
+        o.start(t); o.stop(t + dur);
+      } catch (e) {}
+    }
+    document.addEventListener("click", e => {
+      const el = e.target.closest && e.target.closest(".mm-card, .mm-back, .mm-menu-btn, .mk-back");
+      if (!el) return;
+      if (el.classList.contains("locked")) { uiBlip(220, .1, .1); return; }
+      uiBlip((el.classList.contains("mm-back") || el.classList.contains("mk-back")) ? 480 : 720, .13, .13);
+    }, true);
     els.start.addEventListener("click", startGame);
     els.titleStart.addEventListener("click", () => showModeSelect());
     els.titleBgm.addEventListener("click", toggleTitleBgm);
