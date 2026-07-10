@@ -54,7 +54,9 @@
       display: grid;
       place-items: end center;
       padding: 24px 18px max(36px, env(safe-area-inset-bottom));
-      background: #050815 url("../images/mira-musou-title-screen.png") center / cover no-repeat;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(86,220,255,.2), transparent 52%),
+        #050815 url("../images/mira-musou-title-screen.png") center / contain no-repeat;
       z-index: 5;
     }
     .title::before {
@@ -93,7 +95,7 @@
     }
     .pad, .actions { display: grid; gap: 8px; pointer-events: auto; }
     .pad { grid-template-columns: repeat(3, 54px); grid-template-rows: repeat(2, 54px); }
-    .actions { grid-template-columns: repeat(2, 64px); }
+    .actions { grid-template-columns: repeat(3, 60px); }
     .pad button, .actions button {
       min-height: 54px;
       padding: 0;
@@ -117,7 +119,7 @@
       .stats { justify-content: start; }
       .chip { min-width: 68px; padding: 7px 8px; }
       .pad { grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(2, 48px); }
-      .actions { grid-template-columns: repeat(2, 58px); }
+      .actions { grid-template-columns: repeat(3, 54px); }
       .pad button, .actions button { min-height: 48px; }
     }
   </style>
@@ -132,6 +134,8 @@
       <div class="chip"><small>HP</small><b id="hp">100</b></div>
       <div class="chip"><small>COMBO</small><b id="combo">0</b></div>
       <div class="chip"><small>未来視</small><b id="future">0</b></div>
+      <div class="chip"><small>WAVE</small><b id="wave">1</b></div>
+      <div class="chip"><small>STAGE</small><b id="stage">1</b></div>
     </div>
   </div>
 
@@ -148,10 +152,16 @@
     </div>
     <div class="actions" aria-label="攻撃">
       <button data-key="attack">斬</button>
-      <button data-key="dash">避</button>
-      <button class="wide" data-key="special">未来視</button>
+      <button data-key="burst">連斬</button>
+      <button data-key="wave">波動</button>
+      <button data-key="dash">瞬歩</button>
+      <button data-key="rush">突進</button>
+      <button data-key="ring">天輪</button>
+      <button data-key="cutinSkill">時止め</button>
+      <button class="wide" data-key="special">未来視奥義</button>
     </div>
   </div>
+  <audio id="bgm" src="../assets/mira-musou-bgm.mp3" loop preload="auto"></audio>
 
   <script>
     const canvas = document.querySelector("#game");
@@ -161,22 +171,48 @@
     const hpEl = document.querySelector("#hp");
     const comboEl = document.querySelector("#combo");
     const futureEl = document.querySelector("#future");
+    const waveEl = document.querySelector("#wave");
+    const stageEl = document.querySelector("#stage");
+    const bgm = document.querySelector("#bgm");
     const keys = new Set();
+    let audioCtx = null;
     const imgs = {};
     const sources = {
-      bg: "../images/mira-musou-bg-main.jpg",
-      player: "../images/mira-musou-player.png",
-      enemy: "../images/mira-musou-enemy.png",
+      bgGate: "../images/mira-musou-stage-gate.png",
+      bgWhite: "../images/mira-musou-stage-white-1f.png",
+      player: "../images/mira-musou-player-sheet-clean.png",
+      enemyNinja: "../images/mira-musou-enemy-ninja.png",
+      enemyOni: "../images/mira-musou-enemy-oni.png",
+      enemyMage: "../images/mira-musou-enemy-mage.png",
+      boss: "../images/mira-musou-boss.png",
+      bossWhite: "../images/mira-musou-boss-white.png",
       slash: "../images/mira-musou-slash.png"
     };
     let w = 0, h = 0, dpr = 1, last = 0, running = false;
-    let camera = 0, score = 0, combo = 0, comboTime = 0, spawn = 0, clearText = "";
-    const world = 5000;
+    let camera = 0, score = 0, combo = 0, comboTime = 0, spawn = 0, clearText = "", boss = null;
+    let enemyId = 1, wave = 1, ko = 0, shake = 0, cutin = 0, cutinText = "", hitStop = 0, stage = 1, upgrade = 0, nextStageReady = false;
+    const stageWorld = 15000;
     const gravity = 1800;
-    const player = { x: 360, y: 0, vx: 0, vy: 0, hp: 100, future: 0, face: 1, ground: true, atk: 0, inv: 0, special: 0 };
+    const player = { x: 360, y: 0, vx: 0, vy: 0, hp: 100, future: 0, face: 1, ground: true, atk: 0, inv: 0, special: 0, slow: 0 };
+    const skills = {
+      dash: { cd: 0, max: .85 },
+      burst: { cd: 0, max: 1.6 },
+      wave: { cd: 0, max: 2.2 },
+      rush: { cd: 0, max: 2.8 },
+      ring: { cd: 0, max: 3.8 },
+      cutinSkill: { cd: 0, max: 7.8 },
+      special: { cd: 0, max: 6.5 }
+    };
+    const enemyTypes = {
+      ninja: { img: "enemyNinja", hp: 34, speed: 122, w: 104, h: 120, drawW: 178, drawH: 170, yOffset: -88, damage: 8, score: 40 },
+      oni: { img: "enemyOni", hp: 76, speed: 70, w: 138, h: 150, drawW: 220, drawH: 210, yOffset: -116, damage: 15, score: 90 },
+      mage: { img: "enemyMage", hp: 48, speed: 54, w: 118, h: 128, drawW: 198, drawH: 190, yOffset: -138, damage: 11, score: 70 }
+    };
     let enemies = [];
     let slashes = [];
     let particles = [];
+    let pickups = [];
+    let floaters = [];
 
     function loadImages() {
       return Promise.all(Object.entries(sources).map(([key, src]) => new Promise(resolve => {
@@ -204,114 +240,524 @@
       return Math.abs(a.x - b.x) * 2 < (a.w + b.w) && Math.abs(a.y - b.y) * 2 < (a.h + b.h);
     }
 
-    function reset() {
-      running = true; camera = 0; score = 0; combo = 0; comboTime = 0; spawn = 0; clearText = "";
-      Object.assign(player, { x: 360, y: ground() - 112, vx: 0, vy: 0, hp: 100, future: 0, face: 1, ground: true, atk: 0, inv: 0, special: 0 });
-      enemies = []; slashes = []; particles = [];
-      for (let i = 0; i < 9; i++) addEnemy(850 + i * 360);
+    function reset(full = true) {
+      running = true; camera = 0; combo = 0; comboTime = 0; spawn = 0; clearText = ""; boss = null; nextStageReady = false;
+      enemyId = 1; wave = 1; shake = 0; cutin = 0; cutinText = ""; hitStop = 0;
+      if (full) { score = 0; ko = 0; stage = 1; upgrade = 0; }
+      Object.values(skills).forEach(s => { s.cd = 0; });
+      Object.assign(player, { x: 360, y: ground() - 112, vx: 0, vy: 0, hp: full ? 100 : 100, future: full ? 0 : 55, face: 1, ground: true, atk: 0, inv: 0, special: 0, slow: 0 });
+      enemies = []; slashes = []; particles = []; pickups = []; floaters = [];
+      floatText(stage === 1 ? "STAGE 1 城門前" : "STAGE 2 白城 1F", player.x + 220, player.y - 190, "#fff4b8", 34);
+      for (let i = 0; i < 12; i++) addEnemy(900 + i * 420, i < 4 ? "ninja" : null);
       updateHud();
     }
-    function addEnemy(x) {
-      enemies.push({ x, y: ground() - 92, w: 120, h: 130, hp: 36, vx: -rnd(35, 90), stun: 0, flash: 0 });
+    function pickEnemyType() {
+      const r = Math.random();
+      if (r < .48) return "ninja";
+      if (r < .78) return "mage";
+      return "oni";
+    }
+    function addEnemy(x, forcedType) {
+      const type = forcedType || pickEnemyType();
+      const spec = enemyTypes[type];
+      const y = type === "mage" ? ground() - 135 : ground() - 92;
+      enemies.push({ id: enemyId++, type, x, y, w: spec.w, h: spec.h, hp: spec.hp + wave * 3, maxHp: spec.hp + wave * 3, vx: -rnd(spec.speed * .45, spec.speed), stun: 0, flash: 0, attack: 0 });
+    }
+    function spawnBoss() {
+      if (boss) return;
+      const hp = stage === 1 ? 620 : 900;
+      boss = { x: stageWorld - 520, y: ground() - 154, w: stage === 1 ? 210 : 230, h: stage === 1 ? 260 : 280, hp, maxHp: hp, flash: 0, attack: 0, cooldown: 1.1, phase: 0, name: stage === 1 ? "NIGHT ONI WARLORD" : "WHITE CASTLE GUARDIAN" };
+      cutin = 2.2;
+      cutinText = "";
+      shake = 18;
+      for (let i = 0; i < 34; i++) spark(boss.x + rnd(-160, 160), boss.y + rnd(-160, 90), i % 2 ? "#ff66c7" : "#56dcff");
     }
     function slash(power) {
       const big = power > 1;
-      slashes.push({ x: player.x + player.face * (big ? 128 : 92), y: player.y - 40, w: big ? 270 : 180, h: big ? 150 : 104, face: player.face, life: big ? .25 : .16, damage: big ? 92 : 30, big });
+      const boost = upgrade ? 1.35 : 1;
+      slashes.push({ x: player.x + player.face * (big ? 128 : 92), y: player.y - 40, w: big ? 300 : 200, h: big ? 165 : 116, face: player.face, life: big ? .3 : .18, damage: Math.round((big ? 92 : 30) * boost), big, hitIds: new Set(), bossHit: false });
+      shake = Math.max(shake, big ? 16 : 5);
       for (let i = 0; i < (big ? 26 : 10); i++) spark(player.x + player.face * rnd(30, big ? 210 : 130), player.y + rnd(-95, 25), big ? "#ffd36a" : "#56dcff");
     }
     function spark(x, y, color) {
       particles.push({ x, y, vx: rnd(-260, 260), vy: rnd(-310, 100), r: rnd(2, 6), life: rnd(.28, .72), max: .72, color });
     }
+    function areaDamage(cx, cy, radius, damage, color = "#56dcff") {
+      enemies.forEach(e => {
+        if (e.hp <= 0) return;
+        const dx = e.x - cx;
+        const dy = (e.y - 70) - cy;
+        if (Math.hypot(dx, dy) <= radius) {
+          e.hp -= damage;
+          e.stun = .55;
+          e.flash = .18;
+          e.x += Math.sign(e.x - player.x || player.face) * 72;
+          score += enemyTypes[e.type].score;
+          combo += 1;
+          comboTime = 1.25;
+          floatText(String(damage), e.x, e.y - 98, color, damage > 80 ? 30 : 23);
+          if (e.hp <= 0) {
+            ko += 1;
+            score += 220 + combo * 10;
+            dropPickup(e.x, e.y - 60);
+            floatText("KO", e.x, e.y - 130, "#fff", 20);
+          }
+        }
+      });
+      if (boss) {
+        const dx = boss.x - cx;
+        const dy = (boss.y - 100) - cy;
+        if (Math.hypot(dx, dy) <= radius + 120) {
+          boss.hp -= damage;
+          boss.flash = .22;
+          boss.attack = .5;
+          score += 180;
+          combo += 1;
+          comboTime = 1.25;
+          floatText(String(damage), boss.x, boss.y - 220, color, damage > 80 ? 34 : 26);
+        }
+      }
+      player.future = clamp(player.future + 18, 0, 100);
+    }
+    function ensureAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+    }
+    function se(type) {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const tone = (freq, endFreq, dur, wave = "triangle", vol = .22, delay = 0) => {
+        const t0 = now + delay;
+        const gain = audioCtx.createGain();
+        const osc = audioCtx.createOscillator();
+        gain.connect(audioCtx.destination);
+        gain.gain.setValueAtTime(vol, t0);
+        gain.gain.exponentialRampToValueAtTime(.001, t0 + dur);
+        osc.type = wave;
+        osc.frequency.setValueAtTime(freq, t0);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(1, endFreq), t0 + dur * .9);
+        osc.connect(gain);
+        osc.start(t0);
+        osc.stop(t0 + dur);
+      };
+      const noiseHit = (dur, vol, hp, delay = 0) => {
+        const t0 = now + delay;
+        const length = Math.floor(audioCtx.sampleRate * dur);
+        const buffer = audioCtx.createBuffer(1, length, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < length; i++) {
+          const t = i / length;
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 2.2);
+        }
+        const src = audioCtx.createBufferSource();
+        const filter = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+        src.buffer = buffer;
+        filter.type = "highpass";
+        filter.frequency.setValueAtTime(hp, t0);
+        gain.gain.setValueAtTime(vol, t0);
+        gain.gain.exponentialRampToValueAtTime(.001, t0 + dur);
+        src.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+        src.start(t0);
+        src.stop(t0 + dur);
+      };
+      if (type === "dash") {
+        noiseHit(.09, .28, 2600);
+        tone(360, 1180, .16, "sine", .26);
+        return;
+      }
+      if (type === "slash") {
+        noiseHit(.16, .76, 2100);
+        tone(1320, 380, .13, "triangle", .22);
+        tone(660, 180, .1, "sine", .1, .025);
+        return;
+      }
+      if (type === "burst") {
+        noiseHit(.13, .7, 2400);
+        noiseHit(.12, .55, 2800, .07);
+        noiseHit(.11, .5, 3200, .14);
+        tone(1460, 330, .16, "triangle", .2);
+        tone(1120, 260, .13, "triangle", .16, .08);
+        return;
+      }
+      if (type === "wave") {
+        tone(180, 780, .34, "sawtooth", .22);
+        tone(880, 1320, .3, "sine", .16, .04);
+        noiseHit(.22, .38, 1400, .04);
+        return;
+      }
+      if (type === "heavy") {
+        noiseHit(.18, .82, 1800);
+        tone(170, 44, .34, "sawtooth", .5);
+        tone(920, 220, .18, "triangle", .18, .03);
+        return;
+      }
+      if (type === "ring") {
+        tone(520, 1040, .22, "sine", .18);
+        tone(780, 1560, .26, "triangle", .16, .04);
+        tone(1040, 520, .34, "sine", .18, .12);
+        noiseHit(.18, .36, 3000, .06);
+        return;
+      }
+      if (type === "stop") {
+        tone(72, 24, .62, "sawtooth", .52);
+        tone(980, 122, .5, "triangle", .2);
+        noiseHit(.2, .48, 900, .16);
+        setTimeout(() => se("heavy"), 230);
+        return;
+      }
+      if (type === "hit") {
+        const gain = audioCtx.createGain();
+        const osc = audioCtx.createOscillator();
+        gain.connect(audioCtx.destination);
+        gain.gain.setValueAtTime(.32, now);
+        gain.gain.exponentialRampToValueAtTime(.001, now + .13);
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(95, now);
+        osc.frequency.exponentialRampToValueAtTime(42, now + .12);
+        osc.connect(gain);
+        osc.start(now);
+        osc.stop(now + .13);
+        return;
+      }
+      tone(220, 920, .5, "sawtooth", .28);
+      tone(440, 1760, .42, "triangle", .2, .08);
+      noiseHit(.24, .4, 1800, .18);
+    }
+    function triggerSkill(name) {
+      if (name === "dash" && skills.dash.cd <= 0) {
+        player.vx += player.face * 940;
+        player.inv = .55;
+        player.slow = .18;
+        skills.dash.cd = skills.dash.max;
+        shake = Math.max(shake, 8);
+        se("dash");
+        floatText("瞬歩", player.x, player.y - 155, "#bff8ff", 22);
+        for (let i = 0; i < 14; i++) spark(player.x - player.face * rnd(10, 70), player.y + rnd(-105, 20), "#bff8ff");
+      }
+      if (name === "burst" && skills.burst.cd <= 0) {
+        skills.burst.cd = skills.burst.max * (upgrade ? .72 : 1);
+        player.atk = .55;
+        se("burst");
+        slash(1); setTimeout(() => slash(1), 90); setTimeout(() => slash(1), 180);
+        floatText("三連斬", player.x, player.y - 155, "#56dcff", 24);
+      }
+      if (name === "wave" && skills.wave.cd <= 0) {
+        skills.wave.cd = skills.wave.max * (upgrade ? .72 : 1);
+        se("wave");
+        slashes.push({ x: player.x + player.face * 180, y: player.y - 48, w: 420, h: 130, face: player.face, life: .55, damage: upgrade ? 58 : 42, big: false, projectile: true, hitIds: new Set(), bossHit: false });
+        floatText("未来波動", player.x, player.y - 155, "#56dcff", 24);
+      }
+      if (name === "rush" && skills.rush.cd <= 0) {
+        skills.rush.cd = skills.rush.max * (upgrade ? .75 : 1);
+        player.inv = .75;
+        player.vx = player.face * 1050;
+        slash(1);
+        setTimeout(() => slash(1), 140);
+        se("heavy");
+        floatText("時翔突進", player.x, player.y - 155, "#ffd36a", 24);
+      }
+      if (name === "ring" && skills.ring.cd <= 0) {
+        skills.ring.cd = skills.ring.max * (upgrade ? .72 : 1);
+        player.atk = .55;
+        player.inv = .45;
+        se("ring");
+        shake = Math.max(shake, 12);
+        for (let a = 0; a < Math.PI * 2; a += Math.PI / 7) {
+          const x = player.x + Math.cos(a) * 150;
+          const y = player.y - 70 + Math.sin(a) * 70;
+          slashes.push({ x, y, w: 235, h: 118, face: Math.cos(a) >= 0 ? 1 : -1, life: .36, damage: upgrade ? 62 : 46, big: false, hitIds: new Set(), bossHit: false });
+          spark(x, y, "#fff4b8");
+        }
+        areaDamage(player.x, player.y - 70, 250, upgrade ? 70 : 52, "#fff4b8");
+        floatText("天輪斬", player.x, player.y - 165, "#fff4b8", 26);
+      }
+      if (name === "cutinSkill" && skills.cutinSkill.cd <= 0) {
+        skills.cutinSkill.cd = skills.cutinSkill.max * (upgrade ? .72 : 1);
+        player.atk = .85;
+        player.inv = 1.1;
+        player.slow = 1.2;
+        hitStop = .42;
+        cutin = 1.15;
+        cutinText = "時止め・未来断ち";
+        se("stop");
+        shake = Math.max(shake, 22);
+        setTimeout(() => {
+          slash(2);
+          areaDamage(player.x + player.face * 230, player.y - 75, 430, upgrade ? 128 : 98, "#ffd36a");
+          for (let i = 0; i < 36; i++) spark(player.x + player.face * rnd(40, 420), player.y + rnd(-150, 30), i % 2 ? "#ffd36a" : "#56dcff");
+        }, 260);
+        floatText("時止め・未来断ち", player.x, player.y - 185, "#ffd36a", 32);
+      }
+      if (name === "special" && skills.special.cd <= 0 && player.future >= 100) {
+        skills.special.cd = skills.special.max * (upgrade ? .78 : 1);
+        player.future = 0;
+        player.special = 1.4;
+        player.slow = 1.8;
+        cutin = 1.4;
+        cutinText = "未来視奥義";
+        se("future");
+        slash(2);
+        setTimeout(() => slash(2), 160);
+        setTimeout(() => slash(2), 320);
+        floatText("未来視奥義", player.x, player.y - 180, "#ffd36a", 34);
+      }
+    }
+    function floatText(text, x, y, color = "#fff", size = 24) {
+      floaters.push({ text, x, y, vy: -58, life: .9, max: .9, color, size });
+    }
+    function dropPickup(x, y) {
+      if (Math.random() > .42) return;
+      pickups.push({ x, y, w: 34, h: 34, kind: Math.random() > .58 ? "heal" : "future", life: 8, bob: rnd(0, Math.PI * 2) });
+    }
 
     function update(dt) {
       if (!running) return;
+      const timeScale = player.slow > 0 ? .42 : 1;
+      const simDt = dt * timeScale;
       const left = keys.has("left") || keys.has("ArrowLeft") || keys.has("a") || keys.has("A");
       const right = keys.has("right") || keys.has("ArrowRight") || keys.has("d") || keys.has("D");
       const jump = keys.has("jump") || keys.has("ArrowUp") || keys.has("w") || keys.has("W") || keys.has(" ");
       const attack = keys.has("attack") || keys.has("j") || keys.has("J");
       const dash = keys.has("dash") || keys.has("Shift");
+      const burst = keys.has("burst") || keys.has("u") || keys.has("U");
+      const waveKey = keys.has("wave") || keys.has("i") || keys.has("I");
+      const rush = keys.has("rush") || keys.has("o") || keys.has("O");
+      const ring = keys.has("ring") || keys.has("l") || keys.has("L");
+      const cutinKey = keys.has("cutinSkill") || keys.has("p") || keys.has("P");
       const special = keys.has("special") || keys.has("k") || keys.has("K");
 
-      player.vx *= Math.pow(.001, dt);
-      if (left) { player.vx -= 2100 * dt; player.face = -1; }
-      if (right) { player.vx += 2300 * dt; player.face = 1; }
+      Object.values(skills).forEach(s => { s.cd = Math.max(0, s.cd - dt); });
+      player.slow = Math.max(0, player.slow - dt);
+      if (hitStop > 0) {
+        hitStop = Math.max(0, hitStop - dt);
+        cutin = Math.max(0, cutin - dt);
+        shake = Math.max(0, shake - 18 * dt);
+        updateHud();
+        return;
+      }
+      player.vx *= Math.pow(.001, simDt);
+      if (left) { player.vx -= 2100 * simDt; player.face = -1; }
+      if (right) { player.vx += 2300 * simDt; player.face = 1; }
       if (jump && player.ground) { player.vy = -780; player.ground = false; }
-      if (dash && player.inv <= 0) { player.vx += player.face * 780; player.inv = .35; }
-      if (attack && player.atk <= 0) { player.atk = .25; slash(1); }
-      if (special && player.future >= 100 && player.special <= 0) { player.future = 0; player.special = 1.1; slash(2); }
+      if (dash) triggerSkill("dash");
+      if (burst) triggerSkill("burst");
+      if (waveKey) triggerSkill("wave");
+      if (rush) triggerSkill("rush");
+      if (ring) triggerSkill("ring");
+      if (cutinKey) triggerSkill("cutinSkill");
+      if (special) triggerSkill("special");
+      if (attack && player.atk <= 0) {
+        player.atk = .25;
+        se("slash");
+        slash(1);
+      }
       player.atk -= dt; player.inv -= dt; player.special -= dt;
       player.vx = clamp(player.vx, -520, 680);
-      player.vy += gravity * dt;
-      player.x = clamp(player.x + player.vx * dt, 180, world - 240);
-      player.y += player.vy * dt;
+      player.vy += gravity * simDt;
+      player.x = clamp(player.x + player.vx * simDt, 180, stageWorld - 240);
+      player.y += player.vy * simDt;
       if (player.y >= ground() - 112) { player.y = ground() - 112; player.vy = 0; player.ground = true; }
-      camera = clamp(player.x - w * .34, 0, world - w);
+      camera = clamp(player.x - w * .34, 0, stageWorld - w);
+      shake = Math.max(0, shake - 38 * dt);
+      cutin = Math.max(0, cutin - dt);
 
       spawn -= dt;
-      if (spawn <= 0 && camera < world - 900) { addEnemy(camera + w + rnd(180, 430)); spawn = rnd(1.1, 1.8); }
+      wave = clamp(1 + Math.floor(player.x / 2200), 1, 7);
+      if (spawn <= 0 && camera < stageWorld - 950) {
+        const count = wave >= 4 ? 2 : 1;
+        for (let i = 0; i < count; i++) addEnemy(camera + w + rnd(180, 620) + i * 150);
+        spawn = rnd(.45, 1.05);
+      }
+      if (player.x > stageWorld - 1250) spawnBoss();
       enemies.forEach(e => {
         e.flash -= dt; e.stun -= dt;
+        e.attack -= dt;
+        const spec = enemyTypes[e.type];
         if (e.stun <= 0) {
-          e.vx += Math.sign(player.x - e.x) * 150 * dt;
-          e.vx = clamp(e.vx, -130, 110);
-          e.x += e.vx * dt;
+          e.vx += Math.sign(player.x - e.x) * spec.speed * 1.5 * simDt;
+          e.vx = clamp(e.vx, -spec.speed, spec.speed * .9);
+          e.x += e.vx * simDt;
+          if (e.type === "mage") e.y += Math.sin(performance.now() / 360 + e.x * .01) * 18 * simDt;
         }
         if (player.inv <= 0 && hit({ x: player.x, y: player.y - 12, w: 92, h: 150 }, e)) {
-          player.hp = clamp(player.hp - 10, 0, 100);
+          e.attack = .34;
+          player.hp = clamp(player.hp - spec.damage, 0, 100);
           player.inv = .8;
           player.vx = -player.face * 420;
+          shake = Math.max(shake, 10);
           combo = 0;
+          se("hit");
+          floatText("-" + spec.damage, player.x, player.y - 130, "#ff66c7", 22);
           for (let i = 0; i < 10; i++) spark(player.x, player.y - 50, "#ff66c7");
         }
       });
+      if (boss) {
+        boss.flash -= dt;
+        boss.attack -= dt;
+        boss.cooldown -= dt;
+        boss.phase += dt;
+        boss.x += Math.sign(player.x - boss.x) * (stage === 1 ? 62 : 78) * simDt;
+        if (boss.cooldown <= 0) {
+          boss.attack = .55;
+          boss.cooldown = boss.hp < boss.maxHp * .45 ? .72 : 1.1;
+          const reach = { x: boss.x + Math.sign(player.x - boss.x) * 92, y: boss.y - 8, w: 260, h: 210 };
+          if (player.inv <= 0 && hit({ x: player.x, y: player.y - 28, w: 92, h: 150 }, reach)) {
+            player.hp = clamp(player.hp - 24, 0, 100);
+            player.inv = .95;
+            player.vx = Math.sign(player.x - boss.x) * 620;
+            shake = Math.max(shake, 18);
+            combo = 0;
+            se("hit");
+            floatText("-24", player.x, player.y - 130, "#ff66c7", 28);
+          }
+          for (let i = 0; i < 18; i++) spark(boss.x + rnd(-110, 120), boss.y + rnd(-150, 85), i % 2 ? "#ff66c7" : "#ffd36a");
+        }
+      }
       slashes.forEach(s => {
         s.life -= dt;
+        if (s.projectile) s.x += s.face * 760 * dt;
         enemies.forEach(e => {
-          if (e.hp > 0 && hit(s, e)) {
+          if (e.hp > 0 && !s.hitIds.has(e.id) && hit(s, e)) {
+            s.hitIds.add(e.id);
             e.hp -= s.damage; e.stun = .3; e.flash = .12; e.x += player.face * 42;
-            score += s.damage; combo += 1; comboTime = 1.2; player.future = clamp(player.future + 13, 0, 100);
+            score += enemyTypes[e.type].score; combo += 1; comboTime = 1.2; player.future = clamp(player.future + 13, 0, 100);
+            shake = Math.max(shake, s.big ? 14 : 7);
+            floatText(String(s.damage), e.x, e.y - 92, s.big ? "#ffd36a" : "#56dcff", s.big ? 30 : 22);
+            if (e.hp <= 0) {
+              ko += 1;
+              score += 150 + combo * 8;
+              floatText("KO", e.x, e.y - 128, "#fff4b8", 28);
+              dropPickup(e.x, e.y - 50);
+            }
             for (let i = 0; i < 9; i++) spark(e.x, e.y + rnd(-45, 50), "#56dcff");
           }
         });
+        if (boss && boss.hp > 0 && !s.bossHit && hit(s, boss)) {
+          s.bossHit = true;
+          boss.hp -= s.damage;
+          boss.flash = .15;
+          score += s.big ? 220 : 90;
+          combo += 1;
+          comboTime = 1.4;
+          player.future = clamp(player.future + 9, 0, 100);
+          shake = Math.max(shake, s.big ? 20 : 10);
+          floatText(String(s.damage), boss.x, boss.y - 210, s.big ? "#ffd36a" : "#56dcff", s.big ? 34 : 24);
+          for (let i = 0; i < 16; i++) spark(boss.x + rnd(-95, 95), boss.y + rnd(-160, 90), s.big ? "#ffd36a" : "#56dcff");
+        }
       });
       slashes = slashes.filter(s => s.life > 0);
       enemies = enemies.filter(e => e.hp > 0 && e.x > camera - 300);
+      if (boss && boss.hp <= 0) {
+        for (let i = 0; i < 70; i++) spark(boss.x + rnd(-170, 170), boss.y + rnd(-190, 120), i % 3 ? "#ffd36a" : "#56dcff");
+        boss = null;
+        clearStage();
+      }
+      pickups.forEach(p => {
+        p.life -= dt;
+        p.y += Math.sin(performance.now() / 260 + p.bob) * 10 * dt;
+        if (hit({ x: player.x, y: player.y - 55, w: 104, h: 155 }, p)) {
+          if (p.kind === "heal") {
+            player.hp = clamp(player.hp + 18, 0, 100);
+            floatText("+HP", player.x, player.y - 150, "#79ffb2", 24);
+          } else {
+            player.future = clamp(player.future + 28, 0, 100);
+            floatText("+未来視", player.x, player.y - 150, "#56dcff", 24);
+          }
+          p.life = 0;
+          for (let i = 0; i < 12; i++) spark(player.x + rnd(-34, 34), player.y + rnd(-125, 10), p.kind === "heal" ? "#79ffb2" : "#56dcff");
+        }
+      });
       particles.forEach(p => { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 640 * dt; });
+      floaters.forEach(f => { f.life -= dt; f.y += f.vy * dt; f.vy -= 10 * dt; });
       particles = particles.filter(p => p.life > 0);
+      pickups = pickups.filter(p => p.life > 0);
+      floaters = floaters.filter(f => f.life > 0);
       comboTime -= dt; if (comboTime <= 0) combo = 0;
       if (player.hp <= 0) finish("GAME OVER");
-      if (player.x > world - 360 && enemies.length < 4) finish("STAGE CLEAR");
+      if (player.x > stageWorld - 360 && !boss) spawnBoss();
       updateHud();
     }
-    function finish(text) { running = false; clearText = text; title.classList.remove("hidden"); document.querySelector("#start").textContent = text + " / RETRY"; }
+    function clearStage() {
+      running = false;
+      if (stage === 1) {
+        upgrade += 1;
+        score += 1500;
+        nextStageReady = true;
+        title.classList.remove("hidden");
+        document.querySelector("#start").textContent = "STAGE 1 CLEAR / 白城1Fへ";
+        floatText("MIRA POWER UP", player.x, player.y - 190, "#ffd36a", 36);
+      } else {
+        finish("STAGE 2 CLEAR");
+      }
+    }
+    function finish(text) {
+      running = false;
+      clearText = text;
+      title.classList.remove("hidden");
+      const rank = score > 12000 ? "S" : score > 8000 ? "A" : score > 4500 ? "B" : "C";
+      document.querySelector("#start").textContent = `${text} / SCORE ${Math.floor(score)} / KO ${ko} / RANK ${rank} / RETRY`;
+    }
     function updateHud() {
       scoreEl.textContent = Math.floor(score);
       hpEl.textContent = Math.ceil(player.hp);
       comboEl.textContent = combo;
       futureEl.textContent = Math.floor(player.future);
+      waveEl.textContent = boss ? "B" : wave;
     }
 
     function draw() {
       ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      if (shake > 0) ctx.translate(rnd(-shake, shake), rnd(-shake, shake));
       drawBackground();
       drawFloor();
       enemies.forEach(drawEnemy);
+      if (boss) drawBoss();
       slashes.forEach(drawSlash);
       drawPlayer();
+      pickups.forEach(drawPickup);
       particles.forEach(drawParticle);
+      floaters.forEach(drawFloater);
+      ctx.restore();
       drawProgress();
+      drawSkillHud();
+      drawCutin();
+      drawTimeVision();
     }
     function sx(x) { return x - camera; }
     function drawBackground() {
-      const img = imgs.bg;
+      const img = stage === 1 ? imgs.bgGate : imgs.bgWhite;
       if (!img) return;
       const scale = Math.max(h / img.height, w / img.width);
       const bw = img.width * scale, bh = img.height * scale;
       const y = (h - bh) * .5;
       for (let i = -1; i < Math.ceil(w / bw) + 2; i++) {
-        const x = i * bw - (camera * .22 % bw);
+        const x = i * bw - (camera * .16 % bw);
         ctx.drawImage(img, x, y, bw, bh);
       }
+      const t = performance.now() / 1000;
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      for (let i = 0; i < 18; i++) {
+        const px = ((i * 173 + t * 22 - camera * .28) % (w + 140)) - 70;
+        const py = (Math.sin(i * 1.7 + t) * .5 + .5) * h * .62 + 38;
+        ctx.fillStyle = i % 3 ? "rgba(86,220,255,.36)" : "rgba(255,211,106,.24)";
+        ctx.beginPath();
+        ctx.arc(px, py, 2 + (i % 4), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.strokeStyle = "rgba(86,220,255,.25)";
+      ctx.lineWidth = 3;
+      for (let i = 0; i < 7; i++) {
+        const x = ((i * 280 + t * 85 - camera * .38) % (w + 420)) - 220;
+        const yy = 70 + i * 42;
+        ctx.beginPath();
+        ctx.moveTo(x, yy);
+        ctx.lineTo(x + 170, yy - 36);
+        ctx.stroke();
+      }
+      ctx.restore();
       ctx.fillStyle = "rgba(0,0,0,.16)";
       ctx.fillRect(0, 0, w, h);
     }
@@ -330,37 +776,139 @@
       ctx.restore();
     }
     function drawPlayer() {
+      const moving = Math.abs(player.vx) > 60;
+      const t = performance.now() / 1000;
+      const bob = moving ? Math.sin(t * 14) * 7 : Math.sin(t * 4) * 3;
+      const tilt = moving ? Math.sin(t * 14) * .035 : Math.sin(t * 3) * .018;
+      let frame = 0;
+      if (!player.ground) frame = 3;
+      else if (player.special > 0) frame = 5;
+      else if (player.atk > 0) frame = 4;
+      else if (moving) frame = Math.floor(t * 10) % 2 ? 1 : 2;
       ctx.save();
-      ctx.translate(sx(player.x), player.y);
+      ctx.translate(sx(player.x), player.y + bob);
       if (player.inv > 0 && Math.floor(performance.now() / 70) % 2) ctx.globalAlpha = .55;
-      ctx.scale(player.face, 1);
+      ctx.rotate(tilt);
       ctx.shadowColor = "rgba(86,220,255,.9)";
       ctx.shadowBlur = 24;
       const img = imgs.player;
-      if (img) ctx.drawImage(img, -92, -165, 184, 252);
+      const rawFw = img ? img.width / 6 : 0;
+      const sx0 = img ? Math.round(frame * rawFw) : 0;
+      const sx1 = img ? Math.round((frame + 1) * rawFw) : 0;
+      const fw = Math.max(1, sx1 - sx0);
+      const fh = img ? img.height : 0;
+      if (img && player.atk > 0) {
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        ctx.globalAlpha = .35;
+        ctx.fillStyle = "rgba(86,220,255,.42)";
+        ctx.beginPath();
+        ctx.ellipse(22, -62, 96, 128, -.18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      if (img) {
+        const frontTrim = 0;
+        const srcW = Math.max(1, fw - frontTrim);
+        const dstW = 208 * (srcW / fw);
+        ctx.drawImage(img, sx0, 0, srcW, fh, -104, -178, dstW, 274);
+      }
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.strokeStyle = "rgba(255,255,210,.72)";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.ellipse(0, -168 + Math.sin(t * 5) * 4, 46, 10, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
       ctx.restore();
     }
     function drawEnemy(e) {
       const x = sx(e.x);
       if (x < -220 || x > w + 220) return;
+      const spec = enemyTypes[e.type];
+      const t = performance.now() / 1000 + e.x * .01;
+      const run = Math.sin(t * 11) * 6;
+      let frame = Math.floor(t * 8) % 2;
+      if (e.flash > 0) frame = 3;
+      else if (e.attack > 0 || Math.abs(player.x - e.x) < 160) frame = 2;
       ctx.save();
-      ctx.translate(x, e.y);
-      ctx.scale(player.x < e.x ? 1 : -1, 1);
+      ctx.translate(x, e.y + run);
+      ctx.scale(player.x < e.x ? -1 : 1, 1);
+      ctx.rotate(Math.sin(t * 9) * .06);
       ctx.shadowColor = e.flash > 0 ? "#fff" : "rgba(255,102,199,.8)";
       ctx.shadowBlur = e.flash > 0 ? 28 : 16;
-      const img = imgs.enemy;
-      if (img) ctx.drawImage(img, -86, -98, 172, 168);
+      const img = imgs[spec.img];
+      const fw = img ? img.width / 4 : 0;
+      const fh = img ? img.height : 0;
+      if (img) {
+        ctx.save();
+        ctx.globalAlpha = .18;
+        ctx.translate(-20, 0);
+        ctx.drawImage(img, frame * fw, 0, fw, fh, -spec.drawW / 2, spec.yOffset, spec.drawW, spec.drawH);
+        ctx.restore();
+      }
+      if (img) ctx.drawImage(img, frame * fw, 0, fw, fh, -spec.drawW / 2, spec.yOffset, spec.drawW, spec.drawH);
+      if (e.hp < e.maxHp) {
+        ctx.fillStyle = "rgba(0,0,0,.5)";
+        ctx.fillRect(-42, spec.yOffset - 14, 84, 6);
+        ctx.fillStyle = "#ff66c7";
+        ctx.fillRect(-42, spec.yOffset - 14, 84 * clamp(e.hp / e.maxHp, 0, 1), 6);
+      }
+      ctx.restore();
+    }
+    function drawBoss() {
+      const x = sx(boss.x);
+      if (x < -420 || x > w + 420) return;
+      const t = performance.now() / 1000;
+      let frame = 0;
+      if (boss.flash > 0) frame = 2;
+      else if (boss.attack > 0) frame = 1;
+      ctx.save();
+      ctx.translate(x, boss.y + Math.sin(t * 3) * 5);
+      ctx.scale(player.x < boss.x ? -1 : 1, 1);
+      ctx.shadowColor = boss.flash > 0 ? "#fff" : "rgba(255,70,180,.95)";
+      ctx.shadowBlur = boss.flash > 0 ? 46 : 28;
+      const img = stage === 1 ? imgs.boss : imgs.bossWhite;
+      const fw = img ? img.width / 3 : 0;
+      const fh = img ? img.height : 0;
+      if (img) ctx.drawImage(img, frame * fw, 0, fw, fh, stage === 1 ? -170 : -190, stage === 1 ? -255 : -285, stage === 1 ? 340 : 380, stage === 1 ? 330 : 370);
+      ctx.restore();
+
+      ctx.save();
+      ctx.fillStyle = "rgba(0,0,0,.58)";
+      ctx.fillRect(24, 74, w - 48, 18);
+      ctx.fillStyle = "rgba(255,255,255,.35)";
+      ctx.fillRect(27, 77, w - 54, 12);
+      ctx.fillStyle = "linear-gradient";
+      const grad = ctx.createLinearGradient(27, 0, w - 27, 0);
+      grad.addColorStop(0, "#ff66c7");
+      grad.addColorStop(1, "#ffd36a");
+      ctx.fillStyle = grad;
+      ctx.fillRect(27, 77, (w - 54) * clamp(boss.hp / boss.maxHp, 0, 1), 12);
+      ctx.fillStyle = "#fff";
+      ctx.font = "900 13px system-ui, sans-serif";
+      ctx.fillText("BOSS  " + boss.name, 28, 68);
       ctx.restore();
     }
     function drawSlash(s) {
       ctx.save();
       ctx.translate(sx(s.x), s.y);
       ctx.scale(s.face, 1);
+      const pulse = 1 + Math.sin(performance.now() / 35) * .08;
+      ctx.scale(pulse, pulse);
       ctx.globalAlpha = clamp(s.life * 7, 0, 1);
       ctx.shadowColor = s.big ? "#ffd36a" : "#56dcff";
       ctx.shadowBlur = 34;
       const img = imgs.slash;
       if (img) ctx.drawImage(img, -s.w * .52, -s.h * .55, s.w, s.h);
+      ctx.globalCompositeOperation = "screen";
+      ctx.strokeStyle = s.big ? "rgba(255,211,106,.65)" : "rgba(86,220,255,.72)";
+      ctx.lineWidth = s.big ? 10 : 6;
+      ctx.beginPath();
+      ctx.moveTo(-s.w * .45, s.h * .2);
+      ctx.quadraticCurveTo(0, -s.h * .5, s.w * .48, -s.h * .16);
+      ctx.stroke();
       ctx.restore();
     }
     function drawParticle(p) {
@@ -372,12 +920,123 @@
       ctx.beginPath(); ctx.arc(sx(p.x), p.y, p.r, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     }
+    function drawPickup(p) {
+      const x = sx(p.x);
+      const y = p.y + Math.sin(performance.now() / 180 + p.bob) * 8;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.globalCompositeOperation = "screen";
+      ctx.shadowColor = p.kind === "heal" ? "#79ffb2" : "#56dcff";
+      ctx.shadowBlur = 22;
+      ctx.fillStyle = p.kind === "heal" ? "rgba(121,255,178,.9)" : "rgba(86,220,255,.9)";
+      ctx.beginPath();
+      ctx.arc(0, 0, 16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.85)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      if (p.kind === "heal") {
+        ctx.moveTo(-8, 0); ctx.lineTo(8, 0); ctx.moveTo(0, -8); ctx.lineTo(0, 8);
+      } else {
+        ctx.moveTo(-8, 6); ctx.lineTo(0, -9); ctx.lineTo(8, 6);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+    function drawFloater(f) {
+      ctx.save();
+      ctx.globalAlpha = clamp(f.life / f.max, 0, 1);
+      ctx.fillStyle = f.color;
+      ctx.strokeStyle = "rgba(0,0,0,.72)";
+      ctx.lineWidth = 5;
+      ctx.font = `1000 ${f.size}px system-ui, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.strokeText(f.text, sx(f.x), f.y);
+      ctx.fillText(f.text, sx(f.x), f.y);
+      ctx.restore();
+    }
     function drawProgress() {
       ctx.save();
       ctx.fillStyle = "rgba(255,255,255,.2)";
       ctx.fillRect(18, h - 14, w - 36, 5);
       ctx.fillStyle = "#56dcff";
-      ctx.fillRect(18, h - 14, (w - 36) * clamp(player.x / world, 0, 1), 5);
+      ctx.fillRect(18, h - 14, (w - 36) * clamp(player.x / stageWorld, 0, 1), 5);
+      ctx.fillStyle = "#fff";
+      ctx.font = "900 12px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      const remain = Math.max(0, Math.floor((stageWorld - player.x) / 100));
+      ctx.fillText(boss ? "目標: ボスを倒せ！" : `目標: 右へ進め / ボス地点まで ${remain}m`, 18, h - 56);
+      ctx.fillStyle = upgrade ? "#ffd36a" : "#b8c6d8";
+      ctx.fillText(upgrade ? "強化: 未来視覚醒 攻撃UP / 技回転UP" : "強化: Stage 1クリアで覚醒", 18, h - 36);
+      ctx.restore();
+    }
+    function drawSkillHud() {
+      const labels = [
+        ["連斬", skills.burst],
+        ["波動", skills.wave],
+        ["瞬歩", skills.dash],
+        ["突進", skills.rush],
+        ["天輪", skills.ring],
+        ["時止め", skills.cutinSkill],
+        ["奥義", skills.special]
+      ];
+      const boxW = Math.min(86, (w - 34) / labels.length - 4);
+      const y = h - 48;
+      ctx.save();
+      ctx.font = "900 11px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      labels.forEach(([label, skill], i) => {
+        const x = 17 + i * (boxW + 4);
+        const ready = skill.cd <= 0;
+        ctx.fillStyle = ready ? "rgba(86,220,255,.28)" : "rgba(0,0,0,.46)";
+        ctx.fillRect(x, y, boxW, 24);
+        ctx.strokeStyle = ready ? "rgba(255,255,255,.8)" : "rgba(255,255,255,.25)";
+        ctx.strokeRect(x, y, boxW, 24);
+        ctx.fillStyle = ready ? "#fff" : "#b8c6d8";
+        ctx.fillText(ready ? label : Math.ceil(skill.cd * 10) / 10, x + boxW / 2, y + 16);
+        if (!ready) {
+          ctx.fillStyle = "rgba(255,102,199,.45)";
+          ctx.fillRect(x, y + 20, boxW * clamp(1 - skill.cd / skill.max, 0, 1), 4);
+        }
+      });
+      ctx.restore();
+    }
+    function drawTimeVision() {
+      if (player.slow <= 0) return;
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.fillStyle = `rgba(86,220,255,${clamp(player.slow / 2, 0, .18)})`;
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "rgba(255,255,255,.22)";
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 7; i++) {
+        ctx.beginPath();
+        ctx.arc(w / 2, h / 2, 80 + i * 74 + Math.sin(performance.now() / 180) * 8, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    function drawCutin() {
+      if (cutin <= 0) return;
+      ctx.save();
+      const a = clamp(cutin / 2.2, 0, 1);
+      ctx.globalAlpha = Math.min(.9, a + .15);
+      ctx.fillStyle = "rgba(20,0,24,.72)";
+      ctx.fillRect(0, h * .34, w, h * .22);
+      ctx.globalCompositeOperation = "screen";
+      ctx.fillStyle = "rgba(255,102,199,.28)";
+      ctx.fillRect(0, h * .34, w, 4);
+      ctx.fillStyle = "rgba(86,220,255,.28)";
+      ctx.fillRect(0, h * .56 - 4, w, 4);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = "#fff";
+      ctx.strokeStyle = "#1b001b";
+      ctx.lineWidth = 8;
+      ctx.font = `1000 ${Math.min(54, w / 11)}px system-ui, sans-serif`;
+      ctx.textAlign = "center";
+      const warning = cutinText || (stage === 1 ? "WARNING  NIGHT ONI WARLORD" : "WARNING  WHITE CASTLE GUARDIAN");
+      ctx.strokeText(warning, w / 2, h * .48);
+      ctx.fillText(warning, w / 2, h * .48);
       ctx.restore();
     }
     function step(t) {
@@ -394,10 +1053,20 @@
       btn.addEventListener("pointercancel", () => keys.delete(key));
       btn.addEventListener("pointerleave", () => keys.delete(key));
     });
-    document.querySelector("#start").addEventListener("click", () => { title.classList.add("hidden"); reset(); });
+    document.querySelector("#start").addEventListener("click", async () => {
+      ensureAudio();
+      bgm.volume = .46;
+      try { await bgm.play(); } catch {}
+      title.classList.add("hidden");
+      if (nextStageReady) {
+        stage = 2;
+        reset(false);
+      } else {
+        reset(true);
+      }
+    });
     resize();
     loadImages().then(() => requestAnimationFrame(step));
   </script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
