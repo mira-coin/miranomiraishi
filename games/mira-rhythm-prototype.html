@@ -3810,26 +3810,27 @@
       }
       function playBgm() { if (wantBgm && inMenu()) bgm.play().catch(() => {}); }
       function pauseBgm() { try { bgm.pause(); } catch (e) {} }
+      function syncBtn() { const tb = document.getElementById("titleBgm"); if (tb) tb.textContent = wantBgm ? "♪ BGM ON" : "♪ BGM OFF"; }
 
-      // start on first user gesture (autoplay policy)
       const kick = () => playBgm();
       window.addEventListener("pointerdown", kick, true);
       window.addEventListener("keydown", kick, true);
 
-      // repurpose the title BGM button to toggle THIS menu bgm
+      // make the engine's BGM-UI updater reflect our menu bgm state
+      if (typeof updateTitleBgmUi === "function") { updateTitleBgmUi = syncBtn; }
+
       const tb = document.getElementById("titleBgm");
       if (tb) {
         try { if (typeof toggleTitleBgm === "function") tb.removeEventListener("click", toggleTitleBgm); } catch (e) {}
-        tb.textContent = "♪ BGM ON";
+        syncBtn();
         tb.addEventListener("click", e => {
           e.stopPropagation();
           wantBgm = !wantBgm;
-          tb.textContent = wantBgm ? "♪ BGM ON" : "♪ BGM OFF";
+          syncBtn();
           if (wantBgm) playBgm(); else pauseBgm();
         });
       }
 
-      // stop bgm when a game/stage starts; resume when back to menu
       if (typeof startGame === "function") {
         const _sg = startGame;
         startGame = async function () { pauseBgm(); return _sg.apply(this, arguments); };
