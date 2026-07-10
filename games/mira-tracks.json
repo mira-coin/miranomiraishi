@@ -44,6 +44,17 @@
       "layout": "depth",
       "skin": "soul",
       "offsetMs": 0
+    },
+    {
+      "id": "dance-of-chaos-stage5",
+      "title": "DANCE OF CHAOS",
+      "artist": "MIRA",
+      "audio": "dance-of-chaos.mp3",
+      "chart": "dance-of-chaos-chart.json",
+      "mvUrl": "dance-of-chaos-mv.mp4",
+      "difficulty": "Stage 5 / CHAOS",
+      "layout": "depth",
+      "offsetMs": 0
     }
   ]
 }
