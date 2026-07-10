@@ -3790,33 +3790,39 @@
         else if (e.key === "Enter") { e.preventDefault(); playSelected(); }
       });
     })();
-    // ===== Menu BGM「女神の共演」: title + stage select, loop, stop in game =====
+    // ===== Menu BGM: title = Angel Waltz / mode+stage select = 女神の共演 =====
     (function () {
+      const TITLE_SRC = "angel-waltz.mp3";
+      const MENU_SRC = "megami-kyoen.mp3";
       const bgm = document.createElement("audio");
       bgm.id = "menuBgm";
       bgm.loop = true;
       bgm.preload = "auto";
-      bgm.src = "megami-kyoen.mp3";
       bgm.volume = 0.5;
       document.body.appendChild(bgm);
       let wantBgm = true;
+      let curSrc = null;
 
-      function inMenu() {
+      function desiredSrc() {
         const ms = document.getElementById("modeSelect");
         const ss = document.getElementById("stageSelect");
-        return document.body.classList.contains("title-mode")
-          || (ms && ms.classList.contains("show"))
-          || (ss && ss.classList.contains("show"));
+        if ((ms && ms.classList.contains("show")) || (ss && ss.classList.contains("show"))) return MENU_SRC;
+        if (document.body.classList.contains("title-mode")) return TITLE_SRC;
+        return null;
       }
-      function playBgm() { if (wantBgm && inMenu()) bgm.play().catch(() => {}); }
+      function updateBgm() {
+        const d = desiredSrc();
+        if (!wantBgm || !d) { try { bgm.pause(); } catch (e) {} return; }
+        if (d !== curSrc) { curSrc = d; bgm.src = d; bgm.load(); }
+        bgm.play().catch(() => {});
+      }
       function pauseBgm() { try { bgm.pause(); } catch (e) {} }
       function syncBtn() { const tb = document.getElementById("titleBgm"); if (tb) tb.textContent = wantBgm ? "♪ BGM ON" : "♪ BGM OFF"; }
 
-      const kick = () => playBgm();
+      const kick = () => updateBgm();
       window.addEventListener("pointerdown", kick, true);
       window.addEventListener("keydown", kick, true);
 
-      // make the engine's BGM-UI updater reflect our menu bgm state
       if (typeof updateTitleBgmUi === "function") { updateTitleBgmUi = syncBtn; }
 
       const tb = document.getElementById("titleBgm");
@@ -3827,7 +3833,7 @@
           e.stopPropagation();
           wantBgm = !wantBgm;
           syncBtn();
-          if (wantBgm) playBgm(); else pauseBgm();
+          updateBgm();
         });
       }
 
@@ -3837,11 +3843,15 @@
       }
       if (typeof showModeSelect === "function") {
         const _sm = showModeSelect;
-        showModeSelect = function () { const r = _sm.apply(this, arguments); setTimeout(playBgm, 0); return r; };
+        showModeSelect = function () { const r = _sm.apply(this, arguments); setTimeout(updateBgm, 0); return r; };
       }
       if (typeof backToTitle === "function") {
         const _bt = backToTitle;
-        backToTitle = function () { const r = _bt.apply(this, arguments); setTimeout(playBgm, 0); return r; };
+        backToTitle = function () { const r = _bt.apply(this, arguments); setTimeout(updateBgm, 0); return r; };
+      }
+      if (typeof openStageSelect === "function") {
+        const _os = openStageSelect;
+        openStageSelect = function () { const r = _os.apply(this, arguments); setTimeout(updateBgm, 0); return r; };
       }
     })();
     els.start.addEventListener("click", startGame);
