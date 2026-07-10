@@ -3854,6 +3854,15 @@
         openStageSelect = function () { const r = _os.apply(this, arguments); setTimeout(updateBgm, 0); return r; };
       }
     })();
+    // ===== 縦レーン(depth)のノーツを長く（落下時間を延ばす） =====
+    if (typeof applyTrack === "function") {
+      const _atLong = applyTrack;
+      applyTrack = async function () {
+        const r = await _atLong.apply(this, arguments);
+        if (state.layout === "depth") state.speed = Math.max(Number(state.speed) || 0, 4.7);
+        return r;
+      };
+    }
     els.start.addEventListener("click", startGame);
     els.titleStart.addEventListener("click", () => showModeSelect());
     els.titleBgm.addEventListener("click", toggleTitleBgm);
