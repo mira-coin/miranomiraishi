@@ -1,0 +1,1910 @@
+{
+  "title": "光の名前",
+  "version": 2,
+  "lanes": 4,
+  "offsetMs": 0,
+  "difficulty": "Normal",
+  "notes": [
+    {
+      "time": 3.565,
+      "lane": 0,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 3.68,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 4.37,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 4.485,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 4.715,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 5.174,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 5.289,
+      "lane": 2,
+      "type": "pink",
+      "kind": "flick"
+    },
+    {
+      "time": 6.094,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 6.784,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 6.899,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 7.014,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 7.244,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 7.704,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 8.164,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 8.509,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 8.969,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 9.314,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 9.774,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 10.119,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 10.234,
+      "lane": 3,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 10.579,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 11.039,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 11.384,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 11.844,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 12.304,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 12.649,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 13.109,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 13.454,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 15.179,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 15.753,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "hold",
+      "duration": 0.855
+    },
+    {
+      "time": 16.788,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 16.903,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 17.133,
+      "lane": 1,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 18.053,
+      "lane": 2,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 18.168,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 19.088,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 20.008,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 20.123,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 21.733,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 23.228,
+      "lane": 2,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 23.343,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 23.458,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 24.263,
+      "lane": 2,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 25.068,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 26.562,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 26.677,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 26.792,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 27.137,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 27.597,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 27.942,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 28.402,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 28.747,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 29.207,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 29.667,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 30.012,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 30.472,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 31.277,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 31.737,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 32.082,
+      "lane": 1,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 32.542,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 33.347,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 33.807,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 34.152,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 34.612,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 34.957,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 35.417,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 35.876,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 36.221,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 36.681,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 37.486,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 38.291,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 38.751,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "hold",
+      "duration": 0.625
+    },
+    {
+      "time": 39.556,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 40.591,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 41.396,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 41.626,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 42.891,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 43.236,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 43.926,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 44.731,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 44.961,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 45.536,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 46.57,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 47.03,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 47.375,
+      "lane": 1,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 47.835,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 48.64,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 49.1,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 49.905,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 51.17,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 52.09,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 52.205,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 52.32,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 52.435,
+      "lane": 0,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 52.55,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 53.24,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 53.585,
+      "lane": 2,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 54.045,
+      "lane": 0,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 54.85,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 55.655,
+      "lane": 0,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 56.114,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 56.574,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 56.919,
+      "lane": 2,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 57.724,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 58.184,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 58.989,
+      "lane": 0,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 59.794,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 61.059,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 62.324,
+      "lane": 2,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 63.129,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 63.589,
+      "lane": 2,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 63.934,
+      "lane": 0,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 64.394,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 65.199,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 65.659,
+      "lane": 2,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 66.463,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 68.533,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 69.338,
+      "lane": 0,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 69.798,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 70.143,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 70.603,
+      "lane": 2,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 71.408,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 72.213,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 72.673,
+      "lane": 0,
+      "type": "pink",
+      "kind": "flick"
+    },
+    {
+      "time": 73.018,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 73.363,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 74.743,
+      "lane": 2,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 74.973,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 75.088,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 75.893,
+      "lane": 0,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 76.008,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 76.122,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 76.352,
+      "lane": 3,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 76.467,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 76.812,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 77.157,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 77.617,
+      "lane": 3,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 79.227,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 79.342,
+      "lane": 2,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 79.457,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 79.572,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 79.687,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 79.802,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 80.032,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 80.147,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 80.492,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 80.952,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 81.297,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 81.757,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 82.217,
+      "lane": 3,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 82.562,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 83.022,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 83.367,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 83.827,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 84.287,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 84.632,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 85.092,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 85.437,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 85.897,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 86.701,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 87.161,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 87.506,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 87.966,
+      "lane": 1,
+      "type": "pink",
+      "kind": "flick"
+    },
+    {
+      "time": 88.311,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 88.426,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 88.771,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 89.231,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 89.576,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 90.036,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 90.841,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 91.301,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 92.106,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 92.451,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 92.566,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 94.406,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 96.131,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 96.246,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 96.36,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 96.59,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 96.705,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 96.82,
+      "lane": 0,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 99.235,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 99.35,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 99.465,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 99.58,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 100.155,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 100.96,
+      "lane": 0,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 101.535,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 102.455,
+      "lane": 0,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 102.915,
+      "lane": 2,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 103.26,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 103.72,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 104.065,
+      "lane": 0,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 104.525,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 104.87,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 105.33,
+      "lane": 2,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 105.79,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 108.434,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 108.549,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 108.664,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 108.779,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 108.894,
+      "lane": 3,
+      "type": "pink",
+      "kind": "flick"
+    },
+    {
+      "time": 109.469,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 109.584,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 109.699,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 110.274,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 110.734,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 111.539,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 111.999,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 112.804,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 113.149,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 113.264,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 113.609,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 114.069,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 114.874,
+      "lane": 1,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 115.334,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 115.679,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 116.139,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 116.943,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "hold",
+      "duration": 0.625
+    },
+    {
+      "time": 117.748,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 119.013,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 119.358,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 119.818,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 120.623,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 121.083,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 121.888,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 122.348,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 123.153,
+      "lane": 3,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 124.763,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 125.223,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 125.568,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 125.683,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 126.028,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 126.488,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 126.832,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 127.292,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 127.752,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 128.097,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 128.557,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 128.902,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 129.362,
+      "lane": 1,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 129.707,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 130.167,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 130.627,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 130.972,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 131.432,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 131.777,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 132.237,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 132.697,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 133.042,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 133.502,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 134.307,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 135.112,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 135.572,
+      "lane": 3,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 135.917,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 136.607,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 137.411,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 137.641,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 138.216,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 138.906,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 139.251,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 139.826,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 140.746,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 141.551,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 142.126,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 142.241,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 142.586,
+      "lane": 1,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 143.046,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 143.391,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 143.851,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 144.656,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 145.921,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 146.726,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 150.865,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 152.13,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 152.935,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 154.2,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 155.005,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 156.27,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 157.419,
+      "lane": 3,
+      "type": "pink",
+      "kind": "flick"
+    },
+    {
+      "time": 157.879,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 158.339,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "hold",
+      "duration": 0.625
+    },
+    {
+      "time": 159.144,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 160.754,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 161.214,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 162.019,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 162.824,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 164.089,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 164.549,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 166.964,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 167.423,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 168.228,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 168.688,
+      "lane": 1,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 169.033,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 169.493,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 169.838,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 170.298,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 170.758,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 171.103,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 171.563,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 172.368,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 172.828,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 173.633,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 173.978,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 174.898,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 175.703,
+      "lane": 3,
+      "type": "gold",
+      "kind": "flick"
+    },
+    {
+      "time": 176.508,
+      "lane": 1,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 178.922,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 179.037,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 179.267,
+      "lane": 3,
+      "type": "pink",
+      "kind": "tap"
+    },
+    {
+      "time": 180.647,
+      "lane": 1,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 181.452,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 183.522,
+      "lane": 1,
+      "type": "gold",
+      "kind": "tap"
+    },
+    {
+      "time": 183.637,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 183.752,
+      "lane": 3,
+      "type": "cyan",
+      "kind": "tap"
+    },
+    {
+      "time": 183.867,
+      "lane": 0,
+      "type": "pink",
+      "kind": "tap"
+    }
+  ],
+  "description": "Prototype Normal chart for Hikari no Namae."
+}

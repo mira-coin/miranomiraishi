@@ -1,0 +1,699 @@
+{
+  "title": "不夜城 / Stage 2 横流れ",
+  "version": 1,
+  "layout": "horizontal",
+  "displaySpeed": 6.4,
+  "noteDensity": 0.74,
+  "offsetMs": 0,
+  "notes": [
+    {
+      "time": 18.24,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 29.88,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 34.56,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 36.24,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 41.88,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 42.6,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 46.92,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 57.24,
+      "lane": 3,
+      "type": "pink",
+      "kind": "flick"
+    },
+    {
+      "time": 57.96,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 58.56,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 60.6,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 61.56,
+      "lane": 3,
+      "type": "pink",
+      "kind": "hold",
+      "duration": 0.75
+    },
+    {
+      "time": 63.6,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 64.32,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 65.16,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 65.88,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 66.6,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 67.32,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 68.16,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 69.6,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 70.92,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 71.88,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 81.24,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 87.24,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 90.24,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 96.24,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 98.04,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "flick"
+    },
+    {
+      "time": 98.52,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 99.24,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 100.8,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 101.76,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 102.24,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 103.68,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 104.28,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 105.24,
+      "lane": 2,
+      "type": "cyan",
+      "kind": "hold",
+      "duration": 0.75
+    },
+    {
+      "time": 105.96,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 107.16,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 108.24,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 110.16,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 110.88,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 111.6,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 112.32,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 112.92,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 113.52,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 114.24,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 114.96,
+      "lane": 2,
+      "type": "pink",
+      "kind": "flick"
+    },
+    {
+      "time": 116.64,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 117.24,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 118.32,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 119.52,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 120.24,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 120.96,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 121.56,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 122.16,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 122.88,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 123.6,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 124.32,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 124.92,
+      "lane": 1,
+      "type": "pink",
+      "kind": "hold",
+      "duration": 0.75
+    },
+    {
+      "time": 126.24,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 128.28,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 129.24,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 135.24,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 139.2,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 141.24,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 142.56,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "flick"
+    },
+    {
+      "time": 144.24,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 145.56,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 146.16,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 146.88,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 147.6,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 148.32,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 148.92,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 150.24,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 151.68,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 152.28,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 153.24,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 156.6,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 157.32,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 158.16,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 158.88,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 159.6,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "hold",
+      "duration": 0.75
+    },
+    {
+      "time": 160.8,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 161.52,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 162.24,
+      "lane": 3,
+      "type": "pink",
+      "kind": "flick"
+    },
+    {
+      "time": 162.96,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 163.8,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 164.52,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 165.24,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 166.2,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 166.92,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 168.24,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 169.56,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 171.24,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 172.8,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 173.28,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 173.88,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 174.72,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 175.56,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 176.16,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 177.24,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 178.8,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 179.52,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 180.24,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "flick"
+    },
+    {
+      "time": 181.44,
+      "lane": 3,
+      "type": "pink",
+      "kind": "hold",
+      "duration": 0.75
+    },
+    {
+      "time": 182.28,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 183.24,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 184.8,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 185.76,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 186.24,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 187.8,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 188.28,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 189.24,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 189.96,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 190.8,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 192.24,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 193.8,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 194.88,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 198.24,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 201.24,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 204.24,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 207.6,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 209.16,
+      "lane": 1,
+      "type": "pink",
+      "kind": "flick"
+    },
+    {
+      "time": 211.56,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 213.6,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 214.32,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 216.6,
+      "lane": 2,
+      "type": "pink"
+    },
+    {
+      "time": 217.56,
+      "lane": 0,
+      "type": "cyan",
+      "kind": "hold",
+      "duration": 0.75
+    },
+    {
+      "time": 221.16,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 225.24,
+      "lane": 0,
+      "type": "cyan"
+    },
+    {
+      "time": 227.04,
+      "lane": 1,
+      "type": "pink"
+    },
+    {
+      "time": 228.24,
+      "lane": 2,
+      "type": "cyan"
+    },
+    {
+      "time": 230.04,
+      "lane": 3,
+      "type": "pink"
+    },
+    {
+      "time": 234.24,
+      "lane": 1,
+      "type": "cyan"
+    },
+    {
+      "time": 236.88,
+      "lane": 2,
+      "type": "pink"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "tracks": [
+    {
+      "id": "hikari-no-namae-easy",
+      "title": "光の名前",
+      "artist": "MIRA",
+      "audio": "hikari-no-namae.mp3",
+      "chart": "hikari-no-namae-easy-chart.json",
+      "mvUrl": "mira-hikari-mv.mp4",
+      "difficulty": "Stage 1",
+      "offsetMs": 0
+    },
+    {
+      "id": "fuya-jo-ciudad-sin-noche-stage2-horizontal",
+      "title": "不夜城 - Ciudad Sin Noche",
+      "artist": "MIRA",
+      "audio": "fuya-jo-ciudad-sin-noche-lite.mp3",
+      "chart": "fuya-jo-ciudad-sin-noche-horizontal-chart.json",
+      "mvUrl": "stage2-ai-repair-mv-lite.mp4",
+      "difficulty": "Stage 2 / 横流れ",
+      "layout": "horizontal",
+      "offsetMs": 0
+    },
+    {
+      "id": "night-dive-stage3-taiko",
+      "title": "Night Dive - Luz en Dolor",
+      "artist": "MIRA",
+      "audio": "night-dive-lite.mp3",
+      "chart": "night-dive-taiko-chart.json",
+      "mvUrl": "night-dive-mv-lite.mp4",
+      "difficulty": "Stage 3 / 2レーン太鼓風",
+      "layout": "taiko",
+      "offsetMs": 0
+    }
+  ]
+}
