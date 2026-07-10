@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "updatedAt": "2026-07-09",
+  "updatedAt": "2026-07-11",
   "site": {
     "title": "ミラの未来視",
     "subtitle": "miranomiraishi official hub",
@@ -48,7 +48,7 @@
         },
         {
           "label": "BOOTHで購入",
-          "url": "#"
+          "url": "https://miranomiraishi.booth.pm/items/8163718"
         }
       ]
     },
@@ -85,11 +85,11 @@
       "order": 35,
       "label": "ACTION",
       "icon": "A",
-      "title": "ミラ無双 横スクロールアクション体験版",
-      "description": "動画スクショを素材化して作った、リズムゲームとは別の横スクロールアクション。ちびミラで敵をなぎ倒す1ステージ体験版です。",
+      "title": "ミラ無双 横スクロールアクション",
+      "description": "動画スクショを素材化して作った、リズムゲームとは別の横スクロールアクション。ちびミラで敵をなぎ倒す完成版です。",
       "image": "images/mira-musou-title-screen.jpg",
-      "url": "games/mira-video-stage-demo.html",
-      "buttonLabel": "アクション体験版を遊ぶ"
+      "url": "games/miramusou-game.html",
+      "buttonLabel": "アクションを遊ぶ"
     },
     {
       "id": "game-mira-stg",
@@ -103,6 +103,20 @@
       "image": "images/mira-stg-title.jpg",
       "url": "games/mira-stg.html",
       "buttonLabel": "STGを遊ぶ"
+    },
+    {
+      "id": "anime-mv",
+      "type": "video",
+      "section": "music",
+      "order": 38,
+      "label": "ANIME",
+      "icon": "▶",
+      "title": "ミラのアニメMV",
+      "description": "YouTubeで公開中のアニメMV。TikTokでもバズ多数の話題作をチェック。",
+      "image": "images/works-collage.jpg",
+      "url": "https://www.youtube.com/watch?v=ENInftLm_Bg",
+      "buttonLabel": "YouTubeで見る",
+      "youtubeId": "ENInftLm_Bg"
     },
     {
       "id": "music-streaming",
@@ -139,10 +153,10 @@
       "label": "GOODS",
       "icon": "B",
       "title": "ミラのキャラクターグッズ",
-      "description": "ミラのキーホルダー、アクリル系アイテム、イベント向け小物などを紹介する場所。商品画像とBOOTH販売URLを差し込めます。",
+      "description": "ミラのキーホルダー、アクリル系アイテム、イベント向け小物などを紹介。BOOTHで販売中。",
       "image": "images/works-collage.jpg",
-      "url": "#",
-      "buttonLabel": "BOOTH未設定"
+      "url": "https://miranomiraishi.booth.pm/items/8163718",
+      "buttonLabel": "BOOTHで見る"
     },
     {
       "id": "world-guide",
@@ -169,19 +183,6 @@
       "image": "images/ai-idol-room.jpg",
       "url": "#room",
       "buttonLabel": "Roomへ"
-    },
-    {
-      "id": "live-2d-room",
-      "type": "link",
-      "section": "ai-idol",
-      "order": 75,
-      "label": "SOON",
-      "icon": "2D",
-      "title": "ミラの2Dライブ（Coming Soon）",
-      "description": "まばたき・口パク・視線・髪の物理演算つきで、ブラウザだけで動く2Dライブを現在制作中です。公開までもう少しお待ちください。",
-      "image": "images/ai-idol-room.jpg",
-      "url": "#room",
-      "buttonLabel": "Coming Soon"
     },
     {
       "id": "official-url",
@@ -215,9 +216,9 @@
       "label": "SHOP",
       "icon": "B",
       "title": "BOOTH",
-      "description": "ミラのキーホルダー、アクリル系グッズ、漫画関連アイテム。",
-      "url": "#",
-      "buttonLabel": "BOOTH未設定"
+      "description": "ミラのキーホルダー、アクリル系グッズ、漫画関連アイテムを販売中。",
+      "url": "https://miranomiraishi.booth.pm/items/8163718",
+      "buttonLabel": "BOOTHで見る"
     },
     {
       "id": "music-links",
