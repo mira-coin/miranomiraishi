@@ -32,6 +32,18 @@
       "difficulty": "Stage 3 / 2レーン太鼓風",
       "layout": "taiko",
       "offsetMs": 0
+    },
+    {
+      "id": "soul-kanki-stage4",
+      "title": "魂の歓喜",
+      "artist": "MIRA",
+      "audio": "soul-kanki.mp3",
+      "chart": "soul-kanki-chart.json",
+      "mvUrl": "soul-kanki-mv.mp4",
+      "difficulty": "Stage 4 / 魂",
+      "layout": "depth",
+      "skin": "soul",
+      "offsetMs": 0
     }
   ]
 }
