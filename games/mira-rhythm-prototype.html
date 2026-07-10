@@ -1699,6 +1699,57 @@
         min-width: 260px;
       }
     }
+    /* ===== MODE / STAGE SELECT + MAKER (rebuild) ===== */
+    .mm-overlay{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;
+      padding:5vh 6vw;gap:2.4vh;overflow-y:auto;text-align:center;
+      background:
+        radial-gradient(circle at 50% 10%,rgba(120,90,255,.34),transparent 46%),
+        radial-gradient(circle at 50% 125%,rgba(0,200,255,.22),transparent 52%),
+        linear-gradient(180deg,#0a0a1f 0%,#0b0730 48%,#05030f 100%);
+      color:#eaf2ff;}
+    .mm-overlay.show{display:flex;}
+    .mm-title{font-size:clamp(30px,6vw,64px);font-weight:800;letter-spacing:.16em;margin:0;
+      background:linear-gradient(90deg,#8fd4ff,#c9a8ff,#8fd4ff);-webkit-background-clip:text;background-clip:text;color:transparent;
+      text-shadow:0 0 34px rgba(140,120,255,.35);}
+    .mm-sub{margin:-1vh 0 1vh;letter-spacing:.42em;font-size:12px;color:#8ea6d8;text-transform:uppercase;}
+    .mm-cards{display:flex;flex-wrap:wrap;gap:clamp(14px,2.6vw,30px);justify-content:center;width:100%;max-width:960px;}
+    .mm-card{position:relative;flex:1 1 300px;max-width:420px;min-height:200px;border-radius:20px;cursor:pointer;
+      padding:24px;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;text-align:left;
+      border:1px solid rgba(150,180,255,.28);background:linear-gradient(160deg,rgba(42,46,94,.72),rgba(14,14,40,.82));
+      box-shadow:0 20px 60px rgba(0,0,0,.45),inset 0 0 40px rgba(90,120,255,.08);
+      transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;overflow:hidden;}
+    .mm-card::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 42%,rgba(120,200,255,.16));opacity:0;transition:opacity .2s;}
+    .mm-card:hover{transform:translateY(-6px);border-color:rgba(150,200,255,.7);box-shadow:0 28px 74px rgba(50,70,180,.5),inset 0 0 52px rgba(120,150,255,.18);}
+    .mm-card:hover::before{opacity:1;}
+    .mm-card .mm-k{font-size:11px;letter-spacing:.32em;color:#7fe3ff;text-transform:uppercase;}
+    .mm-card .mm-h{font-size:clamp(21px,3.2vw,32px);font-weight:800;letter-spacing:.03em;}
+    .mm-card .mm-d{font-size:13px;line-height:1.6;color:#b8c6ea;}
+    .mm-card.locked{cursor:not-allowed;opacity:.45;filter:grayscale(.45);}
+    .mm-card.locked:hover{transform:none;box-shadow:0 20px 60px rgba(0,0,0,.45);}
+    .mm-badge{position:absolute;top:14px;right:14px;font-size:10px;letter-spacing:.18em;padding:4px 10px;border-radius:999px;
+      background:rgba(10,12,30,.7);border:1px solid rgba(150,180,255,.4);color:#cbd8ff;}
+    .stage-num{font-size:11px;letter-spacing:.3em;color:#7fe3ff;}
+    .mm-back{margin-top:1vh;align-self:center;background:transparent;border:1px solid rgba(150,180,255,.4);color:#cbd8ff;
+      padding:10px 26px;border-radius:999px;letter-spacing:.24em;font-size:12px;cursor:pointer;transition:.18s;}
+    .mm-back:hover{background:rgba(120,150,255,.16);border-color:#9fc4ff;}
+    /* maker mode chrome */
+    #makerBackdrop{position:absolute;inset:0;z-index:24;display:none;
+      background:radial-gradient(circle at 50% 10%,rgba(120,90,255,.3),transparent 46%),linear-gradient(180deg,#0a0a1f,#05030f);}
+    body.maker-mode #makerBackdrop{display:block;}
+    body:not(.maker-mode) .toolbar{display:none !important;}
+    body.maker-mode .toolbar{display:flex !important;opacity:1 !important;pointer-events:auto !important;z-index:25;
+      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-height:88vh;width:min(680px,92vw);overflow-y:auto;}
+    body.maker-mode.clean-view .toolbar{display:none !important;}
+    .maker-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 6px;}
+    .maker-header .mk-title{font-size:15px;letter-spacing:.22em;color:#8fd4ff;font-weight:800;}
+    .mk-back{background:transparent;border:1px solid rgba(150,180,255,.4);color:#cbd8ff;padding:6px 16px;border-radius:999px;font-size:11px;letter-spacing:.18em;cursor:pointer;}
+    .mk-back:hover{background:rgba(120,150,255,.16);}
+    .layout-select{display:flex;gap:8px;margin:10px 0;}
+    .layout-select button{flex:1;padding:10px 6px;border-radius:12px;border:1px solid rgba(150,180,255,.3);background:rgba(20,24,54,.7);color:#cbd8ff;font-size:13px;cursor:pointer;transition:.15s;}
+    .layout-select button.active{border-color:#7fe3ff;background:rgba(90,150,255,.28);color:#fff;box-shadow:0 0 18px rgba(120,180,255,.35);}
+    .lock-note{font-size:11px;color:#ffb4c8;letter-spacing:.06em;margin:6px 0 0;}
+    .mm-menu-btn{background:transparent;border:1px solid rgba(150,180,255,.4);color:#cbd8ff;padding:8px 18px;border-radius:999px;font-size:12px;letter-spacing:.16em;cursor:pointer;}
+    .mm-menu-btn:hover{background:rgba(120,150,255,.16);}
   </style>
 </head>
 <body>
@@ -1735,6 +1786,31 @@
         <button class="title-hotspot option" type="button" data-soon="OPTION">OPTION</button>
         <div id="titleToast" class="title-toast">COMING SOON</div>
       </div>
+    </section>
+
+    <div id="makerBackdrop"></div>
+    <section id="modeSelect" class="mm-overlay" aria-label="モード選択">
+      <h1 class="mm-title">SELECT MODE</h1>
+      <p class="mm-sub">ミラ リズム</p>
+      <div class="mm-cards">
+        <div class="mm-card" id="cardStage" role="button" tabindex="0">
+          <div class="mm-k">STAGE</div>
+          <div class="mm-h">ステージモード</div>
+          <div class="mm-d">MVに合わせて叩く本編。STAGE 1・2・3、以降も続々追加していきます。</div>
+        </div>
+        <div class="mm-card" id="cardMaker" role="button" tabindex="0">
+          <div class="mm-k">CREATE</div>
+          <div class="mm-h">ツクールモード</div>
+          <div class="mm-d">自分の動画・音源を入れて譜面を作る。たて／よこ／横2レーン対応。</div>
+        </div>
+      </div>
+      <button class="mm-back" id="modeBack" type="button">← TITLE</button>
+    </section>
+    <section id="stageSelect" class="mm-overlay" aria-label="ステージ選択">
+      <h1 class="mm-title">STAGE SELECT</h1>
+      <p class="mm-sub">Choose your stage</p>
+      <div class="mm-cards" id="stageList"></div>
+      <button class="mm-back" id="stageBack" type="button">← MODE</button>
     </section>
 
     <section class="hud" aria-label="ゲーム情報">
@@ -1794,6 +1870,10 @@
 
     <aside class="toolbar" aria-label="素材読み込み">
       <h1>MIRA Rhythm Prototype</h1>
+      <div class="maker-header">
+        <span class="mk-title">RHYTHM MAKER</span>
+        <button class="mk-back" id="makerBack" type="button">← MENU</button>
+      </div>
       <div class="controls">
         <select id="trackSelect" class="track-select" aria-label="曲選択">
           <option value="">曲リスト読込中...</option>
@@ -1842,6 +1922,12 @@
             <input id="noteSpeedInput" type="range" min="240" max="700" step="5" value="325">
             <output id="noteSpeedText">3.25s</output>
           </label>
+          <div class="layout-select" aria-label="ノーツ配置">
+            <button type="button" data-layout="depth" class="active">たて</button>
+            <button type="button" data-layout="horizontal">よこ</button>
+            <button type="button" data-layout="taiko">横2レーン</button>
+          </div>
+          <p class="lock-note">🔒 保存はプレミアム機能（現在は準備中）</p>
           <div class="maker-actions">
             <button id="applyMakerChart" class="ghost-btn" type="button">出現率で生成</button>
             <button id="openMakerJson" class="ghost-btn" type="button">JSON編集</button>
@@ -3290,8 +3376,117 @@
       els.meta.textContent = `作成データ保存: ${payload.chart.notes.length} notes / 速度 ${payload.maker.displaySpeed}s`;
     }
 
+    // ===== Mode / Stage select rebuild =====
+    const rb = {
+      modeSelect: document.getElementById("modeSelect"),
+      stageSelect: document.getElementById("stageSelect"),
+      stageList: document.getElementById("stageList"),
+      cardStage: document.getElementById("cardStage"),
+      cardMaker: document.getElementById("cardMaker"),
+      modeBack: document.getElementById("modeBack"),
+      stageBack: document.getElementById("stageBack"),
+      makerBack: document.getElementById("makerBack")
+    };
+    function hideMenus() {
+      rb.modeSelect.classList.remove("show");
+      rb.stageSelect.classList.remove("show");
+    }
+    function stopPlayback() {
+      try { pauseLoadedMedia(); } catch (e) {}
+      state.running = false;
+      state.paused = false;
+      cancelAnimationFrame(state.raf);
+      if (typeof updatePauseUi === "function") updatePauseUi();
+    }
+    function showModeSelect() {
+      stopPlayback();
+      document.body.classList.remove("maker-mode", "clean-view");
+      els.resultModal.classList.remove("show");
+      setTitleVisible(false);
+      hideMenus();
+      rb.modeSelect.classList.add("show");
+      updateCleanViewUi();
+    }
+    function backToTitle() {
+      hideMenus();
+      document.body.classList.remove("maker-mode");
+      setTitleVisible(true);
+    }
+    function layoutLabel(l) {
+      return l === "horizontal" ? "よこ" : (l === "taiko" ? "横2レーン" : "たて");
+    }
+    async function openStageSelect() {
+      rb.modeSelect.classList.remove("show");
+      rb.stageSelect.classList.add("show");
+      rb.stageList.innerHTML = '<div class="stage-num">読み込み中...</div>';
+      let tracks = [];
+      try { tracks = await loadTrackManifest(); } catch (e) { tracks = []; }
+      if (!tracks || !tracks.length) tracks = (typeof fallbackTracks !== "undefined") ? fallbackTracks : [];
+      rb.stageList.innerHTML = "";
+      tracks.forEach((track, i) => {
+        const card = document.createElement("div");
+        card.className = "mm-card";
+        card.setAttribute("role", "button");
+        card.tabIndex = 0;
+        card.innerHTML =
+          '<span class="mm-badge">' + (track.difficulty || ("STAGE " + (i + 1))) + "</span>" +
+          '<div class="stage-num">STAGE ' + (i + 1) + "</div>" +
+          '<div class="mm-h">' + (track.title || track.id || ("Stage " + (i + 1))) + "</div>" +
+          '<div class="mm-d">' + (track.artist || "MIRA") + (track.layout ? (" ・ " + layoutLabel(track.layout)) : "") + "</div>";
+        const launch = () => startStage(track);
+        card.addEventListener("click", launch);
+        card.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); launch(); } });
+        rb.stageList.appendChild(card);
+      });
+      const soon = document.createElement("div");
+      soon.className = "mm-card locked";
+      soon.innerHTML = '<span class="mm-badge">SOON</span><div class="stage-num">NEXT</div><div class="mm-h">新ステージ</div><div class="mm-d">自曲MVを続々追加予定</div>';
+      rb.stageList.appendChild(soon);
+    }
+    async function startStage(track) {
+      hideMenus();
+      document.body.classList.remove("maker-mode");
+      try { await applyTrack(track); } catch (e) {}
+      await startGame();
+    }
+    function openMaker() {
+      stopPlayback();
+      hideMenus();
+      setTitleVisible(false);
+      document.body.classList.remove("clean-view");
+      document.body.classList.add("maker-mode");
+      updateCleanViewUi();
+    }
+    rb.cardStage.addEventListener("click", openStageSelect);
+    rb.cardStage.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openStageSelect(); } });
+    rb.cardMaker.addEventListener("click", openMaker);
+    rb.cardMaker.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openMaker(); } });
+    rb.modeBack.addEventListener("click", backToTitle);
+    rb.stageBack.addEventListener("click", () => { rb.stageSelect.classList.remove("show"); rb.modeSelect.classList.add("show"); });
+    if (rb.makerBack) rb.makerBack.addEventListener("click", showModeSelect);
+    document.querySelectorAll(".layout-select [data-layout]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".layout-select [data-layout]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        setStageLayout(btn.dataset.layout);
+        els.meta.textContent = "ノーツ配置: " + btn.textContent;
+      });
+    });
+    ["saveProject", "saveChart"].forEach(id => {
+      const b = els[id] || document.getElementById(id);
+      if (b) { b.disabled = true; b.textContent = "🔒 保存(課金)"; b.title = "プレミアム機能（準備中）"; }
+    });
+    els.start.addEventListener("click", () => { document.body.classList.remove("maker-mode"); hideMenus(); });
+    (function () {
+      const mkBtn = label => { const b = document.createElement("button"); b.type = "button"; b.className = "mm-menu-btn"; b.textContent = label; return b; };
+      const pa = document.querySelector(".pause-actions");
+      if (pa) { const b = mkBtn("MENU"); b.addEventListener("click", () => { state.paused = false; if (typeof updatePauseUi === "function") updatePauseUi(); showModeSelect(); }); pa.appendChild(b); }
+      const ra = document.querySelector(".result-actions");
+      if (ra) { const b = mkBtn("MENU"); b.addEventListener("click", showModeSelect); ra.appendChild(b); }
+    })();
+
     els.start.addEventListener("click", startGame);
-    els.titleStart.addEventListener("click", startGame);
+    els.titleStart.addEventListener("click", () => showModeSelect());
     els.titleBgm.addEventListener("click", toggleTitleBgm);
     els.titlePc.addEventListener("click", () => selectDevice("pc"));
     els.titleSp.addEventListener("click", () => selectDevice("sp"));
