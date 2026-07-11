@@ -243,6 +243,18 @@
       "description": "ゲーム、資料、更新履歴、技術的な制作ログ。",
       "url": "#",
       "buttonLabel": "準備中"
+    },
+    {
+      "id": "request-board",
+      "type": "link",
+      "section": "links",
+      "order": 90,
+      "label": "BOARD",
+      "icon": "✉",
+      "title": "要望ボード",
+      "description": "「こうしてほしい」「応援」「バグ報告」などを送れる要望ボード。ログイン不要。いただいた声はサイトに反映していきます。",
+      "url": "board.html",
+      "buttonLabel": "要望を送る"
     }
   ]
 }

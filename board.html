@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>要望ボード | ミラの未来視</title>
+<meta name="description" content="ミラの未来視への要望・応援メッセージを送れるボード。">
+<style>
+  :root{--bg:#06070a;--cyan:#7fe3ff;--pink:#ff8fd0;--vio:#c9a8ff;}
+  *{box-sizing:border-box;}
+  body{margin:0;min-height:100vh;font-family:"Noto Sans JP",system-ui,sans-serif;color:#e9eefc;
+    background:radial-gradient(circle at 50% 8%,rgba(120,90,255,.28),transparent 45%),radial-gradient(circle at 50% 120%,rgba(0,200,255,.18),transparent 50%),linear-gradient(180deg,#0a0a1f,#0b0730 48%,#05030f);}
+  .wrap{max-width:720px;margin:0 auto;padding:5vh 20px 8vh;}
+  .back{display:inline-flex;align-items:center;gap:8px;color:#cbd8ff;text-decoration:none;font-size:13px;letter-spacing:.14em;border:1px solid rgba(150,180,255,.35);padding:8px 18px;border-radius:999px;transition:.15s;}
+  .back:hover{background:rgba(120,150,255,.16);}
+  h1{font-size:clamp(28px,5.4vw,46px);font-weight:800;letter-spacing:.08em;margin:4vh 0 6px;
+    background:linear-gradient(90deg,#8fd4ff,#c9a8ff,#8fd4ff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(140,120,255,.3);}
+  .sub{color:#aab8e0;font-size:14px;line-height:1.7;margin:0 0 3vh;}
+  form{background:linear-gradient(160deg,rgba(40,44,90,.55),rgba(14,14,40,.72));border:1px solid rgba(150,180,255,.24);
+    border-radius:20px;padding:26px 22px;box-shadow:0 20px 60px rgba(0,0,0,.4);}
+  label{display:block;font-size:13px;letter-spacing:.06em;color:#bccaf0;margin:16px 0 6px;font-weight:700;}
+  label:first-child{margin-top:0;}
+  input,select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(150,180,255,.3);
+    background:rgba(10,14,34,.8);color:#eef3ff;font-size:15px;font-family:inherit;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 14px rgba(120,200,255,.3);}
+  textarea{min-height:130px;resize:vertical;}
+  .hp{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;}
+  .send{margin-top:22px;width:100%;padding:15px;border:none;border-radius:999px;cursor:pointer;
+    font-size:16px;font-weight:800;letter-spacing:.12em;color:#04121a;background:linear-gradient(90deg,#8fe6ff,#c9a8ff);
+    box-shadow:0 10px 30px rgba(120,180,255,.45);transition:transform .15s ease;}
+  .send:hover{transform:translateY(-2px);}
+  .note{margin-top:18px;font-size:12px;line-height:1.7;color:#8fa0cc;}
+  .thanks{display:none;background:linear-gradient(160deg,rgba(40,90,70,.5),rgba(14,30,24,.7));border:1px solid rgba(120,255,190,.35);
+    border-radius:18px;padding:24px;text-align:center;}
+  .thanks.show{display:block;}
+  .thanks h2{margin:.2em 0;color:#8fffca;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← ホームに戻る</a>
+  <h1 data-i18n="board_title">要望ボード</h1>
+  <p class="sub" data-i18n="board_sub">ミラの未来視への「こうしてほしい」「応援」「バグ報告」など、なんでも送ってください。いただいた声はスタッフが確認し、良いものはサイトに反映・掲載していきます。（ログイン不要）</p>
+
+  <div id="thanks" class="thanks">
+    <h2 data-i18n="board_thanks_h">送信ありがとう！</h2>
+    <p data-i18n="board_thanks_p">あなたの声、しっかり届きました。反映をお楽しみに。</p>
+    <a class="back" href="index.html" style="margin-top:14px" data-i18n="board_back">← ホームに戻る</a>
+  </div>
+
+  <form id="reqForm" action="https://formsubmit.co/newmarsh410@me.com" method="POST">
+    <input type="hidden" name="_subject" value="🌟 ミラの未来視 サイト要望が届きました">
+    <input type="hidden" name="_captcha" value="true">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_next" value="https://mira-coin.github.io/miranomiraishi/board.html?sent=1">
+    <div class="hp"><label>この欄は空のままにしてください</label><input type="text" name="_honey" tabindex="-1" autocomplete="off"></div>
+
+    <label data-i18n="board_name">お名前・ニックネーム（任意）</label>
+    <input type="text" name="お名前" placeholder="ミラ好きさん">
+
+    <label data-i18n="board_lang">言語 / Language（任意）</label>
+    <select name="言語">
+      <option value="日本語">日本語</option>
+      <option value="English">English</option>
+      <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+      <option value="Español">Español</option>
+      <option value="中文">中文</option>
+      <option value="한국어">한국어</option>
+    </select>
+
+    <label data-i18n="board_msg">要望・メッセージ <span style="color:#ff9ec4">*</span></label>
+    <textarea name="要望・メッセージ" required placeholder="例：新しいステージがほしい！／このゲーム最高でした！"></textarea>
+
+    <button type="submit" class="send" data-i18n="board_send">送信する</button>
+    <p class="note" data-i18n="board_note">※ 送信内容はスタッフのみに届きます（公開されません）。スパム対策のcaptchaが表示されることがあります。個人情報や誹謗中傷はお控えください。</p>
+  </form>
+</div>
+<script src="ticker.js"></script>
+<script src="i18n.js"></script>
+<script>
+  if (location.search.indexOf("sent=1") !== -1) {
+    var f = document.getElementById("reqForm"); if (f) f.style.display = "none";
+    document.getElementById("thanks").classList.add("show");
+  }
+</script>
+</body>
+</html>
