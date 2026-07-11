@@ -415,7 +415,7 @@
       position: absolute;
       left: 5%;
       right: 5%;
-      bottom: 92px;
+      bottom: 20%;
       height: 8px;
       background: linear-gradient(90deg, var(--pink), white, var(--cyan));
       border-radius: 999px;
@@ -1890,6 +1890,11 @@
       .pads { bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
       .pad { min-height: 60px; }
     }
+    /* ステージ選択：下端の「← MODE」等が見切れないよう余白確保（スマホのみ） */
+    @media (max-width: 820px), (max-height: 560px) {
+      .stg-right { padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
+      .stg-back2 { flex: 0 0 auto; }
+    }
   </style>
 </head>
 <body>
@@ -2813,14 +2818,14 @@
         } else {
           const progress = Math.max(0, Math.min(1.12, 1 - (remain / ahead)));
           const depth = Math.max(0, Math.min(1, progress));
-          const eased = depth * depth * (3 - 2 * depth);
-          const y = Math.max(-8, Math.min(104, -6 + eased * 103));
-          const scale = .36 + Math.pow(depth, 1.22) * 1.08;
+          const eased = Math.pow(depth, 1.12);
+          const y = Math.max(-12, Math.min(96, -12 + eased * 92));
+          const scale = .52 + Math.pow(depth, 1.05) * .9;
           const lift = (1 - depth) * -46;
           const brightness = 0.78 + depth * 0.68 + glow * 0.46;
           note.el.style.top = `${y}%`;
           note.el.style.transform = `translate3d(0, ${lift}px, ${Math.round(depth * 90)}px) translateY(-50%) scale(${scale})`;
-          note.el.style.opacity = remain < -timing.lateMiss ? "0" : String(Math.max(.34, Math.min(1, .36 + depth * .72)));
+          note.el.style.opacity = remain < -timing.lateMiss ? "0" : String(Math.max(.55, Math.min(1, .58 + depth * .42)));
           note.el.style.filter = `brightness(${brightness.toFixed(2)}) saturate(${(1.05 + depth * .35).toFixed(2)}) drop-shadow(0 0 ${Math.round(5 + depth * 18 + glow * 14)}px rgba(139, 244, 255, ${(.25 + depth * .42 + glow * .28).toFixed(2)}))`;
           note.el.style.zIndex = String(Math.round(depth * 100));
         }
