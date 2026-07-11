@@ -117,20 +117,26 @@
     if (lc) { var L = LANGS.filter(function (x) { return x.c === lang; })[0]; lc.textContent = "🌐 " + (L ? L.n : "日本語"); }
   }
 
+  var SKIP = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, TEXTAREA: 1, IFRAME: 1, CANVAS: 1, SVG: 1 };
   function walk(root, lang, i) {
-    var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
-    var n, jobs = [];
-    while ((n = tw.nextNode())) {
-      if (n.parentNode && (n.parentNode.id === "news-ticker" || n.parentNode.closest && n.parentNode.closest("#mvLangSwitch"))) continue;
-      var raw = n.nodeValue; var key = raw.trim();
-      if (!key) continue;
-      if (!n.__src) { if (T[key]) n.__src = key; else continue; }
-      jobs.push(n);
-    }
+    var jobs = [];
+    var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (node) {
+        var p = node.parentNode;
+        if (!p || SKIP[p.nodeName]) return NodeFilter.FILTER_REJECT;
+        if (p.id === "news-ticker" || (p.closest && p.closest("#mvLangSwitch,#news-ticker"))) return NodeFilter.FILTER_REJECT;
+        var key = node.nodeValue.trim();
+        if (!key || key.length > 220) return NodeFilter.FILTER_REJECT;
+        if (node.__src || T[key]) return NodeFilter.FILTER_ACCEPT;
+        return NodeFilter.FILTER_REJECT;
+      }
+    });
+    var n;
+    while ((n = tw.nextNode())) { if (!n.__src) n.__src = n.nodeValue.trim(); jobs.push(n); }
     for (var j = 0; j < jobs.length; j++) {
-      var node = jobs[j]; var src = node.__src;
-      if (lang === "ja") { node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), src); }
-      else if (T[src] && T[src][i] != null) { node.nodeValue = node.nodeValue.replace(src, T[src][i]); }
+      var node = jobs[j], src = node.__src, out = src;
+      if (lang !== "ja" && T[src] && T[src][i] != null) out = T[src][i];
+      if (node.nodeValue.trim() !== out) node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), out);
     }
   }
 
