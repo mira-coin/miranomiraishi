@@ -27,10 +27,10 @@
       "title": "Night Dive - Luz en Dolor",
       "artist": "MIRA",
       "audio": "night-dive-lite.mp3",
-      "chart": "night-dive-taiko-chart.json",
+      "chart": "night-dive-depth-chart.json",
       "mvUrl": "night-dive-mv-lite.mp4",
-      "difficulty": "Stage 3 / 2レーン太鼓風",
-      "layout": "taiko",
+      "difficulty": "Stage 3 / 縦",
+      "layout": "depth",
       "offsetMs": 0
     },
     {

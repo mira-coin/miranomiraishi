@@ -1910,6 +1910,29 @@
         pointer-events: auto;
       }
     }
+    /* ===== 横レーン(よこ)：判定ライン上の丸をタップ＝判定。英数字パッド廃止・下部メニュー被り解消 ===== */
+    .layout-horizontal .pads {
+      left: calc(15% - clamp(56px, 12vw, 92px) / 2);
+      right: auto;
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+      width: clamp(56px, 12vw, 92px);
+      height: min(66vh, 480px);
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(4, 1fr);
+      gap: clamp(8px, 2.4vh, 22px);
+      z-index: 8;
+    }
+    .layout-horizontal .pad {
+      width: clamp(56px, 12vw, 92px);
+      height: clamp(56px, 12vw, 92px);
+      border-radius: 50%;
+      margin: auto;
+      font-size: 0;            /* D/F/J/K の英数字を非表示（サークルのみ） */
+      border-width: 3px;
+    }
+    .layout-horizontal .pad::after { display: none; }
   </style>
 </head>
 <body>
