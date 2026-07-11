@@ -2848,7 +2848,7 @@
           const y = Math.max(-26, Math.min(96, -26 + eased * 106));
           const scale = .28 + Math.pow(depth, 1.2) * 1.2;
           const lift = (1 - depth) * -66;
-          const brightness = 0.72 + depth * 0.74 + glow * 0.46;
+          const brightness = 0.78 + depth * 0.68 + glow * 0.46;
           note.el.style.top = `${y}%`;
           note.el.style.transform = `translate3d(0, ${lift}px, ${Math.round(depth * 170)}px) translateY(-50%) scale(${scale})`;
           note.el.style.opacity = remain < -timing.lateMiss ? "0" : String(Math.max(.42, Math.min(1, .46 + depth * .54)));
@@ -4122,4 +4122,8 @@
     updateCleanViewUi();
     updateAssetStatus();
     applyBackgroundTuning();
-    setTitleVisi
+    setTitleVisible(true);
+    initialLoadPromise = loadBundledAudio();
+  </script>
+</body>
+</html>
