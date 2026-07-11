@@ -255,6 +255,19 @@
       "description": "「こうしてほしい」「応援」「バグ報告」などを送れる要望ボード。ログイン不要。いただいた声はサイトに反映していきます。",
       "url": "board.html",
       "buttonLabel": "要望を送る"
+    },
+    {
+      "id": "game-escape-labyrinth",
+      "type": "game",
+      "section": "game",
+      "order": 36,
+      "label": "ESCAPE",
+      "icon": "🔓",
+      "title": "囚われた電脳の迷宮",
+      "description": "ミラの未来視 外伝の脱出ゲーム。未来視ナビAI・ミラと共に、予測不能の電脳迷宮からの脱出を目指す謎解き。日本語/English/Indonesia対応。",
+      "image": "images/mira-escape-title.jpg",
+      "url": "games/mira-escape-labyrinth.html",
+      "buttonLabel": "脱出ゲームを遊ぶ"
     }
   ]
 }
