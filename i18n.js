@@ -170,12 +170,10 @@
   function boot() {
     buildSwitcher();
     apply(curLang());
-    // re-apply as homepage renders cards asynchronously
-    var tries = 0;
-    var iv = setInterval(function () { apply(curLang()); if (++tries >= 6) clearInterval(iv); }, 500);
-    var mo = new MutationObserver(function () { apply(curLang()); });
-    mo.observe(document.body, { childList: true, subtree: true });
-    setTimeout(function () { mo.disconnect(); }, 6000);
+    // re-apply a few times to catch asynchronously-rendered cards (no continuous observer = no freeze)
+    [400, 1000, 2000, 3500].forEach(function (ms) {
+      setTimeout(function () { apply(curLang()); }, ms);
+    });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
