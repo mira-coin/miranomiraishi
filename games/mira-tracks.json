@@ -16,10 +16,10 @@
       "title": "不夜城 - Ciudad Sin Noche",
       "artist": "MIRA",
       "audio": "fuya-jo-ciudad-sin-noche-lite.mp3",
-      "chart": "fuya-jo-ciudad-sin-noche-horizontal-chart.json",
+      "chart": "fuya-jo-ciudad-sin-noche-depth-chart.json",
       "mvUrl": "stage2-ai-repair-mv-lite.mp4",
-      "difficulty": "Stage 2 / 横流れ",
-      "layout": "horizontal",
+      "difficulty": "Stage 2 / 縦",
+      "layout": "depth",
       "offsetMs": 0
     },
     {
