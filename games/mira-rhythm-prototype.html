@@ -1910,27 +1910,13 @@
         pointer-events: auto;
       }
     }
-    /* ===== 横レーン(よこ)：判定ライン上の丸をタップ＝判定。英数字パッド廃止・下部メニュー被り解消 ===== */
-    .layout-horizontal .pads {
-      left: calc(15% - clamp(56px, 12vw, 92px) / 2);
-      right: auto;
-      top: 50%;
-      bottom: auto;
-      transform: translateY(-50%);
-      width: clamp(56px, 12vw, 92px);
-      height: min(66vh, 480px);
-      grid-template-columns: 1fr;
-      grid-template-rows: repeat(4, 1fr);
-      gap: clamp(8px, 2.4vh, 22px);
-      z-index: 8;
-    }
+    /* ===== 横レーン：タップ丸の見た目だけCSS（位置はJSでノーツ4レーンに正確に合わせる） ===== */
     .layout-horizontal .pad {
-      width: clamp(56px, 12vw, 92px);
-      height: clamp(56px, 12vw, 92px);
+      width: clamp(54px, 11vw, 86px);
+      height: clamp(54px, 11vw, 86px);
       border-radius: 50%;
-      margin: auto;
-      font-size: 0;            /* D/F/J/K の英数字を非表示（サークルのみ） */
       border-width: 3px;
+      font-size: 0;            /* D/F/J/K の英数字を非表示 */
     }
     .layout-horizontal .pad::after { display: none; }
   </style>
@@ -3945,6 +3931,47 @@
         return r;
       };
     }
+    // ===== 横レーン：タップ丸をノーツの4レーン(12.5/37.5/62.5/87.5%)＋判定ラインに正確配置 =====
+    (function () {
+      var LANEY = [12.5, 37.5, 62.5, 87.5];
+      function alignHPads() {
+        if (typeof els === "undefined" || !els.pads) return;
+        if (state.layout !== "horizontal") {
+          els.pads.forEach(function (p) {
+            p.style.position = ""; p.style.left = ""; p.style.top = ""; p.style.margin = ""; p.style.zIndex = "";
+          });
+          return;
+        }
+        var pf = document.querySelector(".playfield");
+        var hit = document.querySelector(".hit-line");
+        if (!pf || !hit) return;
+        var pr = pf.getBoundingClientRect();
+        var hr = hit.getBoundingClientRect();
+        var cx = hr.left + hr.width / 2;
+        els.pads.forEach(function (p, i) {
+          var w = p.offsetWidth || 70, h = p.offsetHeight || 70;
+          var cy = pr.top + pr.height * (LANEY[i] / 100);
+          p.style.position = "fixed";
+          p.style.left = Math.round(cx - w / 2) + "px";
+          p.style.top = Math.round(cy - h / 2) + "px";
+          p.style.right = "auto";
+          p.style.bottom = "auto";
+          p.style.transform = "none";
+          p.style.margin = "0";
+          p.style.zIndex = "8";
+        });
+      }
+      if (typeof setStageLayout === "function") {
+        var _sl = setStageLayout;
+        setStageLayout = function () { var r = _sl.apply(this, arguments); setTimeout(alignHPads, 30); return r; };
+      }
+      if (typeof startGame === "function") {
+        var _sg = startGame;
+        startGame = async function () { var r = await _sg.apply(this, arguments); [40, 250, 700, 1500].forEach(function (ms) { setTimeout(alignHPads, ms); }); return r; };
+      }
+      window.addEventListener("resize", alignHPads);
+      window.addEventListener("orientationchange", function () { setTimeout(alignHPads, 200); });
+    })();
     els.start.addEventListener("click", startGame);
     els.titleStart.addEventListener("click", () => showModeSelect());
     els.titleBgm.addEventListener("click", toggleTitleBgm);
