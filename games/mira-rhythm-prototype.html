@@ -639,7 +639,7 @@
     .layout-taiko .note.arrow-right::before { content: "→"; }
 
     .layout-taiko .hit-line {
-      left: 11%;
+      left: 10.5%;
       right: auto;
       top: 0;
       bottom: auto;
@@ -1895,6 +1895,21 @@
       .stg-right { padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
       .stg-back2 { flex: 0 0 auto; }
     }
+    /* 横レーン(よこ/太鼓)のミライシボタン：スマホでパッドと重なって押せない→右中央の空きへ */
+    @media (pointer: coarse) {
+      .layout-horizontal .miraisi-btn,
+      .layout-taiko .miraisi-btn {
+        left: auto;
+        right: 12px;
+        top: 50%;
+        bottom: auto;
+        transform: translateY(-50%);
+        width: min(150px, 34vw);
+        min-height: 46px;
+        z-index: 9;
+        pointer-events: auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2808,7 +2823,7 @@
         const glow = Math.max(0, 1 - Math.abs(remain) / timing.hit);
         if (state.layout === "horizontal" || state.layout === "taiko") {
           const progress = Math.max(0, Math.min(1.1, 1 - (remain / ahead)));
-          const x = Math.max(8, Math.min(112, 108 - progress * 100));
+          const x = Math.max(6, Math.min(114, 110.5 - progress * 100));
           const scale = .86 + glow * .22;
           note.el.style.left = `${x}%`;
           note.el.style.transform = `translate(-50%, -50%) scale(${scale})`;
