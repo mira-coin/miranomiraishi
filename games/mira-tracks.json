@@ -55,6 +55,17 @@
       "difficulty": "Stage 5 / CHAOS",
       "layout": "depth",
       "offsetMs": 0
+    },
+    {
+      "id": "haru-no-kaze-stage6",
+      "title": "春の風",
+      "artist": "MIRA",
+      "audio": "haru-no-kaze.mp3",
+      "chart": "haru-no-kaze-chart.json",
+      "mvUrl": "haru-kaze-mv.mp4",
+      "difficulty": "Stage 6 / 春",
+      "layout": "depth",
+      "offsetMs": 0
     }
   ]
 }

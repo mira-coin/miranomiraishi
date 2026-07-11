@@ -1815,7 +1815,7 @@
     /* ===== STAGE SELECT redesign: left preview + right scroll list ===== */
     #stageSelect.mm-overlay{padding:0;gap:0;flex-direction:row;align-items:stretch;justify-content:stretch;overflow:hidden;}
     #stageSelect .stg-wrap{display:flex;width:100%;height:100%;}
-    .stg-preview{position:relative;flex:1 1 60%;min-width:0;overflow:hidden;background:#05030f;display:flex;align-items:flex-end;}
+    .stg-preview{position:relative;flex:1 1 60%;min-width:0;overflow:hidden;background:#05030f;display:flex;align-items:center;}
     #stgVid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92;}
     .stg-preview::after{content:"";position:absolute;inset:0;pointer-events:none;
       background:linear-gradient(90deg,transparent 40%,rgba(6,7,14,.55) 78%,rgba(6,7,14,.92)),linear-gradient(0deg,rgba(6,7,14,.92),transparent 46%);}
@@ -1851,7 +1851,7 @@
       .stg-preview{flex:0 0 42%;}
       .stg-right{flex:1;border-left:none;border-top:1px solid rgba(150,180,255,.22);}
     }
-    /* ===== MOBILE FIT (PCは無変更：高さのある画面/精密ポインタには影響しない) ===== */
+      /* ===== MOBILE FIT (PCは無変更：高さのある画面/精密ポインタには影響しない) ===== */
     /* flexの高さ制約バグ修正：ステージ選択リストがスクロールできるように（PCでも安全） */
     .stg-right, .stg-list { min-height: 0; }
 
