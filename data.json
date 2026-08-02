@@ -268,6 +268,19 @@
       "image": "images/mira-escape-title.jpg",
       "url": "games/mira-escape-labyrinth.html",
       "buttonLabel": "脱出ゲームを遊ぶ"
+    },
+    {
+      "id": "game-mira-sugoroku-quest-demo",
+      "type": "game",
+      "section": "game",
+      "order": 38,
+      "label": "BOARD GAME",
+      "icon": "🎲",
+      "title": "ミラのすごろくクエスト 体験版",
+      "description": "10ターン以内に未来のゲートを目指す、ミラのすごろくクエスト。イベントマスで運命コインを集めよう。好評なら新ステージを追加予定です。",
+      "image": "images/mira-sugoroku-quest-thumbnail.png",
+      "url": "games/mira-sugoroku-quest/",
+      "buttonLabel": "すごろくを遊ぶ"
     }
   ]
 }
