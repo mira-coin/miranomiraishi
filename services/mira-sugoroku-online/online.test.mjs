@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 import { io as connect } from "socket.io-client";
+import { TILES } from "./data.mjs";
 
 process.env.PORT = "0";
 const { io, rooms, server } = await import("./server.mjs");
@@ -112,6 +113,44 @@ test("ルーム作成・参加・秘密手札バトル・同時公開", async ()
   assert.deepEqual(revealA.battle.reveal, revealB.battle.reveal);
   assert.equal(revealA.battle.reveal.winnerId, created.playerId);
   assert.equal(internal.game.players[1].hp, bobHpBefore - 2);
+});
+
+test("イベントCGは全員で共有し、選択できるのは手番プレイヤーだけ", async () => {
+  const host = await makeClient();
+  const guest = await makeClient();
+  const created = await emitAck(host, "room:create", { name: "Host", charKey: "mira", turns: 5 });
+  const joined = await emitAck(guest, "room:join", { code: created.code, name: "Guest", charKey: "you" });
+  await emitAck(guest, "room:ready", { ready: true });
+
+  const hostStartWait = waitFor(host, "game:state", (state) => state.phase === "preroll");
+  const guestStartWait = waitFor(guest, "game:state", (state) => state.phase === "preroll");
+  assert.equal((await emitAck(host, "room:start")).ok, true);
+  await Promise.all([hostStartWait, guestStartWait]);
+
+  const eventFrom = TILES.findIndex((tile) => tile.next?.length === 1 && TILES[tile.next[0]]?.type === "event");
+  assert.notEqual(eventFrom, -1);
+  const internal = rooms.rooms.get(created.code);
+  internal.game.players[0].pos = eventFrom;
+  internal.game.players[0].status.badluck = true;
+
+  const hostEventWait = waitFor(host, "game:state", (state) => state.phase === "event" && !!state.prompt);
+  const guestEventWait = waitFor(guest, "game:state", (state) => state.phase === "event" && !!state.prompt);
+  assert.equal((await emitAck(host, "game:roll")).ok, true);
+  const [hostEvent, guestEvent] = await Promise.all([hostEventWait, guestEventWait]);
+
+  assert.equal(hostEvent.prompt.actorId, created.playerId);
+  assert.equal(hostEvent.prompt.actionable, true);
+  assert.equal(guestEvent.prompt.actorId, created.playerId);
+  assert.equal(guestEvent.prompt.actionable, false);
+  assert.equal(guestEvent.prompt.title, hostEvent.prompt.title);
+  assert.equal(guestEvent.prompt.text, hostEvent.prompt.text);
+  assert.equal(guestEvent.prompt.cg, hostEvent.prompt.cg);
+  assert.deepEqual(guestEvent.prompt.choices, hostEvent.prompt.choices);
+  assert.ok(hostEvent.prompt.choices.length >= 2);
+
+  assert.equal((await emitAck(guest, "game:event", { index: 0 })).ok, false);
+  assert.equal((await emitAck(host, "game:event", { index: 0 })).ok, true);
+  assert.equal(joined.playerId, guestEvent.you.id);
 });
 
 test("再接続トークンで同じ席へ復帰", async () => {
