@@ -347,7 +347,14 @@ export class RoomStore {
       if (guess === rolled) player.coin += 60;
       this.#log(room, `${event.nm}：出目は${rolled}。${guess === rolled ? "的中！+60コイン" : "残念、はずれ"}`);
     } else if (event.monster) {
-      this.#monster(room, player);
+      if ((Number(index) || 0) === 0) {
+        this.#monster(room, player);
+      } else {
+        const toll = Math.min(10, player.coin);
+        player.coin -= toll;
+        player.pos = stepBack(player.pos, 1);
+        this.#log(room, `${event.nm}：退路を選び、${toll}コインを落として1マス後退`);
+      }
     } else {
       const choice = event.ch[clamp(Number(index) || 0, 0, event.ch.length - 1)];
       const outcome = weightedPick(choice.out);
@@ -531,6 +538,11 @@ export class RoomStore {
     const game = room.game;
     const me = game.players.find((player) => player.id === viewerId);
     const battle = game.battle;
+    const prompt = game.prompt ? {
+      ...this.#safePrompt(game.prompt),
+      actorId: game.prompt.playerId || null,
+      actionable: game.prompt.playerId === viewerId,
+    } : null;
     const battleView = battle ? {
       id: battle.id,
       attackerId: battle.attackerId,
@@ -554,8 +566,11 @@ export class RoomStore {
         itemUsedThisTurn: me.itemUsedThisTurn,
         status: me.status,
       } : null,
-      prompt: game.prompt?.playerId === viewerId ? this.#safePrompt(game.prompt) : null,
+      // Events, shops and route choices are shared table scenes. Only the
+      // active player's copy is actionable; nothing here contains a secret.
+      prompt,
       lastRoll: game.lastRoll || null,
+      movePath: game.movePath || [],
       battle: battleView,
       log: game.log.slice(-10),
       result: game.result || null,
@@ -573,7 +588,7 @@ export class RoomStore {
         cg: event.cg ? `cg/${event.cg}` : null,
         music: HAPPENING_EVENT_IDS.has(event.id) ? "happening" : "event",
         choices: event.dicechallenge ? ["1", "2", "3", "4", "5", "6"] :
-          event.monster ? ["戦う！"] : event.ch.map((choice) => choice.l),
+          event.monster ? ["⚔ 正面から戦う", "🏃 コインを落として逃げる"] : event.ch.map((choice) => choice.l),
       };
     }
     if (prompt.type === "shop") {
@@ -868,7 +883,7 @@ export class RoomStore {
         }
         game.prompt = null;
         this.#afterTile(room, player);
-      }, player.isCpu ? 750 : TURN_TIMEOUT);
+      }, player.isCpu ? 2_200 : TURN_TIMEOUT);
       return;
     } else if (tile.type === "event") {
       const event = pick(EVENTS);
@@ -882,7 +897,15 @@ export class RoomStore {
           const rolled = 1 + randomInt(6);
           if (rolled === 1) player.coin += 60;
           this.#log(room, `${pending.nm}：自動選択の結果は${rolled}`);
-        } else if (pending.monster) this.#monster(room, player);
+        } else if (pending.monster) {
+          if (Math.random() < 0.7) this.#monster(room, player);
+          else {
+            const toll = Math.min(10, player.coin);
+            player.coin -= toll;
+            player.pos = stepBack(player.pos, 1);
+            this.#log(room, `${pending.nm}：${player.name}は退路を選んだ`);
+          }
+        }
         else {
           const outcome = weightedPick(pending.ch[0].out);
           if (outcome.fx?.monsterBattle) {
@@ -896,7 +919,7 @@ export class RoomStore {
         }
         game.prompt = null;
         this.#afterTile(room, player);
-      }, player.isCpu ? 850 : TURN_TIMEOUT);
+      }, player.isCpu ? 3_000 : TURN_TIMEOUT);
       return;
     } else if (tile.type === "battle") {
       this.#monster(room, player);
