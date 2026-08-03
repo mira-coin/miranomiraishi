@@ -533,7 +533,24 @@ export class RoomStore {
     const battle = game.battle;
     const battleView = battle ? {
       id: battle.id,
-      attackerId:…142 tokens truncated…ems,
+      attackerId: battle.attackerId,
+      defenderId: battle.defenderId,
+      attackerLocked: !!battle.choices[battle.attackerId],
+      defenderLocked: !!battle.choices[battle.defenderId],
+      reveal: battle.reveal || null,
+    } : null;
+    return {
+      room: this.#roomPublic(room),
+      turn: game.turn,
+      maxTurn: game.maxTurn,
+      active: game.active,
+      activePlayerId: game.players[game.active]?.id || null,
+      phase: game.phase,
+      players: game.players.map(playerPublic),
+      you: me ? {
+        id: me.id,
+        hand: me.hand,
+        items: me.items,
         itemUsedThisTurn: me.itemUsedThisTurn,
         status: me.status,
       } : null,
@@ -1069,4 +1086,3 @@ export class RoomStore {
     this.rooms.delete(room.code);
   }
 }
-
