@@ -1,7 +1,3 @@
-Exit code: 0
-Wall time: 1.3 seconds
-Total output lines: 1089
-Output:
 import crypto from "node:crypto";
 import {
   BEATS, CARD_SPACE_POOL, CHARS, CHAR_KEYS, EVENTS, GOAL_REWARD,
