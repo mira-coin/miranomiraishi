@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-02",
+  "tool": "image_gen",
+  "assets": [
+    {
+      "file": "mira.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "5d64ba38cd1b981d0a5edba65646f0bc091c0bf2acb833a6f7ae4efbe81c8840",
+      "generatedSource": "C:/Users/要人/.codex/generated_images/01a0f649-689e-7111-a8f1-6ee602514b3e/exec-2f01908b-1233-4fc5-81e6-29b3784839bc.png"
+    },
+    {
+      "file": "ninja.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "2148b367e022a649f791004e5140764453f7683c8b9d461e921b913fb3ba12b2",
+      "generatedSource": "C:/Users/要人/.codex/generated_images/01a0f649-689e-7111-a8f1-6ee602514b3e/exec-9bd2853f-756c-4f0c-933a-726fc6258467.png"
+    },
+    {
+      "file": "oni.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "74af7fa31cf8faafbd4c0c83afaeff6863e2eac24503653f1b17bd947fc1d4a2",
+      "generatedSource": "C:/Users/要人/.codex/generated_images/01a0f649-689e-7111-a8f1-6ee602514b3e/exec-a89b2810-4f72-4772-aca0-20363ee4ac03.png"
+    },
+    {
+      "file": "mage.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "4afcc9a57299ea03c3cd00b31f0ba21d8f94ca0037fc45145afa264a4b7ab156",
+      "generatedSource": "C:/Users/要人/.codex/generated_images/01a0f649-689e-7111-a8f1-6ee602514b3e/exec-0bf9ac5a-7b6e-4c95-94e8-a9d5dfcfec41.png"
+    },
+    {
+      "file": "bosses.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "511d5720c484153f10f052784334d69988e124abe97d9b18cfd82da4746578c2",
+      "generatedSource": "C:/Users/要人/.codex/generated_images/01a0f649-689e-7111-a8f1-6ee602514b3e/exec-bd73575e-ea56-4be9-84fb-c9b046b0b10c.png"
+    },
+    {
+      "file": "gate.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "6ab2a21f4f802f6b8ea927cf2f944c186248e3618317b43a116941c488f44095",
+      "generatedSource": "C:/Users/要人/.codex/generated_images/01a0f649-689e-7111-a8f1-6ee602514b3e/exec-2051aeb9-cf04-4138-b41d-7ea3d8d9e997.png"
+    },
+    {
+      "file": "white.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "7a7a05881338ddff30d2b59b80e8d90f30eb404248fc21e5507527d47c10f969",
+      "generatedSource": "C:/Users/要人/.codex/generated_images/01a0f649-689e-7111-a8f1-6ee602514b3e/exec-54c07315-b939-45a6-a60d-4221b91aae52.png"
+    }
+  ],
+  "notes": "Raw generated sheets retained. Runtime chroma key and pixel-grid rendering only. Mechanics preserved."
+}

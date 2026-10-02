@@ -1,0 +1,91 @@
+{
+  "engine": "AivisSpeech local 1.1.0-dev",
+  "speaker": "コハク",
+  "speakerUuid": "5680ac39-43c9-487a-bc3e-018c0d29cc38",
+  "style": "ノーマル",
+  "styleId": 1878365376,
+  "speedScale": 1.02,
+  "intonationScale": 1.05,
+  "volumeScale": 1.15,
+  "format": "Ogg Vorbis mono 44100Hz quality 5",
+  "clips": [
+    {
+      "key": "start",
+      "text": "ミラ無双、ゲームスタートです。行きますよ！",
+      "seconds": 3.854,
+      "file": "start.ogg"
+    },
+    {
+      "key": "attack",
+      "text": "えいっ！",
+      "seconds": 0.904,
+      "file": "attack.ogg"
+    },
+    {
+      "key": "attack-alt",
+      "text": "やあっ！",
+      "seconds": 0.973,
+      "file": "attack-alt.ogg"
+    },
+    {
+      "key": "ultimate",
+      "text": "奥義！",
+      "seconds": 1.061,
+      "file": "ultimate.ogg"
+    },
+    {
+      "key": "future",
+      "text": "未来視！",
+      "seconds": 1.166,
+      "file": "future.ogg"
+    },
+    {
+      "key": "skill",
+      "text": "未来は、私が切り開きます！",
+      "seconds": 2.936,
+      "file": "skill.ogg"
+    },
+    {
+      "key": "hurt",
+      "text": "きゃっ！",
+      "seconds": 0.844,
+      "file": "hurt.ogg"
+    },
+    {
+      "key": "boss",
+      "text": "強敵です。気をつけて！",
+      "seconds": 2.603,
+      "file": "boss.ogg"
+    },
+    {
+      "key": "stage-clear",
+      "text": "やりました！ 次のステージへ進みましょう。",
+      "seconds": 3.445,
+      "file": "stage-clear.ogg"
+    },
+    {
+      "key": "all-clear",
+      "text": "ゲームクリア、ありがとうございました！",
+      "seconds": 3.103,
+      "file": "all-clear.ogg"
+    },
+    {
+      "key": "game-over",
+      "text": "大丈夫。もう一度、一緒に挑戦しましょう。",
+      "seconds": 3.921,
+      "file": "game-over.ogg"
+    },
+    {
+      "key": "level-up",
+      "text": "レベルアップ！",
+      "seconds": 1.327,
+      "file": "level-up.ogg"
+    },
+    {
+      "key": "heal",
+      "text": "回復！",
+      "seconds": 1.163,
+      "file": "heal.ogg"
+    }
+  ]
+}
